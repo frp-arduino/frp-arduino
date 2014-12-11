@@ -4,7 +4,7 @@ import qualified AST
 import Stream
 
 programToC :: AST.Program -> String
-programToC = streamTreeToC . programToNodes
+programToC = streamTreeToC . programToStreamTree
 
 streamTreeToC :: StreamTree -> String
 streamTreeToC tree = unlines $

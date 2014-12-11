@@ -11,14 +11,6 @@ data StreamTree = StreamTree
     }
     deriving (Show)
 
-data StreamType = StreamTypeVoid
-                | StreamTypeBool
-    deriving (Show)
-
-data Body = OutputPin AST.Pin
-          | Builtin String
-    deriving (Show)
-
 data Stream = Stream
     { name         :: Identifier
     , inputType    :: StreamType
@@ -28,10 +20,18 @@ data Stream = Stream
     }
     deriving (Show)
 
+data StreamType = StreamTypeVoid
+                | StreamTypeBool
+    deriving (Show)
+
+data Body = OutputPin AST.Pin
+          | Builtin String
+    deriving (Show)
+
 type Identifier = String
 
-nodesEmpty :: StreamTree
-nodesEmpty = StreamTree 1 "" M.empty
+emptyStreamTree :: StreamTree
+emptyStreamTree = StreamTree 1 "" M.empty
 
 streamsInTree :: StreamTree -> [Stream]
 streamsInTree = M.elems . streams
@@ -71,24 +71,24 @@ nodesAddDependency nodeName dependencyName nodes = nodes
     { streams = M.adjust (addDependency dependencyName) nodeName (streams nodes)
     }
 
-programToNodes :: AST.Program -> StreamTree
-programToNodes (AST.Program statements) =
-    foldl statementToNodes nodesEmpty statements
+programToStreamTree :: AST.Program -> StreamTree
+programToStreamTree (AST.Program statements) =
+    foldl statementToStreamTree emptyStreamTree statements
 
-statementToNodes :: StreamTree -> AST.Statement -> StreamTree
-statementToNodes existing (AST.Assignment pin stream) = final
+statementToStreamTree :: StreamTree -> AST.Statement -> StreamTree
+statementToStreamTree existing (AST.Assignment pin stream) = final
     where
         withThisAdded = addStream (AST.name pin) StreamTypeBool StreamTypeVoid (OutputPin pin) existing
         thisName = lastNode withThisAdded
-        rest = streamToNodes stream withThisAdded
+        rest = streamToStreamTree stream withThisAdded
         final = nodesAddDependency (lastNode rest) thisName rest
 
-streamToNodes :: AST.Stream a -> StreamTree -> StreamTree
-streamToNodes (AST.BuiltinStream "clock") nodes =
+streamToStreamTree :: AST.Stream a -> StreamTree -> StreamTree
+streamToStreamTree (AST.BuiltinStream "clock") nodes =
     addBuiltinStream "clock" StreamTypeVoid nodes
-streamToNodes (AST.BuiltinStreamFunction "toggle" stream) nodes = final
+streamToStreamTree (AST.BuiltinStreamFunction "toggle" stream) nodes = final
     where
-        rest = streamToNodes stream nodes
+        rest = streamToStreamTree stream nodes
         lastName = lastNode rest
         withThisAdded = addStream "toggle" StreamTypeVoid StreamTypeBool (Builtin "toggle") rest
         thisName = lastNode withThisAdded
