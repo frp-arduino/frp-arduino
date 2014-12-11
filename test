@@ -1,3 +1,18 @@
 #!/bin/sh
+
 set -e
-./make Blink
+
+TEST_REPORT=test_report.txt
+
+test() {
+    echo -n "Testing $1 ... "
+    (./make $1 > $TEST_REPORT 2>&1) || (echo "FAIL";
+                                        cat $TEST_REPORT;
+                                        rm $TEST_REPORT;
+                                        exit 1)
+    echo "OK"
+    rm $TEST_REPORT
+}
+
+test Blink
+test DoubleBlink
