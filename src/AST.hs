@@ -1,7 +1,8 @@
 module AST where
 
-data Program = Assignment Pin (Stream Bool)
-    deriving (Show)
+data Program = Program [Statement]
+
+data Statement = Assignment Pin (Stream Bool)
 
 data Stream a = BuiltinStream String
               | BuiltinStreamFunction String (Stream ())
@@ -16,7 +17,11 @@ data Pin = Pin
     deriving (Show)
 
 (=:) :: Pin -> Stream Bool -> Program
-(=:) pin expression = Assignment pin expression
+(=:) pin expression = Program $ [Assignment pin expression]
+
+(<->) :: Program -> Program -> Program
+(<->) (Program leftStatements) (Program rightStatements) =
+    Program $ leftStatements ++ rightStatements
 
 clock :: Stream ()
 clock = BuiltinStream "clock"

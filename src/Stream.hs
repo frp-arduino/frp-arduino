@@ -6,9 +6,10 @@ import qualified AST
 
 data StreamTree = StreamTree
     { counter  :: Int
-    , lastNode :: String
-    , streams :: M.Map Identifier Stream
+    , lastNode :: Identifier
+    , streams  :: M.Map Identifier Stream
     }
+    deriving (Show)
 
 data StreamType = StreamTypeVoid
                 | StreamTypeBool
@@ -25,6 +26,7 @@ data Stream = Stream
     , body         :: Body
     , dependencies :: [Identifier]
     }
+    deriving (Show)
 
 type Identifier = String
 
@@ -54,7 +56,9 @@ addStream streamName inputType outputType body nodes = nodes
 addBuiltinStream :: String -> StreamType -> StreamTree -> StreamTree
 addBuiltinStream streamName outputType nodes = nodes
     { lastNode = streamName
-    , streams = M.insert streamName (Stream streamName StreamTypeVoid outputType (Builtin streamName) []) (streams nodes)
+    , streams = if M.member streamName (streams nodes)
+                    then (streams nodes)
+                    else M.insert streamName (Stream streamName StreamTypeVoid outputType (Builtin streamName) []) (streams nodes)
     }
 
 addDependency :: Identifier -> Stream -> Stream
@@ -68,9 +72,13 @@ nodesAddDependency nodeName dependencyName nodes = nodes
     }
 
 programToNodes :: AST.Program -> StreamTree
-programToNodes (AST.Assignment pin stream) = final
+programToNodes (AST.Program statements) =
+    foldl statementToNodes nodesEmpty statements
+
+statementToNodes :: StreamTree -> AST.Statement -> StreamTree
+statementToNodes existing (AST.Assignment pin stream) = final
     where
-        withThisAdded = addStream (AST.name pin) StreamTypeBool StreamTypeVoid (OutputPin pin) nodesEmpty
+        withThisAdded = addStream (AST.name pin) StreamTypeBool StreamTypeVoid (OutputPin pin) existing
         thisName = lastNode withThisAdded
         rest = streamToNodes stream withThisAdded
         final = nodesAddDependency (lastNode rest) thisName rest
