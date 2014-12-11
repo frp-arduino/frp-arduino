@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+EXAMPLE=Blink
+OUTPUT_DIR=build/$EXAMPLE
+mkdir -p $OUTPUT_DIR
+ghc --make -i../src -outputdir $OUTPUT_DIR -o $OUTPUT_DIR/$EXAMPLE $EXAMPLE.hs
+cd $OUTPUT_DIR
+./$EXAMPLE
+cat << EOF > Makefile
+BOARD_TAG = uno
+ARDUINO_LIBS =
+include ../../../Arduino-Makefile/Arduino.mk
+EOF
+make $*
