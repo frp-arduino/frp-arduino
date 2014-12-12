@@ -1,4 +1,4 @@
-module Language
+module DSL
     ( (=:)
     , clock
     , toggle

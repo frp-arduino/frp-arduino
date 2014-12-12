@@ -1,11 +1,11 @@
 module Arduino
-    ( module Language
+    ( module DSL
     , pin13
     , pin12
     ) where
 
 import AST (Pin(..))
-import Language
+import DSL
 
 -- For mappings, see http://arduino.cc/en/Hacking/PinMapping168
 
