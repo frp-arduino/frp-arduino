@@ -1,5 +1,5 @@
 import Arduino
 
-main = arduinoProgram $ do
+main = compileProgram $ do
 
     pin13 =: toggle clock

@@ -1,14 +1,11 @@
 module Arduino
-    ( module AST
-    , arduinoProgram
+    ( module Language
     , pin13
     , pin12
     ) where
 
-import Control.Monad.State
-
 import AST
-import CodeGen (programToC)
+import Language
 
 -- For mappings, see http://arduino.cc/en/Hacking/PinMapping168
 
@@ -27,6 +24,3 @@ pin12 = Pin -- pin12 (arduino) = pb4 (atmega328p)
     , directionRegister = "DDRB"
     , pinMask           = "0x10U"
     }
-
-arduinoProgram :: State Program () -> IO ()
-arduinoProgram program = writeFile "main.c" (programToC $ execState program (Program []))
