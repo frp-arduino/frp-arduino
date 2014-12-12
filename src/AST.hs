@@ -2,11 +2,10 @@ module AST where
 
 data Program = Program [Statement]
 
-data Statement = Assignment Pin (Stream Bool)
+data Statement = Assignment Pin Expression
 
-data Stream a = BuiltinStream String
-              | BuiltinStreamFunction String (Stream ())
-    deriving (Show)
+data Expression = Builtin String
+                | Application Expression Expression
 
 data Pin = Pin
     { name :: String
@@ -16,15 +15,15 @@ data Pin = Pin
     }
     deriving (Show)
 
-(=:) :: Pin -> Stream Bool -> Program
+(=:) :: Pin -> Expression -> Program
 (=:) pin expression = Program $ [Assignment pin expression]
 
 (<->) :: Program -> Program -> Program
 (<->) (Program leftStatements) (Program rightStatements) =
     Program $ leftStatements ++ rightStatements
 
-clock :: Stream ()
-clock = BuiltinStream "clock"
+clock :: Expression
+clock = Builtin "clock"
 
-toggle :: Stream () -> Stream Bool
-toggle stream = BuiltinStreamFunction "toggle" stream
+toggle :: Expression -> Expression
+toggle expression = Application (Builtin "toggle") expression

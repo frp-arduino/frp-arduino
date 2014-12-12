@@ -76,19 +76,19 @@ programToStreamTree (AST.Program statements) =
     foldl statementToStreamTree emptyStreamTree statements
 
 statementToStreamTree :: StreamTree -> AST.Statement -> StreamTree
-statementToStreamTree existing (AST.Assignment pin stream) = final
+statementToStreamTree existing (AST.Assignment pin expression) = final
     where
         withThisAdded = addStream (AST.name pin) StreamTypeBool StreamTypeVoid (OutputPin pin) existing
         thisName = lastNode withThisAdded
-        rest = streamToStreamTree stream withThisAdded
+        rest = expressionToStreamTree expression withThisAdded
         final = nodesAddDependency (lastNode rest) thisName rest
 
-streamToStreamTree :: AST.Stream a -> StreamTree -> StreamTree
-streamToStreamTree (AST.BuiltinStream "clock") nodes =
+expressionToStreamTree :: AST.Expression -> StreamTree -> StreamTree
+expressionToStreamTree (AST.Builtin "clock") nodes =
     addBuiltinStream "clock" StreamTypeVoid nodes
-streamToStreamTree (AST.BuiltinStreamFunction "toggle" stream) nodes = final
+expressionToStreamTree (AST.Application (AST.Builtin "toggle") expression) nodes = final
     where
-        rest = streamToStreamTree stream nodes
+        rest = expressionToStreamTree expression nodes
         lastName = lastNode rest
         withThisAdded = addStream "toggle" StreamTypeVoid StreamTypeBool (Builtin "toggle") rest
         thisName = lastNode withThisAdded
