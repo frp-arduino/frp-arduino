@@ -8,22 +8,26 @@ data Expression = Builtin String
                 | Application Expression Expression
 
 data Pin = Pin
-    { name :: String
-    , portRegister :: String
+    { name              :: String
+    , portRegister      :: String
     , directionRegister :: String
-    , pinMask :: String
+    , pinMask           :: String
     }
     deriving (Show)
 
-(=:) :: Pin -> Expression -> Program
-(=:) pin expression = Program $ [Assignment pin expression]
+-- Type safe constructors
+
+newtype EExpression a = EExpression { getExpression :: Expression }
+
+(=:) :: Pin -> EExpression Bool -> Program
+(=:) pin eexpression = Program $ [Assignment pin (getExpression eexpression)]
 
 (<->) :: Program -> Program -> Program
 (<->) (Program leftStatements) (Program rightStatements) =
     Program $ leftStatements ++ rightStatements
 
-clock :: Expression
-clock = Builtin "clock"
+clock :: EExpression ()
+clock = EExpression $ Builtin "clock"
 
-toggle :: Expression -> Expression
-toggle expression = Application (Builtin "toggle") expression
+toggle :: EExpression () -> EExpression Bool
+toggle eexpression = EExpression $ Application (Builtin "toggle") $ getExpression eexpression
