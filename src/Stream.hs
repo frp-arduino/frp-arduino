@@ -1,14 +1,11 @@
 module Stream where
 
+import Control.Monad.State
 import qualified Data.Map as M
 
 import qualified AST
 
-data StreamTree = StreamTree
-    { counter  :: Int
-    , lastNode :: Identifier
-    , streams  :: M.Map Identifier Stream
-    }
+type StreamTree = M.Map Identifier Stream
 
 data Stream = Stream
     { name         :: Identifier
@@ -26,73 +23,89 @@ data Body = OutputPin AST.Pin
 
 type Identifier = String
 
-emptyStreamTree :: StreamTree
-emptyStreamTree = StreamTree 1 "" M.empty
-
 streamsInTree :: StreamTree -> [Stream]
-streamsInTree = M.elems . streams
+streamsInTree = M.elems
 
 outputPins :: StreamTree -> [AST.Pin]
-outputPins = M.elems . M.mapMaybe getOutputPin . streams
+outputPins = M.elems . M.mapMaybe getOutputPin
 
 getOutputPin :: Stream -> Maybe AST.Pin
 getOutputPin stream = case body stream of
     (OutputPin pin) -> Just pin
     _               -> Nothing
 
-addStream :: String -> StreamType -> StreamType -> Body -> StreamTree -> StreamTree
-addStream streamName inputType outputType body nodes = nodes
-    { counter  = counter nodes + 1
-    , lastNode = nodeName
-    , streams = M.insert nodeName (Stream nodeName inputType outputType body []) (streams nodes)
-    }
-    where
-        nodeName = streamName ++ "_" ++ show (counter nodes)
-
-addBuiltinStream :: String -> StreamType -> StreamTree -> StreamTree
-addBuiltinStream streamName outputType nodes = nodes
-    { lastNode = streamName
-    , streams = if M.member streamName (streams nodes)
-                    then (streams nodes)
-                    else M.insert streamName (Stream streamName StreamTypeVoid outputType (Builtin streamName) []) (streams nodes)
+data StreamTreeState = StreamTreeState
+    { idCounter  :: Int
+    , streamTree :: StreamTree
     }
 
-addDependency :: Identifier -> Stream -> Stream
-addDependency name stream = stream
-    { dependencies = name : dependencies stream
-    }
-
-nodesAddDependency :: String -> String -> StreamTree -> StreamTree
-nodesAddDependency nodeName dependencyName nodes = nodes
-    { streams = M.adjust (addDependency dependencyName) nodeName (streams nodes)
-    }
+type StreamTreeBuilder a = State StreamTreeState a
 
 programToStreamTree :: AST.Program -> StreamTree
-programToStreamTree (AST.Program statements) =
-    foldl statementToStreamTree emptyStreamTree statements
+programToStreamTree program = streamTree $
+    execState (buildProgram program) (StreamTreeState 1 M.empty)
 
-statementToStreamTree :: StreamTree -> AST.Statement -> StreamTree
-statementToStreamTree existing (AST.Assignment pin expression) = final
-    where
-        withThisAdded = addStream (AST.name pin) StreamTypeBool StreamTypeVoid (OutputPin pin) existing
-        thisName = lastNode withThisAdded
-        rest = expressionToStreamTree expression withThisAdded
-        final = nodesAddDependency (lastNode rest) thisName rest
+buildProgram :: AST.Program -> StreamTreeBuilder ()
+buildProgram (AST.Program statements) = do
+    mapM_ buildStatement statements
 
-expressionToStreamTree :: AST.Expression -> StreamTree -> StreamTree
-expressionToStreamTree (AST.Builtin "clock") nodes =
-    addBuiltinStream "clock" StreamTypeVoid nodes
-expressionToStreamTree (AST.Application (AST.Builtin "toggle") expression) nodes = final
+buildStatement :: AST.Statement -> StreamTreeBuilder Identifier
+buildStatement statement = case statement of
+    (AST.Assignment pin expression) -> do
+        restName <- buildExpression expression
+        thisName <- buildStream (AST.name pin) StreamTypeBool StreamTypeVoid (OutputPin pin)
+        buildDependency restName thisName
+        return thisName
+
+buildExpression :: AST.Expression -> StreamTreeBuilder Identifier
+buildExpression expression = case expression of
+    (AST.Builtin "clock") -> do
+        buildBuiltinStream "clock" StreamTypeVoid
+    (AST.Application (AST.Builtin "toggle") expression) -> do
+        lastName <- buildExpression expression
+        thisName <- buildStream "toggle" StreamTypeVoid StreamTypeBool (Builtin "toggle")
+        buildDependency lastName thisName
+        return thisName
+    (AST.Application (AST.Builtin "invert") expression) -> do
+        lastName <- buildExpression expression
+        thisName <- buildStream "invert" StreamTypeBool StreamTypeBool (Builtin "invert")
+        buildDependency lastName thisName
+        return thisName
+
+buildBuiltinStream :: Identifier -> StreamType -> StreamTreeBuilder Identifier
+buildBuiltinStream name outputType = do
+    streamTreeState <- get
+    when (not $ M.member name $ streamTree streamTreeState) $ do
+        modify $ insertStream $ Stream name StreamTypeVoid outputType (Builtin name) []
+    return name
+
+buildStream :: String -> StreamType -> StreamType -> Body -> StreamTreeBuilder Identifier
+buildStream baseName inputType outputType body = do
+    uniqName <- buildUniqIdentifier baseName
+    modify $ insertStream $ Stream uniqName inputType outputType body []
+    return uniqName
+
+buildDependency :: Identifier -> Identifier -> StreamTreeBuilder ()
+buildDependency srcStream destStream = do
+    modify $ nodesAddDependency srcStream destStream
     where
-        rest = expressionToStreamTree expression nodes
-        lastName = lastNode rest
-        withThisAdded = addStream "toggle" StreamTypeVoid StreamTypeBool (Builtin "toggle") rest
-        thisName = lastNode withThisAdded
-        final = nodesAddDependency lastName thisName withThisAdded
-expressionToStreamTree (AST.Application (AST.Builtin "invert") expression) nodes = final
+        nodesAddDependency :: String -> String -> StreamTreeState -> StreamTreeState
+        nodesAddDependency nodeName dependencyName nodes = nodes
+            { streamTree = M.adjust (addDependency dependencyName) nodeName (streamTree nodes)
+            }
+        addDependency :: Identifier -> Stream -> Stream
+        addDependency name stream = stream
+            { dependencies = name : dependencies stream
+            }
+
+buildUniqIdentifier :: String -> StreamTreeBuilder Identifier
+buildUniqIdentifier baseName = do
+    streamTree <- get
+    let id = idCounter streamTree
+    modify inc
+    return $ baseName ++ "_" ++ show id
     where
-        rest = expressionToStreamTree expression nodes
-        lastName = lastNode rest
-        withThisAdded = addStream "invert" StreamTypeBool StreamTypeBool (Builtin "invert") rest
-        thisName = lastNode withThisAdded
-        final = nodesAddDependency lastName thisName withThisAdded
+        inc streamTree = streamTree { idCounter = idCounter streamTree + 1 }
+
+insertStream :: Stream -> StreamTreeState -> StreamTreeState
+insertStream stream x = x { streamTree = M.insert (name stream) stream (streamTree x) }
