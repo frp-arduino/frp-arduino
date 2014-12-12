@@ -57,22 +57,33 @@ streamToCBody stream =
     ]
 
 streamBodyToC :: Body -> [String]
-streamBodyToC (OutputPin pin) =
-    [ "  if (*((bool*)input)) {"
-    , "    " ++ AST.portRegister pin ++ " |= " ++ AST.pinMask pin ++ ";"
-    , "  } else {"
-    , "    " ++ AST.portRegister pin ++ " &= ~(" ++ AST.pinMask pin ++ ");"
-    , "  }"
-    ]
-streamBodyToC (Builtin "toggle") =
-    [ "  static bool value = true;"
-    , "  value = !value;"
-    , "  output = (void*)(&value);"
-    ]
-streamBodyToC (Builtin "invert") =
-    [ "  bool value = !(*((bool*)input));"
-    , "  output = (void*)(&value);"
-    ]
-streamBodyToC (Builtin _) =
-    [
-    ]
+streamBodyToC body = case body of
+    (OutputPin pin) ->
+        [ "  if (*((bool*)input)) {"
+        , "    " ++ AST.portRegister pin ++ " |= " ++ AST.pinMask pin ++ ";"
+        , "  } else {"
+        , "    " ++ AST.portRegister pin ++ " &= ~(" ++ AST.pinMask pin ++ ");"
+        , "  }"
+        ]
+    (OutputExpression expression) ->
+        [ "  " ++ expressionTypeToC expression ++ " temp = *((" ++ expressionTypeToC expression ++ "*)input);"
+        , "  " ++ expressionTypeToC expression ++ " result = " ++ expressionToC expression ++ ";"
+        , "  output = (void*)(&result);"
+        ]
+    (Builtin "toggle") ->
+        [ "  static bool value = true;"
+        , "  value = !value;"
+        , "  output = (void*)(&value);"
+        ]
+    _ ->
+        [
+        ]
+
+expressionToC :: AST.Expression -> String
+expressionToC expression = case expression of
+    (AST.Not expression) -> "!" ++ expressionToC expression
+    (AST.Variable name) -> name
+
+expressionTypeToC :: AST.Expression -> String
+expressionTypeToC expression = case expression of
+    (AST.Not expression) -> "bool"

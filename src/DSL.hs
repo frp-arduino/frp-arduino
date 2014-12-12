@@ -27,7 +27,7 @@ toggle :: Stream () -> Stream Bool
 toggle = Stream . Application (Builtin "toggle") . getExpression
 
 invert :: Stream Bool -> Stream Bool
-invert = Stream . Application (Builtin "invert") . getExpression
+invert = Stream . Map (\e -> Not e) . getExpression
 
 compileProgram :: State Program () -> IO ()
 compileProgram state = do

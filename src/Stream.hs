@@ -15,6 +15,7 @@ data Stream = Stream
 
 data Body = OutputPin AST.Pin
           | Builtin String
+          | OutputExpression AST.Expression
 
 type Identifier = String
 
@@ -61,9 +62,9 @@ buildExpression expression = case expression of
         thisName <- buildStream "toggle" (Builtin "toggle")
         buildDependency lastName thisName
         return thisName
-    (AST.Application (AST.Builtin "invert") expression) -> do
+    (AST.Map fn expression) -> do
         lastName <- buildExpression expression
-        thisName <- buildStream "invert" (Builtin "invert")
+        thisName <- buildStream "map" (OutputExpression $ fn (AST.Variable "temp"))
         buildDependency lastName thisName
         return thisName
 
