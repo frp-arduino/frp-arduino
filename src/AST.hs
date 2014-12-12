@@ -13,4 +13,3 @@ data Pin = Pin
     , directionRegister :: String
     , pinMask           :: String
     }
-    deriving (Show)

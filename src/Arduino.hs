@@ -4,7 +4,7 @@ module Arduino
     , pin12
     ) where
 
-import AST
+import AST (Pin(..))
 import Language
 
 -- For mappings, see http://arduino.cc/en/Hacking/PinMapping168

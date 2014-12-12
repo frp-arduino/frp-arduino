@@ -9,7 +9,6 @@ data StreamTree = StreamTree
     , lastNode :: Identifier
     , streams  :: M.Map Identifier Stream
     }
-    deriving (Show)
 
 data Stream = Stream
     { name         :: Identifier
@@ -18,15 +17,12 @@ data Stream = Stream
     , body         :: Body
     , dependencies :: [Identifier]
     }
-    deriving (Show)
 
 data StreamType = StreamTypeVoid
                 | StreamTypeBool
-    deriving (Show)
 
 data Body = OutputPin AST.Pin
           | Builtin String
-    deriving (Show)
 
 type Identifier = String
 
