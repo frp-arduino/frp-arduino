@@ -75,6 +75,9 @@ streamBodyToC (Builtin "toggle") =
     [ "  static bool value = true;"
     , "  value = !value;"
     ]
+streamBodyToC (Builtin "invert") =
+    [ "  bool value = !input;"
+    ]
 streamBodyToC (Builtin _) =
     [
     ]

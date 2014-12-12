@@ -31,3 +31,6 @@ clock = EExpression $ Builtin "clock"
 
 toggle :: EExpression () -> EExpression Bool
 toggle eexpression = EExpression $ Application (Builtin "toggle") $ getExpression eexpression
+
+invert :: EExpression Bool -> EExpression Bool
+invert eexpression = EExpression $ Application (Builtin "invert") $ getExpression eexpression

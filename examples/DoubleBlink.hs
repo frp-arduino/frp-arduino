@@ -7,4 +7,4 @@ main = frpArduino $
 
     <->
 
-    (pin12 =: toggle clock)
+    (pin12 =: invert (toggle clock))

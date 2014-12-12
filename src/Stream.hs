@@ -93,3 +93,10 @@ expressionToStreamTree (AST.Application (AST.Builtin "toggle") expression) nodes
         withThisAdded = addStream "toggle" StreamTypeVoid StreamTypeBool (Builtin "toggle") rest
         thisName = lastNode withThisAdded
         final = nodesAddDependency lastName thisName withThisAdded
+expressionToStreamTree (AST.Application (AST.Builtin "invert") expression) nodes = final
+    where
+        rest = expressionToStreamTree expression nodes
+        lastName = lastNode rest
+        withThisAdded = addStream "invert" StreamTypeBool StreamTypeBool (Builtin "invert") rest
+        thisName = lastNode withThisAdded
+        final = nodesAddDependency lastName thisName withThisAdded
