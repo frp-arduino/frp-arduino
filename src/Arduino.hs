@@ -1,4 +1,9 @@
-module Arduino where
+module Arduino
+    ( module AST
+    , arduinoProgram
+    , pin13
+    , pin12
+    ) where
 
 import AST
 import CodeGen (programToC)
@@ -21,5 +26,5 @@ pin12 = Pin -- pin12 (arduino) = pb4 (atmega328p)
     , pinMask           = "0x10U"
     }
 
-frpArduino :: Program -> IO ()
-frpArduino program = writeFile "main.c" (programToC program)
+arduinoProgram :: Program -> IO ()
+arduinoProgram program = writeFile "main.c" (programToC program)

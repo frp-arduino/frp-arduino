@@ -1,6 +1,5 @@
 import Arduino
-import AST
 
-main = frpArduino $
+main = arduinoProgram $
 
     pin13 =: toggle clock
