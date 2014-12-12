@@ -9,14 +9,9 @@ type StreamTree = M.Map Identifier Stream
 
 data Stream = Stream
     { name         :: Identifier
-    , inputType    :: StreamType
-    , outputType   :: StreamType
     , body         :: Body
     , dependencies :: [Identifier]
     }
-
-data StreamType = StreamTypeVoid
-                | StreamTypeBool
 
 data Body = OutputPin AST.Pin
           | Builtin String
@@ -53,36 +48,36 @@ buildStatement :: AST.Statement -> StreamTreeBuilder Identifier
 buildStatement statement = case statement of
     (AST.Assignment pin expression) -> do
         restName <- buildExpression expression
-        thisName <- buildStream (AST.name pin) StreamTypeBool StreamTypeVoid (OutputPin pin)
+        thisName <- buildStream (AST.name pin) (OutputPin pin)
         buildDependency restName thisName
         return thisName
 
 buildExpression :: AST.Expression -> StreamTreeBuilder Identifier
 buildExpression expression = case expression of
     (AST.Builtin "clock") -> do
-        buildBuiltinStream "clock" StreamTypeVoid
+        buildBuiltinStream "clock"
     (AST.Application (AST.Builtin "toggle") expression) -> do
         lastName <- buildExpression expression
-        thisName <- buildStream "toggle" StreamTypeVoid StreamTypeBool (Builtin "toggle")
+        thisName <- buildStream "toggle" (Builtin "toggle")
         buildDependency lastName thisName
         return thisName
     (AST.Application (AST.Builtin "invert") expression) -> do
         lastName <- buildExpression expression
-        thisName <- buildStream "invert" StreamTypeBool StreamTypeBool (Builtin "invert")
+        thisName <- buildStream "invert" (Builtin "invert")
         buildDependency lastName thisName
         return thisName
 
-buildBuiltinStream :: Identifier -> StreamType -> StreamTreeBuilder Identifier
-buildBuiltinStream name outputType = do
+buildBuiltinStream :: Identifier -> StreamTreeBuilder Identifier
+buildBuiltinStream name = do
     streamTreeState <- get
     when (not $ M.member name $ streamTree streamTreeState) $ do
-        modify $ insertStream $ Stream name StreamTypeVoid outputType (Builtin name) []
+        modify $ insertStream $ Stream name (Builtin name) []
     return name
 
-buildStream :: String -> StreamType -> StreamType -> Body -> StreamTreeBuilder Identifier
-buildStream baseName inputType outputType body = do
+buildStream :: String -> Body -> StreamTreeBuilder Identifier
+buildStream baseName body = do
     uniqName <- buildUniqIdentifier baseName
-    modify $ insertStream $ Stream uniqName inputType outputType body []
+    modify $ insertStream $ Stream uniqName body []
     return uniqName
 
 buildDependency :: Identifier -> Identifier -> StreamTreeBuilder ()

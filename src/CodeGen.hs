@@ -24,7 +24,7 @@ streamTreeToC tree = unlines $
     concatMap foo (outputPins tree)
     ++
     [ "  while (1) {"
-    , "    clock();"
+    , "    clock(0);"
     , "    _delay_ms(1000);"
     , "  }"
     , "  return 0;"
@@ -37,35 +37,28 @@ foo pin =
     ]
 
 streamToToCHeader :: Stream -> [String]
-streamToToCHeader (Stream name inputType outputType body dependencies) =
+streamToToCHeader stream =
     [ ""
-    , "static void " ++ name ++ "(" ++ toCInType inputType ++ ");"
+    , "static void " ++ name stream ++ "(void *input);"
     ]
 
 streamToCBody :: Stream -> [String]
-streamToCBody (Stream name inputType outputType body dependencies) =
+streamToCBody stream =
     [ ""
-    , "static void " ++ name ++ "(" ++ toCInType inputType ++ ") {"
+    , "static void " ++ name stream ++ "(void *input) {"
+    , "  void *output;"
     ]
     ++
-    streamBodyToC body
+    streamBodyToC (body stream)
     ++
-    map (\x -> "  " ++ x ++ "(" ++ toCOutType outputType ++ ");") dependencies
+    map (\x -> "  " ++ x ++ "(output);") (dependencies stream)
     ++
     [ "}"
     ]
 
-toCInType :: StreamType -> String
-toCInType StreamTypeVoid = "void"
-toCInType StreamTypeBool = "bool input"
-
-toCOutType :: StreamType -> String
-toCOutType StreamTypeVoid = ""
-toCOutType _              = "value"
-
 streamBodyToC :: Body -> [String]
 streamBodyToC (OutputPin pin) =
-    [ "  if (input) {"
+    [ "  if (*((bool*)input)) {"
     , "    " ++ AST.portRegister pin ++ " |= " ++ AST.pinMask pin ++ ";"
     , "  } else {"
     , "    " ++ AST.portRegister pin ++ " &= ~(" ++ AST.pinMask pin ++ ");"
@@ -74,9 +67,11 @@ streamBodyToC (OutputPin pin) =
 streamBodyToC (Builtin "toggle") =
     [ "  static bool value = true;"
     , "  value = !value;"
+    , "  output = (void*)(&value);"
     ]
 streamBodyToC (Builtin "invert") =
-    [ "  bool value = !input;"
+    [ "  bool value = !(*((bool*)input));"
+    , "  output = (void*)(&value);"
     ]
 streamBodyToC (Builtin _) =
     [
