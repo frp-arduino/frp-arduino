@@ -1,5 +1,7 @@
 module AST where
 
+import Control.Monad.State
+
 data Program = Program [Statement]
 
 data Statement = Assignment Pin Expression
@@ -19,12 +21,12 @@ data Pin = Pin
 
 newtype Stream a = Stream { getExpression :: Expression }
 
-(=:) :: Pin -> Stream Bool -> Program
-(=:) pin stream = Program $ [Assignment pin (getExpression stream)]
-
-(<->) :: Program -> Program -> Program
-(<->) (Program leftStatements) (Program rightStatements) =
-    Program $ leftStatements ++ rightStatements
+(=:) :: Pin -> Stream Bool -> State Program ()
+(=:) pin stream = do
+    modify $ addStatement $ Assignment pin (getExpression stream)
+    where
+        addStatement :: Statement -> Program -> Program
+        addStatement x (Program xs) = Program $ xs ++ [x]
 
 clock :: Stream ()
 clock = Stream $ Builtin "clock"

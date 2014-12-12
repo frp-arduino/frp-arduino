@@ -1,9 +1,7 @@
 import Arduino
 
-main = arduinoProgram $
+main = arduinoProgram $ do
 
-    (pin13 =: toggle clock)
+    pin13 =: toggle clock
 
-    <->
-
-    (pin12 =: invert (toggle clock))
+    pin12 =: invert (toggle clock)

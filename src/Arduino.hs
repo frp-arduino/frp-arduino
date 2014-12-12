@@ -5,6 +5,8 @@ module Arduino
     , pin12
     ) where
 
+import Control.Monad.State
+
 import AST
 import CodeGen (programToC)
 
@@ -26,5 +28,5 @@ pin12 = Pin -- pin12 (arduino) = pb4 (atmega328p)
     , pinMask           = "0x10U"
     }
 
-arduinoProgram :: Program -> IO ()
-arduinoProgram program = writeFile "main.c" (programToC program)
+arduinoProgram :: State Program () -> IO ()
+arduinoProgram program = writeFile "main.c" (programToC $ execState program (Program []))
