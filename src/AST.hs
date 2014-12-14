@@ -2,7 +2,10 @@ module AST where
 
 data Program = Program [Statement]
 
-data Statement = Assignment Pin Expression
+data Statement = Assignment Pin Stream
+
+data Stream = BuiltinStream String
+            | Custom Expression
 
 data Expression = Builtin String
                 | Application Expression Expression

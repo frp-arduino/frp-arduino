@@ -8,28 +8,28 @@ module DSL
 
 import Control.Monad.State
 
-import AST
+import qualified AST
 import CodeGen (programToC)
 
-newtype Stream a = Stream { getExpression :: Expression }
+newtype Stream a = Stream { getExpression :: AST.Expression }
 
-(=:) :: Pin -> Stream Bool -> State Program ()
+(=:) :: AST.Pin -> Stream Bool -> State AST.Program ()
 (=:) pin stream = do
-    modify $ addStatement $ Assignment pin (getExpression stream)
+    modify $ addStatement $ AST.Assignment pin (AST.Custom (getExpression stream))
     where
-        addStatement :: Statement -> Program -> Program
-        addStatement x (Program xs) = Program $ xs ++ [x]
+        addStatement :: AST.Statement -> AST.Program -> AST.Program
+        addStatement x (AST.Program xs) = AST.Program $ xs ++ [x]
 
 clock :: Stream ()
-clock = Stream $ Builtin "clock"
+clock = Stream $ AST.Builtin "clock"
 
 toggle :: Stream () -> Stream Bool
-toggle = Stream . Application (Builtin "toggle") . getExpression
+toggle = Stream . AST.Application (AST.Builtin "toggle") . getExpression
 
 invert :: Stream Bool -> Stream Bool
-invert = Stream . Map (\e -> Not e) . getExpression
+invert = Stream . AST.Map (\e -> AST.Not e) . getExpression
 
-compileProgram :: State Program () -> IO ()
+compileProgram :: State AST.Program () -> IO ()
 compileProgram state = do
-    let program = execState state (Program [])
+    let program = execState state (AST.Program [])
     writeFile "main.c" (programToC program)

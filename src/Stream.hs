@@ -47,11 +47,16 @@ buildProgram (AST.Program statements) = do
 
 buildStatement :: AST.Statement -> StreamTreeBuilder Identifier
 buildStatement statement = case statement of
-    (AST.Assignment pin expression) -> do
-        restName <- buildExpression expression
+    (AST.Assignment pin stream) -> do
+        restName <- buildNewStream stream
         thisName <- buildStream (AST.name pin) (OutputPin pin)
         buildDependency restName thisName
         return thisName
+
+buildNewStream :: AST.Stream -> StreamTreeBuilder Identifier
+buildNewStream stream = case stream of
+    (AST.Custom expression) -> do
+        buildExpression expression
 
 buildExpression :: AST.Expression -> StreamTreeBuilder Identifier
 buildExpression expression = case expression of
