@@ -50,7 +50,7 @@ streamToCBody :: StreamTree -> Stream -> [String]
 streamToCBody tree stream =
     [ ""
     , "static void " ++ name stream ++ "(" ++ streamInputString tree stream ++ ") {"
-    , "  " ++ streamCType stream ++ " output;"
+    , "  " ++ (streamCType tree) stream ++ " output;"
     ]
     ++
     streamBodyToC (body stream)
@@ -65,7 +65,7 @@ streamInputString tree stream =
     intercalate ", " $
     map (\(input, t) -> t ++ " input_" ++ show input) $
     zip [0..] $
-    map streamCType (map (streamFromId tree) (inputs stream))
+    map (streamCType tree) (map (streamFromId tree) (inputs stream))
 
 streamBodyToC :: Body -> [String]
 streamBodyToC body = case body of
@@ -76,10 +76,10 @@ streamBodyToC body = case body of
         , "    " ++ AST.portRegister pin ++ " &= ~(" ++ AST.pinMask pin ++ ");"
         , "  }"
         ]
-    (StreamBody (AST.Custom inputs expression)) ->
+    (Custom expression) ->
         [ "  output = " ++ expressionToC expression ++ ";"
         ]
-    (StreamBody (AST.Builtin name)) ->
+    (Builtin name) ->
         [ "  static unsigned int i = 0U;"
         , "  i++;"
         , "  output = i;"
@@ -91,17 +91,14 @@ expressionToC expression = case expression of
     (AST.Even expression) -> "(" ++ expressionToC expression ++ ") % 2 == 0"
     (AST.Input x) -> "input_" ++ show x
 
-streamCType :: Stream -> String
-streamCType stream = case body stream of
+streamCType :: StreamTree -> Stream -> String
+streamCType tree stream = case body stream of
     (OutputPin _) -> "bool"
-    (StreamBody astStream) -> astStreamCType astStream
-
-astStreamCType :: AST.Stream -> String
-astStreamCType (AST.Builtin "clock") = "unsigned int"
-astStreamCType (AST.Custom inputs expression) =
-    expressionCType (inputMap inputs) expression
+    (Builtin "clock") -> "unsigned int"
+    (Custom expression) -> expressionCType inputMap expression
     where
-        inputMap = M.fromList . zip [0..] . map astStreamCType
+        inputMap = M.fromList $ zip [0..] $ map (streamCType tree) x
+        x = (map (streamFromId tree) (inputs stream))
 
 expressionCType :: M.Map Int String -> AST.Expression -> String
 expressionCType inputMap (AST.Input x) = fromJust $ M.lookup x inputMap

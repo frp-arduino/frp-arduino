@@ -16,7 +16,8 @@ data Stream = Stream
     }
 
 data Body = OutputPin AST.Pin
-          | StreamBody AST.Stream
+          | Builtin String
+          | Custom AST.Expression
 
 type Identifier = String
 
@@ -64,7 +65,7 @@ buildNewStream stream = case stream of
         buildBuiltinStream name
     (AST.Custom [input] expression) -> do
         lastName <- buildNewStream input
-        thisName <- buildStream "stream" (StreamBody (AST.Custom [input] expression))
+        thisName <- buildStream "stream" (Custom expression)
         buildDependency lastName thisName
         buildInput thisName lastName
         return thisName
@@ -73,7 +74,7 @@ buildBuiltinStream :: Identifier -> StreamTreeBuilder Identifier
 buildBuiltinStream name = do
     streamTreeState <- get
     when (not $ M.member name $ streamTree streamTreeState) $ do
-        modify $ insertStream $ Stream name (StreamBody (AST.Builtin name)) [] []
+        modify $ insertStream $ Stream name (Builtin name) [] []
     return name
 
 buildStream :: String -> Body -> StreamTreeBuilder Identifier
