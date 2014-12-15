@@ -1,56 +1,26 @@
 module Stream where
 
 import Control.Monad.State
-import Data.Maybe (fromJust)
-import qualified Data.Map as M
 
 import qualified AST
+import DAG
 
-type StreamTree = M.Map Identifier Stream
-
-data Stream = Stream
-    { name         :: Identifier
-    , body         :: Body
-    , dependencies :: [Identifier]
-    , inputs       :: [Identifier]
-    }
-
-data Body = OutputPin AST.Pin
-          | Builtin String
-          | Custom AST.Expression
-
-type Identifier = String
-
-streamsInTree :: StreamTree -> [Stream]
-streamsInTree = M.elems
-
-streamFromId :: StreamTree -> Identifier -> Stream
-streamFromId tree id = fromJust $ M.lookup id tree
-
-outputPins :: StreamTree -> [AST.Pin]
-outputPins = M.elems . M.mapMaybe getOutputPin
-
-getOutputPin :: Stream -> Maybe AST.Pin
-getOutputPin stream = case body stream of
-    (OutputPin pin) -> Just pin
-    _               -> Nothing
-
-data StreamTreeState = StreamTreeState
+data StreamDAGState = StreamDAGState
     { idCounter  :: Int
-    , streamTree :: StreamTree
+    , streamTree :: Streams
     }
 
-type StreamTreeBuilder a = State StreamTreeState a
+type StreamDAGBuilder a = State StreamDAGState a
 
-programToStreamTree :: AST.Program -> StreamTree
+programToStreamTree :: AST.Program -> Streams
 programToStreamTree program = streamTree $
-    execState (buildProgram program) (StreamTreeState 1 M.empty)
+    execState (buildProgram program) (StreamDAGState 1 emptyStreams)
 
-buildProgram :: AST.Program -> StreamTreeBuilder ()
+buildProgram :: AST.Program -> StreamDAGBuilder ()
 buildProgram (AST.Program statements) = do
     mapM_ buildStatement statements
 
-buildStatement :: AST.Statement -> StreamTreeBuilder Identifier
+buildStatement :: AST.Statement -> StreamDAGBuilder Identifier
 buildStatement statement = case statement of
     (AST.Assignment pin stream) -> do
         restName <- buildNewStream stream
@@ -59,57 +29,49 @@ buildStatement statement = case statement of
         buildInput thisName restName
         return thisName
 
-buildNewStream :: AST.Stream -> StreamTreeBuilder Identifier
+buildNewStream :: AST.Stream -> StreamDAGBuilder Identifier
 buildNewStream stream = case stream of
     (AST.Builtin name) -> do
         buildBuiltinStream name
     (AST.Custom [input] expression) -> do
         lastName <- buildNewStream input
-        thisName <- buildStream "stream" (Custom expression)
+        thisName <- buildStream "stream" (Transform expression)
         buildDependency lastName thisName
         buildInput thisName lastName
         return thisName
 
-buildBuiltinStream :: Identifier -> StreamTreeBuilder Identifier
+buildBuiltinStream :: Identifier -> StreamDAGBuilder Identifier
 buildBuiltinStream name = do
     streamTreeState <- get
-    when (not $ M.member name $ streamTree streamTreeState) $ do
-        modify $ insertStream $ Stream name (Builtin name) [] []
+    when (not $ hasStream (streamTree streamTreeState) name) $ do
+        modify $ insertStream $ Stream name [] (Builtin name) []
     return name
 
-buildStream :: String -> Body -> StreamTreeBuilder Identifier
+buildStream :: String -> Body -> StreamDAGBuilder Identifier
 buildStream baseName body = do
     uniqName <- buildUniqIdentifier baseName
-    modify $ insertStream $ Stream uniqName body [] []
+    modify $ insertStream $ Stream uniqName [] body []
     return uniqName
 
-buildDependency :: Identifier -> Identifier -> StreamTreeBuilder ()
+buildDependency :: Identifier -> Identifier -> StreamDAGBuilder ()
 buildDependency srcStream destStream = do
     modify $ nodesAddDependency srcStream destStream
     where
-        nodesAddDependency :: String -> String -> StreamTreeState -> StreamTreeState
+        nodesAddDependency :: String -> String -> StreamDAGState -> StreamDAGState
         nodesAddDependency nodeName dependencyName nodes = nodes
-            { streamTree = M.adjust (addDependency dependencyName) nodeName (streamTree nodes)
-            }
-        addDependency :: Identifier -> Stream -> Stream
-        addDependency name stream = stream
-            { dependencies = name : dependencies stream
+            { streamTree = addOutput (streamTree nodes) nodeName dependencyName
             }
 
-buildInput :: Identifier -> Identifier -> StreamTreeBuilder ()
+buildInput :: Identifier -> Identifier -> StreamDAGBuilder ()
 buildInput srcStream inputStream = do
     modify $ nodesAddInput srcStream inputStream
     where
-        nodesAddInput :: String -> String -> StreamTreeState -> StreamTreeState
+        nodesAddInput :: String -> String -> StreamDAGState -> StreamDAGState
         nodesAddInput nodeName inputName nodes = nodes
-            { streamTree = M.adjust (addInput inputName) nodeName (streamTree nodes)
-            }
-        addInput :: Identifier -> Stream -> Stream
-        addInput name stream = stream
-            { inputs = name : inputs stream
+            { streamTree = addInput (streamTree nodes) nodeName inputName
             }
 
-buildUniqIdentifier :: String -> StreamTreeBuilder Identifier
+buildUniqIdentifier :: String -> StreamDAGBuilder Identifier
 buildUniqIdentifier baseName = do
     streamTree <- get
     let id = idCounter streamTree
@@ -118,5 +80,5 @@ buildUniqIdentifier baseName = do
     where
         inc streamTree = streamTree { idCounter = idCounter streamTree + 1 }
 
-insertStream :: Stream -> StreamTreeState -> StreamTreeState
-insertStream stream x = x { streamTree = M.insert (name stream) stream (streamTree x) }
+insertStream :: Stream -> StreamDAGState -> StreamDAGState
+insertStream stream x = x { streamTree = addStream (streamTree x) stream }

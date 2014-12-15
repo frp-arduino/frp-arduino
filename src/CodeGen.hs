@@ -4,13 +4,14 @@ import Data.List (intercalate)
 import Data.Maybe (fromJust)
 import qualified Data.Map as M
 
+import DAG
 import qualified AST
 import Stream
 
 programToC :: AST.Program -> String
 programToC = streamTreeToC . programToStreamTree
 
-streamTreeToC :: StreamTree -> String
+streamTreeToC :: Streams -> String
 streamTreeToC tree = unlines $
     [ "#include <avr/io.h>"
     , "#include <util/delay.h>"
@@ -40,13 +41,13 @@ foo pin =
     ["  " ++ AST.directionRegister pin ++ " |= " ++ AST.pinMask pin ++ ";"
     ]
 
-streamToToCHeader :: StreamTree -> Stream -> [String]
+streamToToCHeader :: Streams -> Stream -> [String]
 streamToToCHeader tree stream =
     [ ""
     , "static void " ++ name stream ++ "(" ++ streamInputString tree stream ++ ");"
     ]
 
-streamToCBody :: StreamTree -> Stream -> [String]
+streamToCBody :: Streams -> Stream -> [String]
 streamToCBody tree stream =
     [ ""
     , "static void " ++ name stream ++ "(" ++ streamInputString tree stream ++ ") {"
@@ -55,12 +56,12 @@ streamToCBody tree stream =
     ++
     streamBodyToC (body stream)
     ++
-    map (\x -> "  " ++ x ++ "(output);") (dependencies stream)
+    map (\x -> "  " ++ x ++ "(output);") (outputs stream)
     ++
     [ "}"
     ]
 
-streamInputString :: StreamTree -> Stream -> String
+streamInputString :: Streams -> Stream -> String
 streamInputString tree stream =
     intercalate ", " $
     map (\(input, t) -> t ++ " input_" ++ show input) $
@@ -76,7 +77,7 @@ streamBodyToC body = case body of
         , "    " ++ AST.portRegister pin ++ " &= ~(" ++ AST.pinMask pin ++ ");"
         , "  }"
         ]
-    (Custom expression) ->
+    (Transform expression) ->
         [ "  output = " ++ expressionToC expression ++ ";"
         ]
     (Builtin name) ->
@@ -91,11 +92,11 @@ expressionToC expression = case expression of
     (AST.Even expression) -> "(" ++ expressionToC expression ++ ") % 2 == 0"
     (AST.Input x) -> "input_" ++ show x
 
-streamCType :: StreamTree -> Stream -> String
+streamCType :: Streams -> Stream -> String
 streamCType tree stream = case body stream of
     (OutputPin _) -> "bool"
     (Builtin "clock") -> "unsigned int"
-    (Custom expression) -> expressionCType inputMap expression
+    (Transform expression) -> expressionCType inputMap expression
     where
         inputMap = M.fromList $ zip [0..] $ map (streamCType tree) x
         x = (map (streamFromId tree) (inputs stream))
