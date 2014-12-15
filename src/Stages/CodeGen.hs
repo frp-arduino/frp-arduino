@@ -1,11 +1,11 @@
-module CodeGen where
+module Stages.CodeGen where
 
 import Data.List (intercalate)
 import Data.Maybe (fromJust)
 import qualified Data.Map as M
 
 import qualified Types.AST as AST
-import Stream
+import Stages.Stream
 import Types.DAG
 
 programToC :: AST.Program -> String

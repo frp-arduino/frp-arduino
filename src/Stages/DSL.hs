@@ -1,4 +1,4 @@
-module DSL
+module Stages.DSL
     ( (=:)
     , clock
     , toggle
@@ -8,9 +8,9 @@ module DSL
 
 import Control.Monad.State
 
-import CodeGen (programToC)
 import Prelude hiding (not)
 import qualified Types.AST as AST
+import Stages.CodeGen (programToC)
 
 newtype Stream a = Stream { unStream :: AST.Stream }
 

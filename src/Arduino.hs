@@ -1,11 +1,11 @@
 module Arduino
-    ( module DSL
+    ( module Stages.DSL
     , pin13
     , pin12
     ) where
 
+import Stages.DSL
 import Types.AST (Pin(..))
-import DSL
 
 -- For mappings, see http://arduino.cc/en/Hacking/PinMapping168
 
