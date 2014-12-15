@@ -5,11 +5,7 @@ import Data.Maybe (fromJust)
 import qualified Data.Map as M
 
 import qualified Types.AST as AST
-import Stages.Analyze
 import Types.DAG
-
-programToC :: AST.Program -> String
-programToC = streamTreeToC . programToStreamTree
 
 streamTreeToC :: Streams -> String
 streamTreeToC tree = unlines $
