@@ -10,8 +10,8 @@ import Control.Monad.State
 
 import Prelude hiding (not)
 import qualified Types.AST as AST
+import Stages.Analyze (programToStreams)
 import Stages.CodeGen (streamsToC)
-import Stages.Analyze (programToStreamTree)
 
 newtype Stream a = Stream { unStream :: AST.Stream }
 
@@ -46,5 +46,7 @@ isEven = Expression . AST.Even . unExpression
 
 compileProgram :: State AST.Program () -> IO ()
 compileProgram state = do
-    let program = execState state (AST.Program [])
-    writeFile "main.c" (streamsToC $ programToStreamTree program)
+    let ast = execState state (AST.Program [])
+    let streams = programToStreams ast
+    let cCode = streamsToC streams
+    writeFile "main.c" cCode
