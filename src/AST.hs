@@ -4,14 +4,12 @@ data Program = Program [Statement]
 
 data Statement = Assignment Pin Stream
 
-data Stream = BuiltinStream String
-            | Custom Expression
+data Stream = Builtin String
+            | Custom [Stream] Expression
 
-data Expression = Builtin String
-                | Application Expression Expression
-                | Map (Expression -> Expression) Expression
+data Expression = Input Int
                 | Not Expression
-                | Variable String
+                | Even Expression
 
 data Pin = Pin
     { name              :: String

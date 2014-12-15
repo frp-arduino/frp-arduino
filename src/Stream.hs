@@ -1,6 +1,7 @@
 module Stream where
 
 import Control.Monad.State
+import Data.Maybe (fromJust)
 import qualified Data.Map as M
 
 import qualified AST
@@ -11,16 +12,19 @@ data Stream = Stream
     { name         :: Identifier
     , body         :: Body
     , dependencies :: [Identifier]
+    , inputs       :: [Identifier]
     }
 
 data Body = OutputPin AST.Pin
-          | Builtin String
-          | OutputExpression AST.Expression
+          | StreamBody AST.Stream
 
 type Identifier = String
 
 streamsInTree :: StreamTree -> [Stream]
 streamsInTree = M.elems
+
+streamFromId :: StreamTree -> Identifier -> Stream
+streamFromId tree id = fromJust $ M.lookup id tree
 
 outputPins :: StreamTree -> [AST.Pin]
 outputPins = M.elems . M.mapMaybe getOutputPin
@@ -51,39 +55,31 @@ buildStatement statement = case statement of
         restName <- buildNewStream stream
         thisName <- buildStream (AST.name pin) (OutputPin pin)
         buildDependency restName thisName
+        buildInput thisName restName
         return thisName
 
 buildNewStream :: AST.Stream -> StreamTreeBuilder Identifier
 buildNewStream stream = case stream of
-    (AST.Custom expression) -> do
-        buildExpression expression
-
-buildExpression :: AST.Expression -> StreamTreeBuilder Identifier
-buildExpression expression = case expression of
-    (AST.Builtin "clock") -> do
-        buildBuiltinStream "clock"
-    (AST.Application (AST.Builtin "toggle") expression) -> do
-        lastName <- buildExpression expression
-        thisName <- buildStream "toggle" (Builtin "toggle")
+    (AST.Builtin name) -> do
+        buildBuiltinStream name
+    (AST.Custom [input] expression) -> do
+        lastName <- buildNewStream input
+        thisName <- buildStream "stream" (StreamBody (AST.Custom [input] expression))
         buildDependency lastName thisName
-        return thisName
-    (AST.Map fn expression) -> do
-        lastName <- buildExpression expression
-        thisName <- buildStream "map" (OutputExpression $ fn (AST.Variable "temp"))
-        buildDependency lastName thisName
+        buildInput thisName lastName
         return thisName
 
 buildBuiltinStream :: Identifier -> StreamTreeBuilder Identifier
 buildBuiltinStream name = do
     streamTreeState <- get
     when (not $ M.member name $ streamTree streamTreeState) $ do
-        modify $ insertStream $ Stream name (Builtin name) []
+        modify $ insertStream $ Stream name (StreamBody (AST.Builtin name)) [] []
     return name
 
 buildStream :: String -> Body -> StreamTreeBuilder Identifier
 buildStream baseName body = do
     uniqName <- buildUniqIdentifier baseName
-    modify $ insertStream $ Stream uniqName body []
+    modify $ insertStream $ Stream uniqName body [] []
     return uniqName
 
 buildDependency :: Identifier -> Identifier -> StreamTreeBuilder ()
@@ -97,6 +93,19 @@ buildDependency srcStream destStream = do
         addDependency :: Identifier -> Stream -> Stream
         addDependency name stream = stream
             { dependencies = name : dependencies stream
+            }
+
+buildInput :: Identifier -> Identifier -> StreamTreeBuilder ()
+buildInput srcStream inputStream = do
+    modify $ nodesAddInput srcStream inputStream
+    where
+        nodesAddInput :: String -> String -> StreamTreeState -> StreamTreeState
+        nodesAddInput nodeName inputName nodes = nodes
+            { streamTree = M.adjust (addInput inputName) nodeName (streamTree nodes)
+            }
+        addInput :: Identifier -> Stream -> Stream
+        addInput name stream = stream
+            { inputs = name : inputs stream
             }
 
 buildUniqIdentifier :: String -> StreamTreeBuilder Identifier
