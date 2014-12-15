@@ -10,7 +10,7 @@ import Control.Monad.State
 
 import CodeGen (programToC)
 import Prelude hiding (not)
-import qualified AST
+import qualified Types.AST as AST
 
 newtype Stream a = Stream { unStream :: AST.Stream }
 

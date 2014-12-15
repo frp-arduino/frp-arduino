@@ -1,9 +1,9 @@
-module DAG where
+module Types.DAG where
 
 import Data.Maybe (fromJust)
 import qualified Data.Map as M
 
-import qualified AST
+import qualified Types.AST as AST
 
 type Streams = M.Map Identifier Stream
 

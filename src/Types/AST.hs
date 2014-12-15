@@ -1,4 +1,4 @@
-module AST where
+module Types.AST where
 
 data Program = Program [Statement]
 

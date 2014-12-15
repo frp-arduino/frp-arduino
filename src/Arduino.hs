@@ -4,7 +4,7 @@ module Arduino
     , pin12
     ) where
 
-import AST (Pin(..))
+import Types.AST (Pin(..))
 import DSL
 
 -- For mappings, see http://arduino.cc/en/Hacking/PinMapping168

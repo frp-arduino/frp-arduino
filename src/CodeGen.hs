@@ -4,9 +4,9 @@ import Data.List (intercalate)
 import Data.Maybe (fromJust)
 import qualified Data.Map as M
 
-import DAG
-import qualified AST
+import qualified Types.AST as AST
 import Stream
+import Types.DAG
 
 programToC :: AST.Program -> String
 programToC = streamTreeToC . programToStreamTree

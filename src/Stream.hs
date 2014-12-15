@@ -2,8 +2,8 @@ module Stream where
 
 import Control.Monad.State
 
-import qualified AST
-import DAG
+import qualified Types.AST as AST
+import Types.DAG
 
 data StreamDAGState = StreamDAGState
     { idCounter  :: Int
