@@ -7,22 +7,22 @@ import qualified Data.Map as M
 import qualified Types.AST as AST
 import Types.DAG
 
-streamTreeToC :: Streams -> String
-streamTreeToC tree = unlines $
+streamsToC :: Streams -> String
+streamsToC streams = unlines $
     [ "#include <avr/io.h>"
     , "#include <util/delay.h>"
     , "#include <stdbool.h>"
     ]
     ++
-    concatMap (streamToToCHeader tree) (streamsInTree tree)
+    concatMap (streamToFunctionDeclaration streams) (streamsInTree streams)
     ++
-    concatMap (streamToCBody tree) (streamsInTree tree)
+    concatMap (streamToFunctionDefinition streams) (streamsInTree streams)
     ++
     [ ""
     , "int main(void) {"
     ]
     ++
-    concatMap foo (outputPins tree)
+    concatMap pinInitToC (outputPins streams)
     ++
     [ "  while (1) {"
     , "    clock(0);"
@@ -32,22 +32,22 @@ streamTreeToC tree = unlines $
     , "}"
     ]
 
-foo :: AST.Pin -> [String]
-foo pin =
+pinInitToC :: AST.Pin -> [String]
+pinInitToC pin =
     ["  " ++ AST.directionRegister pin ++ " |= " ++ AST.pinMask pin ++ ";"
     ]
 
-streamToToCHeader :: Streams -> Stream -> [String]
-streamToToCHeader tree stream =
+streamToFunctionDeclaration :: Streams -> Stream -> [String]
+streamToFunctionDeclaration streams stream =
     [ ""
-    , "static void " ++ name stream ++ "(" ++ streamInputString tree stream ++ ");"
+    , "static void " ++ name stream ++ "(" ++ streamToArgumentList streams stream ++ ");"
     ]
 
-streamToCBody :: Streams -> Stream -> [String]
-streamToCBody tree stream =
+streamToFunctionDefinition :: Streams -> Stream -> [String]
+streamToFunctionDefinition streams stream =
     [ ""
-    , "static void " ++ name stream ++ "(" ++ streamInputString tree stream ++ ") {"
-    , "  " ++ (streamCType tree) stream ++ " output;"
+    , "static void " ++ name stream ++ "(" ++ streamToArgumentList streams stream ++ ") {"
+    , "  " ++ (streamCType streams) stream ++ " output;"
     ]
     ++
     streamBodyToC (body stream)
@@ -57,12 +57,12 @@ streamToCBody tree stream =
     [ "}"
     ]
 
-streamInputString :: Streams -> Stream -> String
-streamInputString tree stream =
+streamToArgumentList :: Streams -> Stream -> String
+streamToArgumentList streams stream =
     intercalate ", " $
     map (\(input, t) -> t ++ " input_" ++ show input) $
     zip [0..] $
-    map (streamCType tree) (map (streamFromId tree) (inputs stream))
+    map (streamCType streams) (map (streamFromId streams) (inputs stream))
 
 streamBodyToC :: Body -> [String]
 streamBodyToC body = case body of
@@ -89,13 +89,13 @@ expressionToC expression = case expression of
     (AST.Input x) -> "input_" ++ show x
 
 streamCType :: Streams -> Stream -> String
-streamCType tree stream = case body stream of
+streamCType streams stream = case body stream of
     (OutputPin _) -> "bool"
     (Builtin "clock") -> "unsigned int"
     (Transform expression) -> expressionCType inputMap expression
     where
-        inputMap = M.fromList $ zip [0..] $ map (streamCType tree) x
-        x = (map (streamFromId tree) (inputs stream))
+        inputMap = M.fromList $ zip [0..] $ map (streamCType streams) x
+        x = (map (streamFromId streams) (inputs stream))
 
 expressionCType :: M.Map Int String -> AST.Expression -> String
 expressionCType inputMap (AST.Input x) = fromJust $ M.lookup x inputMap
