@@ -12,8 +12,8 @@ data StreamDAGState = StreamDAGState
 
 type StreamDAGBuilder a = State StreamDAGState a
 
-programToStreams :: AST.Program -> Streams
-programToStreams program = streamTree $
+astToStreams :: AST.Program -> Streams
+astToStreams program = streamTree $
     execState (buildProgram program) (StreamDAGState 1 emptyStreams)
 
 buildProgram :: AST.Program -> StreamDAGBuilder ()
