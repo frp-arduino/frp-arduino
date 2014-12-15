@@ -1,8 +1,11 @@
 module Stages.DSL
-    ( (=:)
+    ( Stream
+    , Expression
+    , (=:)
     , clock
-    , toggle
-    , invert
+    , streamMap
+    , isEven
+    , not
     , compileProgram
     ) where
 
@@ -31,12 +34,6 @@ streamMap :: (Expression a -> Expression b) -> Stream a -> Stream b
 streamMap fn stream = Stream $ AST.Custom [unStream stream] expression
     where
         expression = unExpression $ fn $ Expression $ AST.Input 0
-
-toggle :: Stream Int -> Stream Bool
-toggle = streamMap isEven
-
-invert :: Stream Bool -> Stream Bool
-invert = streamMap not
 
 not :: Expression Bool -> Expression Bool
 not = Expression . AST.Not . unExpression

@@ -1,9 +1,11 @@
 module Arduino
     ( module Stages.DSL
+    , module Library
     , pin13
     , pin12
     ) where
 
+import Library
 import Stages.DSL
 import Types.AST (Pin(..))
 
