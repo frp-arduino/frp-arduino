@@ -8,10 +8,13 @@ module DSL
 
 import Control.Monad.State
 
-import qualified AST
 import CodeGen (programToC)
+import Prelude hiding (not)
+import qualified AST
 
 newtype Stream a = Stream { unStream :: AST.Stream }
+
+newtype Expression a = Expression { unExpression :: AST.Expression }
 
 (=:) :: AST.Pin -> Stream Bool -> State AST.Program ()
 (=:) pin stream = do
@@ -23,11 +26,22 @@ newtype Stream a = Stream { unStream :: AST.Stream }
 clock :: Stream Int
 clock = Stream $ AST.Builtin "clock"
 
+streamMap :: (Expression a -> Expression b) -> Stream a -> Stream b
+streamMap fn stream = Stream $ AST.Custom [unStream stream] expression
+    where
+        expression = unExpression $ fn $ Expression $ AST.Input 0
+
 toggle :: Stream Int -> Stream Bool
-toggle stream = Stream (AST.Custom [unStream stream] (AST.Even (AST.Input 0)))
+toggle = streamMap isEven
 
 invert :: Stream Bool -> Stream Bool
-invert stream = Stream (AST.Custom [unStream stream] (AST.Not (AST.Input 0)))
+invert = streamMap not
+
+not :: Expression Bool -> Expression Bool
+not = Expression . AST.Not . unExpression
+
+isEven :: Expression Int -> Expression Bool
+isEven = Expression . AST.Even . unExpression
 
 compileProgram :: State AST.Program () -> IO ()
 compileProgram state = do
