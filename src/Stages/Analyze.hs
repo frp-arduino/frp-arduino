@@ -1,4 +1,4 @@
-module Stages.Stream where
+module Stages.Analyze where
 
 import Control.Monad.State
 

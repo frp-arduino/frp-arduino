@@ -5,7 +5,7 @@ import Data.Maybe (fromJust)
 import qualified Data.Map as M
 
 import qualified Types.AST as AST
-import Stages.Stream
+import Stages.Analyze
 import Types.DAG
 
 programToC :: AST.Program -> String
