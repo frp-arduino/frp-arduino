@@ -1,7 +1,8 @@
 module Stages.DSL
     ( Stream
     , Expression
-    , Output(..)
+    , Output
+    , defineOutput
     , (=:)
     , clock
     , streamMap
@@ -23,6 +24,9 @@ newtype Stream a = Stream { unStream :: AST.Stream }
 newtype Expression a = Expression { unExpression :: AST.Expression }
 
 newtype Output a = Output { unOutput :: AST.Output }
+
+defineOutput :: AST.Output -> Output a
+defineOutput = Output
 
 (=:) :: Output a -> Stream a -> State AST.Program ()
 (=:) output stream = do
