@@ -1,6 +1,7 @@
 module Stages.DSL
     ( Stream
     , Expression
+    , Output(..)
     , (=:)
     , clock
     , streamMap
@@ -21,10 +22,11 @@ newtype Stream a = Stream { unStream :: AST.Stream }
 
 newtype Expression a = Expression { unExpression :: AST.Expression }
 
--- TODO: make phantom type for output
-(=:) :: AST.Output -> Stream a -> State AST.Program ()
+newtype Output a = Output { unOutput :: AST.Output }
+
+(=:) :: Output a -> Stream a -> State AST.Program ()
 (=:) output stream = do
-    modify $ addStatement $ AST.Assignment output (unStream stream)
+    modify $ addStatement $ AST.Assignment (unOutput output) (unStream stream)
     where
         addStatement :: AST.Statement -> AST.Program -> AST.Program
         addStatement x (AST.Program xs) = AST.Program $ xs ++ [x]

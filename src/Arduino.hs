@@ -7,16 +7,16 @@ module Arduino
     ) where
 
 import Library
+import qualified Types.AST as AST
 import Stages.DSL
-import Types.AST (Output(..))
 
 -- For mappings, see http://arduino.cc/en/Hacking/PinMapping168
 
-pin13 :: Output
-pin13 = Pin "pin13" "PORTB" "DDRB" "0x20U" -- pin13 (arduino) = pb5 (atmega328p)
+pin13 :: Output Bool
+pin13 = Output $ AST.Pin "pin13" "PORTB" "DDRB" "0x20U"
 
-pin12 :: Output
-pin12 = Pin "pin12" "PORTB" "DDRB" "0x10U" -- pin12 (arduino) = pb4 (atmega328p)
+pin12 :: Output Bool
+pin12 = Output $ AST.Pin "pin12" "PORTB" "DDRB" "0x10U"
 
-uart :: Output
-uart = UART
+uart :: Output String
+uart = Output $ AST.UART
