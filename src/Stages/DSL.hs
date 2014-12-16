@@ -6,6 +6,7 @@ module Stages.DSL
     , streamMap
     , isEven
     , not
+    , stringConstant
     , compileProgram
     ) where
 
@@ -20,9 +21,10 @@ newtype Stream a = Stream { unStream :: AST.Stream }
 
 newtype Expression a = Expression { unExpression :: AST.Expression }
 
-(=:) :: AST.Pin -> Stream Bool -> State AST.Program ()
-(=:) pin stream = do
-    modify $ addStatement $ AST.Assignment pin (unStream stream)
+-- TODO: make phantom type for output
+(=:) :: AST.Output -> Stream a -> State AST.Program ()
+(=:) output stream = do
+    modify $ addStatement $ AST.Assignment output (unStream stream)
     where
         addStatement :: AST.Statement -> AST.Program -> AST.Program
         addStatement x (AST.Program xs) = AST.Program $ xs ++ [x]
@@ -40,6 +42,9 @@ not = Expression . AST.Not . unExpression
 
 isEven :: Expression Int -> Expression Bool
 isEven = Expression . AST.Even . unExpression
+
+stringConstant :: String -> Expression String
+stringConstant = Expression . AST.StringConstant
 
 compileProgram :: State AST.Program () -> IO ()
 compileProgram state = do

@@ -3,26 +3,20 @@ module Arduino
     , module Library
     , pin13
     , pin12
+    , uart
     ) where
 
 import Library
 import Stages.DSL
-import Types.AST (Pin(..))
+import Types.AST (Output(..))
 
 -- For mappings, see http://arduino.cc/en/Hacking/PinMapping168
 
-pin13 :: Pin
-pin13 = Pin -- pin13 (arduino) = pb5 (atmega328p)
-    { name              = "pin13"
-    , portRegister      = "PORTB"
-    , directionRegister = "DDRB"
-    , pinMask           = "0x20U"
-    }
+pin13 :: Output
+pin13 = Pin "pin13" "PORTB" "DDRB" "0x20U" -- pin13 (arduino) = pb5 (atmega328p)
 
-pin12 :: Pin
-pin12 = Pin -- pin12 (arduino) = pb4 (atmega328p)
-    { name              = "pin12"
-    , portRegister      = "PORTB"
-    , directionRegister = "DDRB"
-    , pinMask           = "0x10U"
-    }
+pin12 :: Output
+pin12 = Pin "pin12" "PORTB" "DDRB" "0x10U" -- pin12 (arduino) = pb4 (atmega328p)
+
+uart :: Output
+uart = UART

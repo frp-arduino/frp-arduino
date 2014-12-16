@@ -24,7 +24,7 @@ buildStatement :: AST.Statement -> StreamDAGBuilder Identifier
 buildStatement statement = case statement of
     (AST.Assignment pin stream) -> do
         restName <- buildNewStream stream
-        thisName <- buildStream (AST.name pin) (OutputPin pin)
+        thisName <- buildStream "pin" (OutputPin pin)
         buildDependency restName thisName
         buildInput thisName restName
         return thisName

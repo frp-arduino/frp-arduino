@@ -14,7 +14,7 @@ data Stream = Stream
     , outputs :: [Identifier]
     }
 
-data Body = OutputPin AST.Pin
+data Body = OutputPin AST.Output
           | Builtin String
           | Transform AST.Expression
 
@@ -45,10 +45,10 @@ streamsInTree = M.elems
 streamFromId :: Streams -> Identifier -> Stream
 streamFromId tree id = fromJust $ M.lookup id tree
 
-outputPins :: Streams -> [AST.Pin]
+outputPins :: Streams -> [AST.Output]
 outputPins = M.elems . M.mapMaybe getOutputPin
 
-getOutputPin :: Stream -> Maybe AST.Pin
+getOutputPin :: Stream -> Maybe AST.Output
 getOutputPin stream = case body stream of
     (OutputPin pin) -> Just pin
     _               -> Nothing

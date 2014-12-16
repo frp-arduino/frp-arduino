@@ -2,7 +2,7 @@ module Types.AST where
 
 data Program = Program [Statement]
 
-data Statement = Assignment Pin Stream
+data Statement = Assignment Output Stream
 
 data Stream = Builtin String
             | Custom [Stream] Expression
@@ -10,10 +10,7 @@ data Stream = Builtin String
 data Expression = Input Int
                 | Not Expression
                 | Even Expression
+                | StringConstant String
 
-data Pin = Pin
-    { name              :: String
-    , portRegister      :: String
-    , directionRegister :: String
-    , pinMask           :: String
-    }
+data Output = Pin String String String String
+            | UART

@@ -32,9 +32,23 @@ streamsToC streams = unlines $
     , "}"
     ]
 
-pinInitToC :: AST.Pin -> [String]
-pinInitToC pin =
-    ["  " ++ AST.directionRegister pin ++ " |= " ++ AST.pinMask pin ++ ";"
+pinInitToC :: AST.Output -> [String]
+pinInitToC (AST.Pin _ _ directionRegister pinMask) =
+    ["  " ++ directionRegister ++ " |= " ++ pinMask ++ ";"
+    ]
+pinInitToC (AST.UART) =
+    [ "  #define F_CPU 16000000UL"
+    , "  #define BAUD 9600"
+    , "  #include <util/setbaud.h>"
+    , "  UBRR0H = UBRRH_VALUE;"
+    , "  UBRR0L = UBRRL_VALUE;"
+    , "  #if USE_2X"
+    , "      UCSR0A |= (1 << U2X0);"
+    , "  #else"
+    , "      UCSR0A &= ~((1 << U2X0));"
+    , "  #endif"
+    , "  UCSR0C = (1 << UCSZ01) |(1 << UCSZ00);"
+    , "  UCSR0B = (1 << RXEN0) | (1 << TXEN0);"
     ]
 
 streamToFunctionDeclaration :: Streams -> Stream -> [String]
@@ -66,31 +80,49 @@ streamToArgumentList streams stream =
 
 streamBodyToC :: Body -> [String]
 streamBodyToC body = case body of
-    (OutputPin pin) ->
+    (OutputPin (AST.Pin _ portRegister _ pinMask)) ->
         [ "  if (input_0) {"
-        , "    " ++ AST.portRegister pin ++ " |= " ++ AST.pinMask pin ++ ";"
+        , "    " ++ portRegister ++ " |= " ++ pinMask ++ ";"
         , "  } else {"
-        , "    " ++ AST.portRegister pin ++ " &= ~(" ++ AST.pinMask pin ++ ");"
+        , "    " ++ portRegister ++ " &= ~(" ++ pinMask ++ ");"
+        , "  }"
+        ]
+    (OutputPin (AST.UART)) ->
+        [ "  while (*input_0 != 0) {"
+        , "    while ((UCSR0A & (1 << UDRE0)) == 0) {"
+        , "    }"
+        , "    UDR0 = *input_0;"
+        , "    input_0++;"
         , "  }"
         ]
     (Transform expression) ->
-        [ "  output = " ++ expressionToC expression ++ ";"
+        extraLines
+        ++
+        [ "  output = " ++ expressionString ++ ";"
         ]
+        where
+            (expressionString, extraLines) = expressionToC expression
     (Builtin name) ->
         [ "  static unsigned int i = 0U;"
         , "  i++;"
         , "  output = i;"
         ]
 
-expressionToC :: AST.Expression -> String
+expressionToC :: AST.Expression -> (String, [String])
 expressionToC expression = case expression of
-    (AST.Not expression) -> "!" ++ expressionToC expression
-    (AST.Even expression) -> "(" ++ expressionToC expression ++ ") % 2 == 0"
-    (AST.Input x) -> "input_" ++ show x
+    (AST.Not expression) -> ("!" ++ expressionString, extraLines)
+        where
+            (expressionString, extraLines) = expressionToC expression
+    (AST.Even expression) -> ("(" ++ expressionString ++ ") % 2 == 0", extraLines)
+        where
+            (expressionString, extraLines) = expressionToC expression
+    (AST.Input value) -> ("input_" ++ show value, [])
+    (AST.StringConstant value) -> ("tmp", ["  char tmp[] = " ++ show value ++ ";"])
 
 streamCType :: Streams -> Stream -> String
 streamCType streams stream = case body stream of
-    (OutputPin _) -> "bool"
+    (OutputPin (AST.Pin _ _ _ _)) -> "bool"
+    (OutputPin (AST.UART)) -> "char *"
     (Builtin "clock") -> "unsigned int"
     (Transform expression) -> expressionCType inputMap expression
     where
@@ -98,6 +130,7 @@ streamCType streams stream = case body stream of
         x = (map (streamFromId streams) (inputs stream))
 
 expressionCType :: M.Map Int String -> AST.Expression -> String
-expressionCType inputMap (AST.Input x) = fromJust $ M.lookup x inputMap
-expressionCType _        (AST.Not _)   = "bool"
-expressionCType _        (AST.Even _)  = "bool"
+expressionCType inputMap (AST.Input x)           = fromJust $ M.lookup x inputMap
+expressionCType _        (AST.Not _)             = "bool"
+expressionCType _        (AST.Even _)            = "bool"
+expressionCType _        (AST.StringConstant _)  = "char *"
