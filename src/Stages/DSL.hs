@@ -2,7 +2,6 @@ module Stages.DSL
     ( Stream
     , Expression
     , Output
-    , defineOutput
     , (=:)
     , clock
     , streamMap
@@ -18,15 +17,7 @@ import Prelude hiding (not)
 import qualified Types.AST as AST
 import Stages.Analyze (astToStreams)
 import Stages.CodeGen (streamsToC)
-
-newtype Stream a = Stream { unStream :: AST.Stream }
-
-newtype Expression a = Expression { unExpression :: AST.Expression }
-
-newtype Output a = Output { unOutput :: AST.Output }
-
-defineOutput :: AST.Output -> Output a
-defineOutput = Output
+import Types.Phantom
 
 (=:) :: Output a -> Stream a -> State AST.Program ()
 (=:) output stream = do
