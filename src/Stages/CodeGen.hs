@@ -12,7 +12,7 @@ import qualified Types.AST as AST
 import Types.DAG
 
 streamsToC :: Streams -> String
-streamsToC = unlines . runGen . genStreamsCFile
+streamsToC = runGen . genStreamsCFile
 
 genStreamsCFile :: Streams -> Gen ()
 genStreamsCFile streams = do
@@ -129,8 +129,9 @@ data GenState = GenState
 
 type Gen a = State GenState a
 
-runGen :: Gen a -> [String]
-runGen gen = reverse (headerLines genState) ++ reverse (bodyLines genState)
+runGen :: Gen a -> String
+runGen gen = unlines $ reverse (headerLines genState) ++
+                       reverse (bodyLines genState)
     where
         genState = execState gen emptyGenState
 
