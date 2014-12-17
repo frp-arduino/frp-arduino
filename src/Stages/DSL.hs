@@ -14,7 +14,6 @@ module Stages.DSL
 import Control.Monad.State
 
 import Prelude hiding (not)
-import qualified Types.AST as AST
 import qualified Types.DAG as DAG
 import Stages.CodeGen (streamsToC)
 import Types.Phantom
@@ -33,21 +32,21 @@ compileProgram state = do
     buildInput thisName restName
 
 clock :: Stream Int
-clock = Stream $ AST.Builtin "clock"
+clock = Stream $ DAG.BuiltinStream "clock"
 
 streamMap :: (Expression a -> Expression b) -> Stream a -> Stream b
-streamMap fn stream = Stream $ AST.Custom [unStream stream] expression
+streamMap fn stream = Stream $ DAG.Custom [unStream stream] expression
     where
-        expression = unExpression $ fn $ Expression $ AST.Input 0
+        expression = unExpression $ fn $ Expression $ DAG.Input 0
 
 not :: Expression Bool -> Expression Bool
-not = Expression . AST.Not . unExpression
+not = Expression . DAG.Not . unExpression
 
 isEven :: Expression Int -> Expression Bool
-isEven = Expression . AST.Even . unExpression
+isEven = Expression . DAG.Even . unExpression
 
 stringConstant :: String -> Expression String
-stringConstant = Expression . AST.StringConstant
+stringConstant = Expression . DAG.StringConstant
 
 data DAGState = DAGState
     { idCounter :: Int
@@ -56,11 +55,11 @@ data DAGState = DAGState
 
 type Action a = State DAGState a
 
-buildNewStream :: AST.Stream -> Action DAG.Identifier
+buildNewStream :: DAG.StreamExpression -> Action DAG.Identifier
 buildNewStream stream = case stream of
-    (AST.Builtin name) -> do
+    (DAG.BuiltinStream name) -> do
         buildBuiltinStream name
-    (AST.Custom [input] expression) -> do
+    (DAG.Custom [input] expression) -> do
         lastName <- buildNewStream input
         thisName <- buildStream "stream" (DAG.Transform expression)
         buildDependency lastName thisName

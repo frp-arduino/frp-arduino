@@ -8,7 +8,6 @@ import Data.List (intercalate)
 import Data.Maybe (fromJust)
 import qualified Data.Map as M
 
-import qualified Types.AST as AST
 import Types.DAG
 
 streamsToC :: Streams -> String
@@ -48,30 +47,30 @@ streamToArgumentList streams stream =
 
 streamCType :: Streams -> Stream -> String
 streamCType streams stream = case body stream of
-    (OutputPin (AST.Pin _ _ _ _)) -> "bool"
-    (OutputPin (AST.UART))        -> "char *"
-    (Builtin "clock")             -> "unsigned int"
-    (Transform expression)        -> expressionCType inputMap expression
+    (OutputPin (Pin _ _ _ _)) -> "bool"
+    (OutputPin (UART))        -> "char *"
+    (Builtin "clock")         -> "unsigned int"
+    (Transform expression)    -> expressionCType inputMap expression
     where
         inputMap = M.fromList $ zip [0..] $ map (streamCType streams) x
         x = (map (streamFromId streams) (inputs stream))
 
-expressionCType :: M.Map Int String -> AST.Expression -> String
+expressionCType :: M.Map Int String -> Expression -> String
 expressionCType inputMap expression = case expression of
-    (AST.Input x)          -> fromJust $ M.lookup x inputMap
-    (AST.Not _)            -> "bool"
-    (AST.Even _)           -> "bool"
-    (AST.StringConstant _) -> "char *"
+    (Input x)          -> fromJust $ M.lookup x inputMap
+    (Not _)            -> "bool"
+    (Even _)           -> "bool"
+    (StringConstant _) -> "char *"
 
 genStreamBody :: Body -> Gen ()
 genStreamBody body = case body of
-    (OutputPin (AST.Pin _ portRegister _ pinMask)) -> do
+    (OutputPin (Pin _ portRegister _ pinMask)) -> do
         block "if (input_0) {" $ do
             line $ portRegister ++ " |= " ++ pinMask ++ ";"
         block "} else {" $ do
             line $ portRegister ++ " &= ~(" ++ pinMask ++ ");"
         line "}"
-    (OutputPin (AST.UART)) -> do
+    (OutputPin UART) -> do
         block "while (*input_0 != 0) {" $ do
             line $ "while ((UCSR0A & (1 << UDRE0)) == 0) {"
             line $ "}"
@@ -87,26 +86,26 @@ genStreamBody body = case body of
         line $ temp ++ "++;"
         line $ "output = " ++ temp ++ ";"
 
-genExpression :: AST.Expression -> Gen String
+genExpression :: Expression -> Gen String
 genExpression expression = case expression of
-    (AST.Not expression) -> do
+    (Not expression) -> do
         inner <- genExpression expression
         return $ "!(" ++ inner ++ ")"
-    (AST.Even expression) -> do
+    (Even expression) -> do
         inner <- genExpression expression
         return $ "(" ++ inner ++ ") % 2 == 0"
-    (AST.Input value) -> do
+    (Input value) -> do
         return $ "input_" ++ show value
-    (AST.StringConstant value) -> do
+    (StringConstant value) -> do
         temp <- label
         line $ "char " ++ temp ++ "[] = " ++ show value ++ ";"
         return temp
 
-genOutputInit :: AST.Output -> Gen ()
+genOutputInit :: Output -> Gen ()
 genOutputInit output = case output of
-    (AST.Pin _ _ directionRegister pinMask) -> do
+    (Pin _ _ directionRegister pinMask) -> do
         line $ directionRegister ++ " |= " ++ pinMask ++ ";"
-    (AST.UART) -> do
+    UART -> do
         line $ "#define F_CPU 16000000UL"
         line $ "#define BAUD 9600"
         line $ "#include <util/setbaud.h>"

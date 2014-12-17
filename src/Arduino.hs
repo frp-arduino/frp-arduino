@@ -7,17 +7,17 @@ module Arduino
     ) where
 
 import Library
-import qualified Types.AST as AST
+import qualified Types.DAG as DAG
 import Stages.DSL
 import Types.Phantom
 
 -- For mappings, see http://arduino.cc/en/Hacking/PinMapping168
 
 pin13 :: Output Bool
-pin13 = Output $ AST.Pin "pin13" "PORTB" "DDRB" "0x20U"
+pin13 = Output $ DAG.Pin "pin13" "PORTB" "DDRB" "0x20U"
 
 pin12 :: Output Bool
-pin12 = Output $ AST.Pin "pin12" "PORTB" "DDRB" "0x10U"
+pin12 = Output $ DAG.Pin "pin12" "PORTB" "DDRB" "0x10U"
 
 uart :: Output String
-uart = Output $ AST.UART
+uart = Output $ DAG.UART

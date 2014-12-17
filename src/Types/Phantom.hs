@@ -1,9 +1,9 @@
 module Types.Phantom where
 
-import qualified Types.AST as AST
+import qualified Types.DAG as DAG
 
-newtype Stream a = Stream { unStream :: AST.Stream }
+newtype Stream a = Stream { unStream :: DAG.StreamExpression }
 
-newtype Expression a = Expression { unExpression :: AST.Expression }
+newtype Expression a = Expression { unExpression :: DAG.Expression }
 
-newtype Output a = Output { unOutput :: AST.Output }
+newtype Output a = Output { unOutput :: DAG.Output }

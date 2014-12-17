@@ -3,8 +3,6 @@ module Types.DAG where
 import Data.Maybe (fromJust)
 import qualified Data.Map as M
 
-import qualified Types.AST as AST
-
 type Streams = M.Map Identifier Stream
 
 data Stream = Stream
@@ -14,11 +12,22 @@ data Stream = Stream
     , outputs :: [Identifier]
     }
 
-data Body = OutputPin AST.Output
+data Body = OutputPin Output
           | Builtin String
-          | Transform AST.Expression
+          | Transform Expression
 
 type Identifier = String
+
+data StreamExpression = BuiltinStream String
+                      | Custom [StreamExpression] Expression
+
+data Expression = Input Int
+                | Not Expression
+                | Even Expression
+                | StringConstant String
+
+data Output = Pin String String String String
+            | UART
 
 emptyStreams :: Streams
 emptyStreams = M.empty
@@ -45,10 +54,10 @@ streamsInTree = M.elems
 streamFromId :: Streams -> Identifier -> Stream
 streamFromId tree id = fromJust $ M.lookup id tree
 
-outputPins :: Streams -> [AST.Output]
+outputPins :: Streams -> [Output]
 outputPins = M.elems . M.mapMaybe getOutputPin
 
-getOutputPin :: Stream -> Maybe AST.Output
+getOutputPin :: Stream -> Maybe Output
 getOutputPin stream = case body stream of
     (OutputPin pin) -> Just pin
     _               -> Nothing
