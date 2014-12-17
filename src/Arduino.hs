@@ -9,7 +9,6 @@ module Arduino
 import Library
 import qualified Types.DAG as DAG
 import Stages.DSL
-import Types.Phantom
 
 -- For mappings, see http://arduino.cc/en/Hacking/PinMapping168
 
