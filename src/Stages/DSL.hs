@@ -18,24 +18,27 @@ import qualified Types.DAG as DAG
 import Stages.CodeGen (streamsToC)
 import Types.Phantom
 
-compileProgram :: Action () -> IO ()
+compileProgram :: DAG.Action () -> IO ()
 compileProgram state = do
-    let x = execState state (DAGState 1 DAG.emptyStreams)
-    let cCode = streamsToC (dag x)
+    let x = execState state (DAG.DAGState 1 DAG.emptyStreams)
+    let cCode = streamsToC (DAG.dag x)
     writeFile "main.c" cCode
 
-(=:) :: Output a -> Stream a -> Action ()
+(=:) :: Output a -> Stream a -> DAG.Action ()
 (=:) output stream = do
-    restName <- buildNewStream (unStream stream)
-    thisName <- buildStream "pin" (DAG.OutputPin (unOutput output))
-    buildDependency restName thisName
-    buildInput thisName restName
+    outputName <- DAG.addAnonymousStream (DAG.OutputPin (unOutput output))
+    streamName <- unStream stream
+    DAG.addDependency streamName outputName
 
 clock :: Stream Int
-clock = Stream $ DAG.BuiltinStream "clock"
+clock = Stream $ DAG.addBuiltinStream "clock"
 
 streamMap :: (Expression a -> Expression b) -> Stream a -> Stream b
-streamMap fn stream = Stream $ DAG.Custom [unStream stream] expression
+streamMap fn stream = Stream $ do
+    lastName <- unStream stream
+    thisName <- DAG.addAnonymousStream (DAG.Transform expression)
+    DAG.addDependency lastName thisName
+    return thisName
     where
         expression = unExpression $ fn $ Expression $ DAG.Input 0
 
@@ -47,64 +50,3 @@ isEven = Expression . DAG.Even . unExpression
 
 stringConstant :: String -> Expression String
 stringConstant = Expression . DAG.StringConstant
-
-data DAGState = DAGState
-    { idCounter :: Int
-    , dag       :: DAG.Streams
-    }
-
-type Action a = State DAGState a
-
-buildNewStream :: DAG.StreamExpression -> Action DAG.Identifier
-buildNewStream stream = case stream of
-    (DAG.BuiltinStream name) -> do
-        buildBuiltinStream name
-    (DAG.Custom [input] expression) -> do
-        lastName <- buildNewStream input
-        thisName <- buildStream "stream" (DAG.Transform expression)
-        buildDependency lastName thisName
-        buildInput thisName lastName
-        return thisName
-
-buildInput :: DAG.Identifier -> DAG.Identifier -> Action ()
-buildInput srcStream inputStream = do
-    modify $ nodesAddInput srcStream inputStream
-    where
-        nodesAddInput :: String -> String -> DAGState -> DAGState
-        nodesAddInput nodeName inputName nodes = nodes
-            { dag = DAG.addInput (dag nodes) nodeName inputName
-            }
-
-buildDependency :: DAG.Identifier -> DAG.Identifier -> Action ()
-buildDependency srcStream destStream = do
-    modify $ nodesAddDependency srcStream destStream
-    where
-        nodesAddDependency :: String -> String -> DAGState -> DAGState
-        nodesAddDependency nodeName dependencyName nodes = nodes
-            { dag = DAG.addOutput (dag nodes) nodeName dependencyName
-            }
-
-buildBuiltinStream :: DAG.Identifier -> Action DAG.Identifier
-buildBuiltinStream name = do
-    streamTreeState <- get
-    unless (DAG.hasStream (dag streamTreeState) name) $ do
-        modify $ insertStream $ DAG.Stream name [] (DAG.Builtin name) []
-    return name
-
-buildStream :: String -> DAG.Body -> Action DAG.Identifier
-buildStream baseName body = do
-    uniqName <- buildUniqIdentifier baseName
-    modify $ insertStream $ DAG.Stream uniqName [] body []
-    return uniqName
-
-insertStream :: DAG.Stream -> DAGState -> DAGState
-insertStream stream x = x { dag = DAG.addStream (dag x) stream }
-
-buildUniqIdentifier :: String -> Action DAG.Identifier
-buildUniqIdentifier baseName = do
-    dag <- get
-    let id = idCounter dag
-    modify inc
-    return $ baseName ++ "_" ++ show id
-    where
-        inc dag = dag { idCounter = idCounter dag + 1 }
