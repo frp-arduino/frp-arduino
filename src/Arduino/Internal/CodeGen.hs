@@ -1,4 +1,4 @@
-module Stages.CodeGen
+module Arduino.Internal.CodeGen
     ( streamsToC
     )
     where
@@ -8,7 +8,7 @@ import Data.List (intercalate)
 import Data.Maybe (fromJust)
 import qualified Data.Map as M
 
-import Types.DAG
+import Arduino.Internal.DAG
 
 streamsToC :: Streams -> String
 streamsToC = runGen . genStreamsCFile

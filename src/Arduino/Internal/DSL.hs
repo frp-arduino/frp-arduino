@@ -1,4 +1,4 @@
-module Stages.DSL
+module Arduino.Internal.DSL
     ( compileProgram
     , Stream(..)
     , Expression(..)
@@ -13,10 +13,10 @@ module Stages.DSL
 
 import Control.Monad.State
 import qualified Data.Map as M
-
 import Prelude hiding (not)
-import qualified Types.DAG as DAG
-import Stages.CodeGen (streamsToC)
+
+import Arduino.Internal.CodeGen (streamsToC)
+import qualified Arduino.Internal.DAG as DAG
 
 data DAGState = DAGState
     { idCounter :: Int

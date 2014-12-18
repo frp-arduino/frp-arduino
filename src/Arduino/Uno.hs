@@ -1,14 +1,14 @@
-module Arduino
-    ( module Stages.DSL
-    , module Library
+module Arduino.Uno
+    ( module Arduino.Internal.DSL
+    , module Arduino.Library
     , pin13
     , pin12
     , uart
     ) where
 
-import Library
-import qualified Types.DAG as DAG
-import Stages.DSL
+import Arduino.Internal.DSL
+import Arduino.Library
+import qualified Arduino.Internal.DAG as DAG
 
 -- For mappings, see http://arduino.cc/en/Hacking/PinMapping168
 

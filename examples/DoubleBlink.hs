@@ -1,4 +1,4 @@
-import Arduino
+import Arduino.Uno
 
 main = compileProgram $ do
 

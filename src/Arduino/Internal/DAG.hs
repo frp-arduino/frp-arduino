@@ -1,4 +1,4 @@
-module Types.DAG where
+module Arduino.Internal.DAG where
 
 import Control.Monad.State
 import Data.Maybe (fromJust)
