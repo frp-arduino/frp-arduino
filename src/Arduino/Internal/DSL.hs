@@ -1,15 +1,4 @@
-module Arduino.Internal.DSL
-    ( compileProgram
-    , Stream(..)
-    , Expression(..)
-    , Output(..)
-    , (=:)
-    , clock
-    , streamMap
-    , isEven
-    , not
-    , stringConstant
-    ) where
+module Arduino.Internal.DSL where
 
 import Control.Monad.State
 import qualified Data.Map as M
