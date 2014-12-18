@@ -2,7 +2,7 @@ module Arduino.Library where
 
 import Prelude hiding (not)
 
-import Arduino.Internal.DSL
+import Arduino.Language
 
 toggle :: Stream Int -> Stream Bool
 toggle = streamMap isEven

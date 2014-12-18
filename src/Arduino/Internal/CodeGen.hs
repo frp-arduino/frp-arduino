@@ -1,7 +1,4 @@
-module Arduino.Internal.CodeGen
-    ( streamsToC
-    )
-    where
+module Arduino.Internal.CodeGen where
 
 import Control.Monad.State
 import Data.List (intercalate)
