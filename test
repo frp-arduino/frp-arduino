@@ -4,12 +4,17 @@ set -e
 
 TEST_REPORT=test_report.txt
 
+fail() {
+    echo "FAIL"
+    cat $TEST_REPORT
+    rm $TEST_REPORT
+    exit 1
+}
+
 test() {
     echo -n "Testing $1 ... "
-    (./make $1 > $TEST_REPORT 2>&1) || (echo "FAIL";
-                                        cat $TEST_REPORT;
-                                        rm $TEST_REPORT;
-                                        exit 1)
+    (./make $1 > $TEST_REPORT 2>&1) || fail
+    (diff examples/$1.c build-output/$1/main.c > $TEST_REPORT 2>&1) || fail
     echo "OK"
     rm $TEST_REPORT
 }
