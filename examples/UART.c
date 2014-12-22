@@ -70,7 +70,7 @@ int main(void) {
   UCSR0C = (1 << UCSZ01) |(1 << UCSZ00);
   UCSR0B = (1 << RXEN0) | (1 << TXEN0);
   while (1) {
-    clock(0);
+    clock();
     _delay_ms(1000);
   }
   return 0;

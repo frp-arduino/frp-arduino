@@ -22,3 +22,4 @@ test() {
 test Blink
 test DoubleBlink
 test UART
+test Input

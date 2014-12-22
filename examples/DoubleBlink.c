@@ -65,7 +65,7 @@ int main(void) {
   DDRB |= 0x20U;
   DDRB |= 0x10U;
   while (1) {
-    clock(0);
+    clock();
     _delay_ms(1000);
   }
   return 0;

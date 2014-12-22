@@ -14,10 +14,11 @@ data Stream = Stream
     }
 
 data Body = OutputPin Output
+          | InputPin Output
           | Builtin String
           | Transform Expression
 
-data Output = Pin String String String String
+data Output = Pin String String String String String
             | UART
 
 data Expression = Input Int
@@ -54,3 +55,20 @@ getOutputPin :: Stream -> Maybe Output
 getOutputPin stream = case body stream of
     (OutputPin pin) -> Just pin
     _               -> Nothing
+
+inputStreams :: Streams -> [Identifier]
+inputStreams = M.elems . M.mapMaybe getInputStreamName
+    where
+        getInputStreamName :: Stream -> Maybe Identifier
+        getInputStreamName stream = case body stream of
+            (InputPin _) -> Just $ name stream
+            (Builtin _)  -> Just $ name stream
+            _            -> Nothing
+
+inputPins :: Streams -> [Output]
+inputPins = M.elems . M.mapMaybe getInputPin
+
+getInputPin :: Stream -> Maybe Output
+getInputPin stream = case body stream of
+    (InputPin pin) -> Just pin
+    _              -> Nothing

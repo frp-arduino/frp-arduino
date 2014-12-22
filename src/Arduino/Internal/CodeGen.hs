@@ -21,8 +21,9 @@ genStreamsCFile streams = do
     line ""
     block "int main(void) {" $ do
         mapM genOutputInit (outputPins streams)
+        mapM genInputInit (inputPins streams)
         block "while (1) {" $ do
-            line "clock(0);"
+            mapM (\x -> line (x ++ "();")) (inputStreams streams)
             line "_delay_ms(1000);"
         line "}"
         line "return 0;"
@@ -46,10 +47,11 @@ streamToArgumentList streams stream =
 
 streamCType :: Streams -> Stream -> String
 streamCType streams stream = case body stream of
-    (OutputPin (Pin _ _ _ _)) -> "bool"
-    (OutputPin (UART))        -> "char *"
-    (Builtin "clock")         -> "unsigned int"
-    (Transform expression)    -> expressionCType inputMap expression
+    (OutputPin (Pin _ _ _ _ _)) -> "bool"
+    (InputPin (Pin _ _ _ _ _))  -> "bool"
+    (OutputPin (UART))          -> "char *"
+    (Builtin "clock")           -> "unsigned int"
+    (Transform expression)      -> expressionCType inputMap expression
     where
         inputMap = M.fromList $ zip [0..] $ map (streamCType streams) x
         x = (map (streamFromId streams) (inputs stream))
@@ -63,7 +65,7 @@ expressionCType inputMap expression = case expression of
 
 genStreamBody :: Body -> Gen ()
 genStreamBody body = case body of
-    (OutputPin (Pin _ portRegister _ pinMask)) -> do
+    (OutputPin (Pin _ portRegister _ _ pinMask)) -> do
         block "if (input_0) {" $ do
             line $ portRegister ++ " |= " ++ pinMask ++ ";"
         block "} else {" $ do
@@ -76,6 +78,8 @@ genStreamBody body = case body of
             line $ "UDR0 = *input_0;"
             line $ "input_0++;"
         line $ "}"
+    (InputPin (Pin _ _ pinRegister _ pinMask)) -> do
+        line $ "output = (" ++ pinRegister ++ " & " ++ pinMask ++ ") == " ++ pinMask ++ ";"
     (Transform expression) -> do
         e <- genExpression expression
         line $ "output = " ++ e ++ ";"
@@ -102,7 +106,7 @@ genExpression expression = case expression of
 
 genOutputInit :: Output -> Gen ()
 genOutputInit output = case output of
-    (Pin _ _ directionRegister pinMask) -> do
+    (Pin _ _ _ directionRegister pinMask) -> do
         line $ directionRegister ++ " |= " ++ pinMask ++ ";"
     UART -> do
         line $ "#define F_CPU 16000000UL"
@@ -117,6 +121,12 @@ genOutputInit output = case output of
         line $ "#endif"
         line $ "UCSR0C = (1 << UCSZ01) |(1 << UCSZ00);"
         line $ "UCSR0B = (1 << RXEN0) | (1 << TXEN0);"
+
+genInputInit :: Output -> Gen ()
+genInputInit input = case input of
+    (Pin _ portRegister _ directionRegister pinMask) -> do
+        line $ directionRegister ++ " &= ~(" ++ pinMask ++ ");"
+        line $ portRegister ++ " |= " ++ pinMask ++ ";"
 
 data GenState = GenState
     { labelCounter :: Int

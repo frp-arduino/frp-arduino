@@ -32,6 +32,9 @@ compileProgram state = do
     streamName <- unStream stream
     addDependency streamName outputName
 
+input :: Output a -> Stream a
+input input = Stream $ addAnonymousStream (DAG.InputPin (unOutput input))
+
 clock :: Stream Int
 clock = Stream $ addBuiltinStream "clock"
 

@@ -9,6 +9,7 @@ import Arduino.Internal.DSL
     , Output
     , (=:)
     , clock
+    , input
     , streamMap
     , isEven
     , not
