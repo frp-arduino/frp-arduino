@@ -20,10 +20,9 @@ genStreamsCFile streams = do
     mapM (genStreamCFunction streams) (streamsInTree streams)
     line ""
     block "int main(void) {" $ do
-        mapM genOutputInit (outputPins streams)
-        mapM genInputInit (inputPins streams)
+        mapM genInit (streamsInTree streams)
         block "while (1) {" $ do
-            mapM (\x -> line (x ++ "();")) (inputStreams streams)
+            mapM genInputCall (streamsInTree streams)
             line "_delay_ms(1000);"
         line "}"
         line "return 0;"
@@ -104,11 +103,14 @@ genExpression expression = case expression of
         line $ "char " ++ temp ++ "[] = " ++ show value ++ ";"
         return temp
 
-genOutputInit :: Output -> Gen ()
-genOutputInit output = case output of
-    (Pin _ _ _ directionRegister pinMask) -> do
+genInit :: Stream -> Gen ()
+genInit stream = case body stream of
+    (InputPin (Pin _ portRegister _ directionRegister pinMask)) -> do
+        line $ directionRegister ++ " &= ~(" ++ pinMask ++ ");"
+        line $ portRegister ++ " |= " ++ pinMask ++ ";"
+    (OutputPin (Pin _ _ _ directionRegister pinMask)) -> do
         line $ directionRegister ++ " |= " ++ pinMask ++ ";"
-    UART -> do
+    (OutputPin UART) -> do
         line $ "#define F_CPU 16000000UL"
         line $ "#define BAUD 9600"
         line $ "#include <util/setbaud.h>"
@@ -121,12 +123,18 @@ genOutputInit output = case output of
         line $ "#endif"
         line $ "UCSR0C = (1 << UCSZ01) |(1 << UCSZ00);"
         line $ "UCSR0B = (1 << RXEN0) | (1 << TXEN0);"
+    _ -> do
+        return ()
 
-genInputInit :: Output -> Gen ()
-genInputInit input = case input of
-    (Pin _ portRegister _ directionRegister pinMask) -> do
-        line $ directionRegister ++ " &= ~(" ++ pinMask ++ ");"
-        line $ portRegister ++ " |= " ++ pinMask ++ ";"
+genInputCall :: Stream -> Gen ()
+genInputCall stream = do
+    when (isInput stream) $ do
+        line (name stream ++ "();")
+    where
+        isInput stream = case body stream of
+            (InputPin _) -> True
+            (Builtin _)  -> True
+            _            -> False
 
 data GenState = GenState
     { labelCounter :: Int

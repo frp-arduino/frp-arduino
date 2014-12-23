@@ -47,28 +47,3 @@ streamsInTree = M.elems
 
 streamFromId :: Streams -> Identifier -> Stream
 streamFromId tree id = fromJust $ M.lookup id tree
-
-outputPins :: Streams -> [Output]
-outputPins = M.elems . M.mapMaybe getOutputPin
-
-getOutputPin :: Stream -> Maybe Output
-getOutputPin stream = case body stream of
-    (OutputPin pin) -> Just pin
-    _               -> Nothing
-
-inputStreams :: Streams -> [Identifier]
-inputStreams = M.elems . M.mapMaybe getInputStreamName
-    where
-        getInputStreamName :: Stream -> Maybe Identifier
-        getInputStreamName stream = case body stream of
-            (InputPin _) -> Just $ name stream
-            (Builtin _)  -> Just $ name stream
-            _            -> Nothing
-
-inputPins :: Streams -> [Output]
-inputPins = M.elems . M.mapMaybe getInputPin
-
-getInputPin :: Stream -> Maybe Output
-getInputPin stream = case body stream of
-    (InputPin pin) -> Just pin
-    _              -> Nothing
