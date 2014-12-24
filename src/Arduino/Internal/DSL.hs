@@ -12,45 +12,42 @@ data DAGState = DAGState
     , dag       :: DAG.Streams
     }
 
-type Action a = State DAGState a
-
-newtype Stream a = Stream { unStream :: Action DAG.Identifier }
+type Stream a = State DAGState DAG.Identifier
 
 newtype Expression a = Expression { unExpression :: DAG.Expression }
 
 newtype Output a = Output { unOutput :: DAG.Output }
 
-compileProgram :: Action () -> IO ()
+compileProgram :: Stream a -> IO ()
 compileProgram state = do
     let x = execState state (DAGState 1 DAG.emptyStreams)
     let cCode = streamsToC (dag x)
     writeFile "main.c" cCode
 
-(=:) :: Output a -> Stream a -> Action ()
-(=:) x stream = do
-    unStream (output x stream)
-    return ()
+(=:) :: Output a -> Stream a -> Stream a
+(=:) x stream = stream ~> output x
+
+(~>) :: Stream a -> (Stream a -> Stream b) -> Stream b
+(~>) input fn = fn input
 
 input :: Output a -> Stream a
-input input = Stream $ do
+input input = do
     addAnonymousStream (DAG.InputPin (unOutput input))
 
 output :: Output a -> Stream a -> Stream a
-output output stream = Stream $ do
+output output stream = do
     outputName <- addAnonymousStream (DAG.OutputPin (unOutput output))
-    streamName <- unStream stream
+    streamName <- stream
     addDependency streamName outputName
-    return outputName
 
 clock :: Stream Int
-clock = Stream $ addBuiltinStream "clock"
+clock = addBuiltinStream "clock"
 
 streamMap :: (Expression a -> Expression b) -> Stream a -> Stream b
-streamMap fn stream = Stream $ do
-    lastName <- unStream stream
+streamMap fn stream = do
+    lastName <- stream
     thisName <- addAnonymousStream (DAG.Transform expression)
     addDependency lastName thisName
-    return thisName
     where
         expression = unExpression $ fn $ Expression $ DAG.Input 0
 
@@ -63,15 +60,15 @@ isEven = Expression . DAG.Even . unExpression
 stringConstant :: String -> Expression String
 stringConstant = Expression . DAG.StringConstant
 
-addBuiltinStream :: DAG.Identifier -> Action DAG.Identifier
+addBuiltinStream :: DAG.Identifier -> Stream a
 addBuiltinStream name = addStream name (DAG.Builtin name)
 
-addAnonymousStream :: DAG.Body -> Action DAG.Identifier
+addAnonymousStream :: DAG.Body -> Stream a
 addAnonymousStream body = do
     name <- buildUniqIdentifier "stream"
     addStream name body
 
-buildUniqIdentifier :: String -> Action DAG.Identifier
+buildUniqIdentifier :: String -> Stream a
 buildUniqIdentifier baseName = do
     dag <- get
     let id = idCounter dag
@@ -80,7 +77,7 @@ buildUniqIdentifier baseName = do
     where
         inc dag = dag { idCounter = idCounter dag + 1 }
 
-addStream :: DAG.Identifier -> DAG.Body -> Action DAG.Identifier
+addStream :: DAG.Identifier -> DAG.Body -> Stream a
 addStream name body = do
     streamTreeState <- get
     unless (DAG.hasStream (dag streamTreeState) name) $ do
@@ -90,6 +87,7 @@ addStream name body = do
         insertStream :: DAG.Stream -> DAGState -> DAGState
         insertStream stream x = x { dag = DAG.addStream (dag x) stream }
 
-addDependency :: DAG.Identifier -> DAG.Identifier -> Action ()
+addDependency :: DAG.Identifier -> DAG.Identifier -> Stream a
 addDependency source destination = do
     modify (\x -> x { dag = DAG.addDependency source destination (dag x) })
+    return destination
