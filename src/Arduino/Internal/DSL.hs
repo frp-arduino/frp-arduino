@@ -27,13 +27,20 @@ compileProgram state = do
     writeFile "main.c" cCode
 
 (=:) :: Output a -> Stream a -> Action ()
-(=:) output stream = do
+(=:) x stream = do
+    unStream (output x stream)
+    return ()
+
+input :: Output a -> Stream a
+input input = Stream $ do
+    addAnonymousStream (DAG.InputPin (unOutput input))
+
+output :: Output a -> Stream a -> Stream a
+output output stream = Stream $ do
     outputName <- addAnonymousStream (DAG.OutputPin (unOutput output))
     streamName <- unStream stream
     addDependency streamName outputName
-
-input :: Output a -> Stream a
-input input = Stream $ addAnonymousStream (DAG.InputPin (unOutput input))
+    return outputName
 
 clock :: Stream Int
 clock = Stream $ addBuiltinStream "clock"
