@@ -6,7 +6,8 @@ import Arduino.Internal.DSL
     ( compileProgram
     , Stream
     , Expression
-    , (=:)
+    , def
+    , (~>)
     , clock
     , streamMap
     , isEven

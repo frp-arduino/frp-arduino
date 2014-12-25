@@ -2,6 +2,6 @@ import Arduino.Uno
 
 main = compileProgram $ do
 
-    pin13 =: toggle clock
+    def $ clock ~> toggle ~> pin13
 
-    uart =: streamMap (\_ -> stringConstant "hello\r\n") clock
+    def $ clock ~> streamMap (\_ -> stringConstant "hello\r\n") ~> uart

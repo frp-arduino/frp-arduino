@@ -11,10 +11,15 @@ fail() {
     exit 1
 }
 
+mydiff() {
+    echo "kompare $1 $2"
+    diff $1 $2
+}
+
 test() {
     echo -n "Testing $1 ... "
     (./make $1 > $TEST_REPORT 2>&1) || fail
-    (diff examples/$1.c build-output/$1/main.c > $TEST_REPORT 2>&1) || fail
+    (mydiff examples/$1.c build-output/$1/main.c > $TEST_REPORT 2>&1) || fail
     echo "OK"
     rm $TEST_REPORT
 }

@@ -2,4 +2,4 @@ import Arduino.Uno
 
 main = compileProgram $ do
 
-    pin13 =: pin12in
+    def $ pin12in ~> pin13
