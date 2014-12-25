@@ -2,4 +2,4 @@ import Arduino.Uno
 
 main = compileProgram $ do
 
-    pin13 =: input pin12
+    pin13 =: pin12in

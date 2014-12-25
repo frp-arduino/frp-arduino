@@ -16,27 +16,25 @@ type Stream a = State DAGState DAG.Identifier
 
 newtype Expression a = Expression { unExpression :: DAG.Expression }
 
-newtype Output a = Output { unOutput :: DAG.Output }
-
 compileProgram :: Stream a -> IO ()
 compileProgram state = do
     let x = execState state (DAGState 1 DAG.emptyStreams)
     let cCode = streamsToC (dag x)
     writeFile "main.c" cCode
 
-(=:) :: Output a -> Stream a -> Stream a
-(=:) x stream = stream ~> output x
+(=:) :: (Stream a -> Stream b) -> Stream a -> Stream b
+(=:) x stream = stream ~> x
 
 (~>) :: Stream a -> (Stream a -> Stream b) -> Stream b
 (~>) input fn = fn input
 
-input :: Output a -> Stream a
+input :: DAG.Body -> Stream a
 input input = do
-    addAnonymousStream (DAG.InputPin (unOutput input))
+    addAnonymousStream input
 
-output :: Output a -> Stream a -> Stream a
+output :: DAG.Body -> Stream a -> Stream a
 output output stream = do
-    outputName <- addAnonymousStream (DAG.OutputPin (unOutput output))
+    outputName <- addAnonymousStream output
     streamName <- stream
     addDependency streamName outputName
 

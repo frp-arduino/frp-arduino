@@ -11,11 +11,14 @@ import qualified Arduino.Internal.DSL as DSL
 
 -- For mappings, see http://arduino.cc/en/Hacking/PinMapping168
 
-pin13 :: DSL.Output Bool
-pin13 = DSL.Output $ DAG.Pin "pin13" "PORTB" "PINB" "DDRB" "0x20U"
+pin13 :: Stream Bool -> Stream Bool
+pin13 = DSL.output $ DAG.OutputPin $ DAG.Pin "pin13" "PORTB" "PINB" "DDRB" "0x20U"
 
-pin12 :: DSL.Output Bool
-pin12 = DSL.Output $ DAG.Pin "pin12" "PORTB" "PINB" "DDRB" "0x10U"
+pin12 :: Stream Bool -> Stream Bool
+pin12 = DSL.output $ DAG.OutputPin $ DAG.Pin "pin12" "PORTB" "PINB" "DDRB" "0x10U"
 
-uart :: DSL.Output String
-uart = DSL.Output $ DAG.UART
+pin12in :: Stream Bool
+pin12in = DSL.input $ DAG.InputPin $ DAG.Pin "pin12" "PORTB" "PINB" "DDRB" "0x10U"
+
+uart :: Stream String -> Stream String
+uart = DSL.output $ DAG.OutputPin $ DAG.UART
