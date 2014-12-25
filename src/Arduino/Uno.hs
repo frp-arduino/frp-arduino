@@ -17,6 +17,9 @@ pin13 = DSL.output $ DAG.OutputPin $ DAG.Pin "pin13" "PORTB" "PINB" "DDRB" "0x20
 pin12 :: Stream Bool -> Stream Bool
 pin12 = DSL.output $ DAG.OutputPin $ DAG.Pin "pin12" "PORTB" "PINB" "DDRB" "0x10U"
 
+pin11 :: Stream Bool -> Stream Bool
+pin11 = DSL.output $ DAG.OutputPin $ DAG.Pin "pin11" "PORTB" "PINB" "DDRB" "0x08U"
+
 pin12in :: Stream Bool
 pin12in = DSL.input $ DAG.InputPin $ DAG.Pin "pin12" "PORTB" "PINB" "DDRB" "0x10U"
 
