@@ -25,7 +25,7 @@ static void stream_1(unsigned int input_0) {
   bool output;
   output = (input_0) % 2 == 0;
   stream_2(output);
-  stream_4(output);
+  stream_3(output);
 }
 
 static void stream_2(bool input_0) {
@@ -39,17 +39,17 @@ static void stream_2(bool input_0) {
 
 static void stream_3(bool input_0) {
   bool output;
+  output = !(input_0);
+  stream_4(output);
+}
+
+static void stream_4(bool input_0) {
+  bool output;
   if (input_0) {
     PORTB |= 0x10U;
   } else {
     PORTB &= ~(0x10U);
   }
-}
-
-static void stream_4(bool input_0) {
-  bool output;
-  output = !(input_0);
-  stream_3(output);
 }
 
 int main(void) {

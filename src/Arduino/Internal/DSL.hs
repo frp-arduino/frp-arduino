@@ -14,7 +14,7 @@ data DAGState = DAGState
 
 type Action a = State DAGState a
 
-newtype Stream a = Stream { unStream :: Action DAG.Identifier }
+newtype Stream a = Stream { unStream :: DAG.Identifier }
 
 newtype Expression a = Expression { unExpression :: DAG.Expression }
 
@@ -24,33 +24,34 @@ compileProgram action = do
     let cCode = streamsToC (dag x)
     writeFile "main.c" cCode
 
-def :: Stream a -> Action (Stream a)
-def stream = do
-    identifier <- unStream stream
-    return $ Stream $ return identifier
+(~>) :: Action (Stream a) -> (Action (Stream a) -> Action (Stream b)) -> Action (Stream b)
+(~>) input fn = do
+    x <- input
+    fn (return x)
 
-(~>) :: Stream a -> (Stream a -> Stream b) -> Stream b
-(~>) input fn = fn input
+input :: DAG.Body -> Action (Stream a)
+input input = do
+    x <- addAnonymousStream input
+    return $ Stream x
 
-input :: DAG.Body -> Stream a
-input input = Stream $ do
-    addAnonymousStream input
-
-output :: DAG.Body -> Stream a -> Stream a
-output output stream = Stream $ do
+output :: DAG.Body -> Action (Stream a) -> Action (Stream a)
+output output stream = do
     outputName <- addAnonymousStream output
-    streamName <- unStream stream
-    addDependency streamName outputName
+    streamName <- stream
+    x <- addDependency (unStream streamName) outputName
+    return $ Stream x
 
-clock :: Stream Int
-clock = Stream $ do
-    addBuiltinStream "clock"
+clock :: Action (Stream Int)
+clock = do
+    x <- addBuiltinStream "clock"
+    return $ Stream x
 
-streamMap :: (Expression a -> Expression b) -> Stream a -> Stream b
-streamMap fn stream = Stream $ do
-    lastName <- unStream stream
+streamMap :: (Expression a -> Expression b) -> Action (Stream a) -> Action (Stream b)
+streamMap fn stream = do
+    lastName <- stream
     thisName <- addAnonymousStream (DAG.Transform expression)
-    addDependency lastName thisName
+    x <- addDependency (unStream lastName) thisName
+    return $ Stream x
     where
         expression = unExpression $ fn $ Expression $ DAG.Input 0
 
