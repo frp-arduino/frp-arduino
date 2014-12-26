@@ -12,46 +12,42 @@ data DAGState = DAGState
     , dag       :: DAG.Streams
     }
 
-type Action a = State DAGState a
+type Statement a = State DAGState a
 
 newtype Stream a = Stream { unStream :: DAG.Identifier }
 
 newtype Expression a = Expression { unExpression :: DAG.Expression }
 
-compileProgram :: Action a -> IO ()
-compileProgram action = do
-    let x = execState action (DAGState 1 DAG.emptyStreams)
-    let cCode = streamsToC (dag x)
+compileProgram :: Statement a -> IO ()
+compileProgram statement = do
+    let dagState = execState statement (DAGState 1 DAG.emptyStreams)
+    let cCode = streamsToC (dag dagState)
     writeFile "main.c" cCode
 
-(~>) :: Action (Stream a) -> (Action (Stream a) -> Action (Stream b)) -> Action (Stream b)
-(~>) input fn = do
-    x <- input
-    fn (return x)
+(~>) :: Statement (Stream a) -> (Statement (Stream a) -> Statement (Stream b)) -> Statement (Stream b)
+(~>) inputStatement fn = do
+    stream <- inputStatement
+    fn (return stream)
 
-input :: DAG.Body -> Action (Stream a)
-input input = do
-    x <- addAnonymousStream input
-    return $ Stream x
+input :: DAG.Body -> Statement (Stream a)
+input body = fmap Stream $ do
+    addAnonymousStream body
 
-output :: DAG.Body -> Action (Stream a) -> Action (Stream a)
-output output stream = do
+output :: DAG.Body -> Statement (Stream a) -> Statement (Stream a)
+output output streamStatement = fmap Stream $ do
     outputName <- addAnonymousStream output
-    streamName <- stream
-    x <- addDependency (unStream streamName) outputName
-    return $ Stream x
+    stream <- streamStatement
+    addDependency (unStream stream) outputName
 
-clock :: Action (Stream Int)
-clock = do
-    x <- addBuiltinStream "clock"
-    return $ Stream x
+clock :: Statement (Stream Int)
+clock = fmap Stream $ do
+    addBuiltinStream "clock"
 
-streamMap :: (Expression a -> Expression b) -> Action (Stream a) -> Action (Stream b)
-streamMap fn stream = do
-    lastName <- stream
-    thisName <- addAnonymousStream (DAG.Transform expression)
-    x <- addDependency (unStream lastName) thisName
-    return $ Stream x
+streamMap :: (Expression a -> Expression b) -> Statement (Stream a) -> Statement (Stream b)
+streamMap fn inputStatement = fmap Stream $ do
+    inputStream <- inputStatement
+    expressionStreamName <- addAnonymousStream (DAG.Transform expression)
+    addDependency (unStream inputStream) expressionStreamName
     where
         expression = unExpression $ fn $ Expression $ DAG.Input 0
 
@@ -64,15 +60,15 @@ isEven = Expression . DAG.Even . unExpression
 stringConstant :: String -> Expression String
 stringConstant = Expression . DAG.StringConstant
 
-addBuiltinStream :: DAG.Identifier -> Action DAG.Identifier
+addBuiltinStream :: DAG.Identifier -> Statement DAG.Identifier
 addBuiltinStream name = addStream name (DAG.Builtin name)
 
-addAnonymousStream :: DAG.Body -> Action DAG.Identifier
+addAnonymousStream :: DAG.Body -> Statement DAG.Identifier
 addAnonymousStream body = do
     name <- buildUniqIdentifier "stream"
     addStream name body
 
-buildUniqIdentifier :: String -> Action DAG.Identifier
+buildUniqIdentifier :: String -> Statement DAG.Identifier
 buildUniqIdentifier baseName = do
     dag <- get
     let id = idCounter dag
@@ -81,7 +77,7 @@ buildUniqIdentifier baseName = do
     where
         inc dag = dag { idCounter = idCounter dag + 1 }
 
-addStream :: DAG.Identifier -> DAG.Body -> Action DAG.Identifier
+addStream :: DAG.Identifier -> DAG.Body -> Statement DAG.Identifier
 addStream name body = do
     streamTreeState <- get
     unless (DAG.hasStream (dag streamTreeState) name) $ do
@@ -91,7 +87,7 @@ addStream name body = do
         insertStream :: DAG.Stream -> DAGState -> DAGState
         insertStream stream x = x { dag = DAG.addStream (dag x) stream }
 
-addDependency :: DAG.Identifier -> DAG.Identifier -> Action DAG.Identifier
+addDependency :: DAG.Identifier -> DAG.Identifier -> Statement DAG.Identifier
 addDependency source destination = do
     modify (\x -> x { dag = DAG.addDependency source destination (dag x) })
     return destination

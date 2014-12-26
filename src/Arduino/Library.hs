@@ -4,8 +4,8 @@ import Prelude hiding (not)
 
 import Arduino.Language
 
-toggle :: Action (Stream Int) -> Action (Stream Bool)
+toggle :: Statement (Stream Int) -> Statement (Stream Bool)
 toggle = streamMap isEven
 
-invert :: Action (Stream Bool) -> Action (Stream Bool)
+invert :: Statement (Stream Bool) -> Statement (Stream Bool)
 invert = streamMap not

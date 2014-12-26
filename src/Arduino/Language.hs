@@ -3,10 +3,10 @@ module Arduino.Language
     ) where
 
 import Arduino.Internal.DSL
-    ( compileProgram
+    ( Statement
     , Stream
     , Expression
-    , Action
+    , compileProgram
     , (~>)
     , clock
     , streamMap
