@@ -25,6 +25,8 @@ data Expression = Input Int
                 | Not Expression
                 | Even Expression
                 | StringConstant String
+                | BoolConstant Bool
+                | If Expression Expression Expression
 
 type Identifier = String
 

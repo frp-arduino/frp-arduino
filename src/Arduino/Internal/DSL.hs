@@ -51,6 +51,26 @@ streamMap fn inputStatement = fmap Stream $ do
     where
         expression = unExpression $ fn $ Expression $ DAG.Input 0
 
+combine :: (Expression a -> Expression b -> Expression c)
+        -> Statement (Stream a)
+        -> Statement (Stream b)
+        -> Statement (Stream c)
+combine fn left right = fmap Stream $ do
+    leftStream <- left
+    rightStream <- right
+    expressionStreamName <- addAnonymousStream (DAG.Transform expression)
+    addDependency (unStream leftStream) expressionStreamName
+    addDependency (unStream rightStream) expressionStreamName
+    where
+        expression = unExpression $ fn (Expression $ DAG.Input 0)
+                                       (Expression $ DAG.Input 1)
+
+if_ :: Expression Bool -> Expression a -> Expression a -> Expression a
+if_ condition trueExpression falseExpression =
+    Expression (DAG.If (unExpression condition)
+                       (unExpression trueExpression)
+                       (unExpression falseExpression))
+
 not :: Expression Bool -> Expression Bool
 not = Expression . DAG.Not . unExpression
 
@@ -59,6 +79,9 @@ isEven = Expression . DAG.Even . unExpression
 
 stringConstant :: String -> Expression String
 stringConstant = Expression . DAG.StringConstant
+
+boolConstant :: Bool -> Expression Bool
+boolConstant = Expression . DAG.BoolConstant
 
 addBuiltinStream :: DAG.Identifier -> Statement DAG.Identifier
 addBuiltinStream name = addStream name (DAG.Builtin name)

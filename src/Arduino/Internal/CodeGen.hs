@@ -1,7 +1,7 @@
 module Arduino.Internal.CodeGen where
 
 import Control.Monad.State
-import Data.List (intercalate)
+import Data.List (intercalate, elemIndex)
 import Data.Maybe (fromJust)
 import qualified Data.Map as M
 
@@ -31,16 +31,36 @@ genStreamCFunction streams stream = do
     let declaration = ("static void " ++ name stream ++
                        "(" ++ streamToArgumentList streams stream ++ ")")
     cFunction declaration $ do
+        when ((length (inputs stream)) > 1) $ do
+            forM_ (zip [0..] (inputs stream)) $ \(n, input) -> do
+                let cType = streamCType streams (streamFromId streams input)
+                line $ "static " ++ cType ++ " input_" ++ show n ++ ";"
+            block "switch (arg) {" $ do
+                forM_ (zip [0..] (inputs stream)) $ \(n, input) -> do
+                    let cType = streamCType streams (streamFromId streams input)
+                    block ("case " ++ show n ++ ":") $ do
+                        line $ "input_" ++ show n ++ " = *((" ++ cType ++ "*)value);"
+                        line $ "break;"
+            line $ "}"
         line $ (streamCType streams) stream ++ " output;"
         genStreamBody (body stream)
-        mapM_ (\x -> line (x ++ "(output);")) (outputs stream)
+        forM_ (outputs stream) $ \x -> do
+            if (length (inputs (streamFromId streams x))) > 1
+                then do
+                    let n = fromJust $ elemIndex (name stream) (inputs (streamFromId streams x))
+                    line (x ++ "(" ++ show n ++ ", (void*)(&output));")
+                else do
+                    line (x ++ "(output);")
 
 streamToArgumentList :: Streams -> Stream -> String
-streamToArgumentList streams stream =
-    intercalate ", " $
-    map (\(input, t) -> t ++ " input_" ++ show input) $
-    zip [0..] $
-    map (streamCType streams) (map (streamFromId streams) (inputs stream))
+streamToArgumentList streams stream
+    | length (inputs stream) <= 1 =
+        intercalate ", " $
+        map (\(input, t) -> t ++ " input_" ++ show input) $
+        zip [0..] $
+        map (streamCType streams) (map (streamFromId streams) (inputs stream))
+    | otherwise =
+        "int arg, void* value"
 
 streamCType :: Streams -> Stream -> String
 streamCType streams stream = case body stream of
@@ -59,6 +79,8 @@ expressionCType inputMap expression = case expression of
     (Not _)            -> "bool"
     (Even _)           -> "bool"
     (StringConstant _) -> "char *"
+    (BoolConstant _)   -> "bool"
+    (If _ _ x)         -> expressionCType inputMap x
 
 genStreamBody :: Body -> Gen ()
 genStreamBody body = case body of
@@ -99,6 +121,21 @@ genExpression expression = case expression of
     (StringConstant value) -> do
         temp <- label
         line $ "char " ++ temp ++ "[] = " ++ show value ++ ";"
+        return temp
+    (BoolConstant value) -> do
+        if value
+            then (return "true")
+            else (return "false")
+    (If conditionExpression trueExpression falseExpression) -> do
+        let temp = "output"
+        conditionResult <- genExpression conditionExpression
+        trueResult <- genExpression trueExpression
+        falseResult <- genExpression falseExpression
+        block ("if (" ++ conditionResult ++ ") {") $ do
+            line $ temp ++ " = " ++ trueResult ++ ";"
+        block "} else {" $ do
+            line $ temp ++ " = " ++ falseResult ++ ";"
+        line $ "}"
         return temp
 
 genInit :: Stream -> Gen ()

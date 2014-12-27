@@ -28,3 +28,4 @@ test Blink
 test DoubleBlink
 test UART
 test Input
+test Combine

@@ -10,7 +10,10 @@ import Arduino.Internal.DSL
     , (~>)
     , clock
     , streamMap
+    , combine
     , isEven
+    , if_
     , not
     , stringConstant
+    , boolConstant
     )
