@@ -15,8 +15,15 @@ else
     cd $OUTPUT_DIR
     ./$EXAMPLE
     cat << EOF > Makefile
+NO_CORE = Yes
+
 BOARD_TAG = uno
-ARDUINO_LIBS =
+MCU = atmega328p
+F_CPU = 16000000L
+
+AVRDUDE_ARD_PROGRAMMER = arduino
+AVRDUDE_ARD_BAUDRATE = 115200
+
 include ../../Arduino-Makefile/Arduino.mk
 EOF
     make $TARGET
