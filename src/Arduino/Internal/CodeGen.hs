@@ -28,50 +28,55 @@ genStreamsCFile streams = do
 
 genStreamCFunction :: Streams -> Stream -> Gen ()
 genStreamCFunction streams stream = do
+    let args = streamArguments streams (name stream)
     let declaration = ("static void " ++ name stream ++
                        "(" ++ streamToArgumentList streams stream ++ ")")
     cFunction declaration $ do
-        when ((length (inputs stream)) > 1) $ do
-            forM_ (zip [0..] (inputs stream)) $ \(n, input) -> do
-                let cType = streamCType streams (streamFromId streams input)
-                line $ "static " ++ cType ++ " input_" ++ show n ++ ";"
-            block "switch (arg) {" $ do
-                forM_ (zip [0..] (inputs stream)) $ \(n, input) -> do
-                    let cType = streamCType streams (streamFromId streams input)
-                    block ("case " ++ show n ++ ":") $ do
-                        line $ "input_" ++ show n ++ " = *((" ++ cType ++ "*)value);"
-                        line $ "break;"
-            line $ "}"
-        line $ (streamCType streams) stream ++ " output;"
+        line $ streamCType streams (name stream) ++ " output;"
+        genStreamInputParsing args
         genStreamBody (body stream)
-        forM_ (outputs stream) $ \x -> do
-            if (length (inputs (streamFromId streams x))) > 1
-                then do
-                    let n = fromJust $ elemIndex (name stream) (inputs (streamFromId streams x))
-                    line (x ++ "(" ++ show n ++ ", (void*)(&output));")
-                else do
-                    line (x ++ "(output);")
+        genStreamOuputCalling streams stream
 
 streamToArgumentList :: Streams -> Stream -> String
 streamToArgumentList streams stream
-    | length (inputs stream) <= 1 =
-        intercalate ", " $
-        map (\(input, t) -> t ++ " input_" ++ show input) $
-        zip [0..] $
-        map (streamCType streams) (map (streamFromId streams) (inputs stream))
+    | length args <= 1 =
+        intercalate ", " $ map (\(name, cType, _) -> (cType ++ " " ++ name)) args
     | otherwise =
         "int arg, void* value"
+    where
+        args = streamArguments streams (name stream)
 
-streamCType :: Streams -> Stream -> String
-streamCType streams stream = case body stream of
+streamArguments :: Streams -> String -> [(String, String, Int)]
+streamArguments streams streamName =
+    map (\(input, cType) -> ("input_" ++ show input, cType, input)) $
+    zip [0..] $
+    map (streamCType streams) $
+    inputs $
+    streamFromId streams streamName
+
+genStreamInputParsing :: [(String, String, Int)] -> Gen ()
+genStreamInputParsing args = do
+    when ((length args) > 1) $ do
+        forM_ args $ \(name, cType, _) -> do
+            line $ "static " ++ cType ++ " " ++ name ++ ";"
+        block "switch (arg) {" $ do
+            forM_ args $ \(name, cType, n) -> do
+                block ("case " ++ show n ++ ":") $ do
+                    line $ name ++ " = *((" ++ cType ++ "*)value);"
+                    line $ "break;"
+        line $ "}"
+
+streamCType :: Streams -> String -> String
+streamCType streams streamName = case body stream of
     (OutputPin (Pin _ _ _ _ _)) -> "bool"
     (InputPin (Pin _ _ _ _ _))  -> "bool"
     (OutputPin (UART))          -> "char *"
     (Builtin "clock")           -> "unsigned int"
     (Transform expression)      -> expressionCType inputMap expression
     where
-        inputMap = M.fromList $ zip [0..] $ map (streamCType streams) x
-        x = (map (streamFromId streams) (inputs stream))
+        inputMap = M.fromList $ zip [0..] inputTypes
+        inputTypes = map (streamCType streams) (inputs stream)
+        stream = streamFromId streams streamName
 
 expressionCType :: M.Map Int String -> Expression -> String
 expressionCType inputMap expression = case expression of
@@ -107,6 +112,16 @@ genStreamBody body = case body of
         line $ "static unsigned int " ++ temp ++ " = 0U;"
         line $ temp ++ "++;"
         line $ "output = " ++ temp ++ ";"
+
+genStreamOuputCalling :: Streams -> Stream -> Gen ()
+genStreamOuputCalling streams stream = do
+    forM_ (outputs stream) $ \x -> do
+        if (length (inputs (streamFromId streams x))) > 1
+            then do
+                let n = fromJust $ elemIndex (name stream) (inputs (streamFromId streams x))
+                line (x ++ "(" ++ show n ++ ", (void*)(&output));")
+            else do
+                line (x ++ "(output);")
 
 genExpression :: Expression -> Gen String
 genExpression expression = case expression of

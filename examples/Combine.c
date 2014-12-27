@@ -71,6 +71,7 @@ static void stream_4() {
 }
 
 static void stream_5(int arg, void* value) {
+  bool output;
   static bool input_0;
   static bool input_1;
   switch (arg) {
@@ -81,7 +82,6 @@ static void stream_5(int arg, void* value) {
       input_1 = *((bool*)value);
       break;
   }
-  bool output;
   if (input_0) {
     output = input_1;
   } else {
@@ -113,6 +113,7 @@ static void stream_8(bool input_0) {
 }
 
 static void stream_9(int arg, void* value) {
+  bool output;
   static bool input_0;
   static bool input_1;
   switch (arg) {
@@ -123,7 +124,6 @@ static void stream_9(int arg, void* value) {
       input_1 = *((bool*)value);
       break;
   }
-  bool output;
   if (input_0) {
     output = input_1;
   } else {
