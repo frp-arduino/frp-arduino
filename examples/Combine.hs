@@ -7,13 +7,13 @@ main = compileProgram $ do
     let redLed1 = pin11
     let redLed2 = pin10
 
-    clock ~> toggle ~> \toggled -> do
+    toggled <- def $ clock ~> toggle
 
-        button ~> greenLed
+    greenLed =: button
 
-        combine pick button toggled ~> redLed1
+    redLed1 =: combine pick button toggled
 
-        combine pick button (invert toggled) ~> redLed2
+    redLed2 =: combine pick button (invert toggled)
 
 pick :: Expression Bool -> Expression Bool -> Expression Bool
 pick first second = if_ first second (boolConstant False)

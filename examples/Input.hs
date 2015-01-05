@@ -2,6 +2,6 @@ import Arduino.Uno
 
 main = compileProgram $ do
 
-    pin12in ~> pin13
+    pin13 =: pin12in
 
-    clock ~> toggle ~> pin11
+    pin11 =: (clock ~> toggle)

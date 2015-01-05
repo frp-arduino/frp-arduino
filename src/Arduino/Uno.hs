@@ -11,20 +11,20 @@ import qualified Arduino.Internal.DSL as DSL
 
 -- For mappings, see http://arduino.cc/en/Hacking/PinMapping168
 
-pin13 :: Statement (Stream Bool) -> Statement (Stream Bool)
-pin13 = DSL.output $ DAG.OutputPin $ DAG.Pin "pin13" "PORTB" "PINB" "DDRB" "0x20U"
+pin13 :: DSL.Output Bool
+pin13 = DSL.Output $ DAG.OutputPin $ DAG.Pin "pin13" "PORTB" "PINB" "DDRB" "0x20U"
 
-pin12 :: Statement (Stream Bool) -> Statement (Stream Bool)
-pin12 = DSL.output $ DAG.OutputPin $ DAG.Pin "pin12" "PORTB" "PINB" "DDRB" "0x10U"
+pin12 :: DSL.Output Bool
+pin12 = DSL.Output $ DAG.OutputPin $ DAG.Pin "pin12" "PORTB" "PINB" "DDRB" "0x10U"
 
-pin11 :: Statement (Stream Bool) -> Statement (Stream Bool)
-pin11 = DSL.output $ DAG.OutputPin $ DAG.Pin "pin11" "PORTB" "PINB" "DDRB" "0x08U"
+pin11 :: DSL.Output Bool
+pin11 = DSL.Output $ DAG.OutputPin $ DAG.Pin "pin11" "PORTB" "PINB" "DDRB" "0x08U"
 
-pin10 :: Statement (Stream Bool) -> Statement (Stream Bool)
-pin10 = DSL.output $ DAG.OutputPin $ DAG.Pin "pin10" "PORTB" "PINB" "DDRB" "0x04U"
+pin10 :: DSL.Output Bool
+pin10 = DSL.Output $ DAG.OutputPin $ DAG.Pin "pin10" "PORTB" "PINB" "DDRB" "0x04U"
 
-pin12in :: Statement (Stream Bool)
+pin12in :: Stream Bool
 pin12in = DSL.input $ DAG.InputPin $ DAG.Pin "pin12" "PORTB" "PINB" "DDRB" "0x10U"
 
-uart :: Statement (Stream String) -> Statement (Stream String)
-uart = DSL.output $ DAG.OutputPin $ DAG.UART
+uart :: DSL.Output String
+uart = DSL.Output $ DAG.OutputPin $ DAG.UART

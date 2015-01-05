@@ -2,8 +2,8 @@ import Arduino.Uno
 
 main = compileProgram $ do
 
-    clock ~> toggle ~> \toggled -> do
+    toggled <- def $ clock ~> toggle
 
-        toggled ~> pin13
+    pin13 =: toggled
 
-        toggled ~> invert ~> pin12
+    pin12 =: (toggled ~> invert)
