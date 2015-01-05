@@ -149,5 +149,5 @@ inputPin name directionRegister portRegister pinRegister pinMask =
         line $ directionRegister ++ " &= ~(" ++ pinMask ++ ");"
         line $ portRegister ++ " |= " ++ pinMask ++ ";"
     , DAG.bodyCode = do
-        line $ "output = (" ++ pinRegister ++ " & " ++ pinMask ++ ") == " ++ pinMask ++ ";"
+        line $ "output = (" ++ pinRegister ++ " & " ++ pinMask ++ ") == 0U;"
     }

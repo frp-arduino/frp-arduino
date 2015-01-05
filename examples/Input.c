@@ -23,7 +23,7 @@ static void clock() {
 
 static void stream_1() {
   bool output;
-  output = (PINB & 0x10U) == 0x10U;
+  output = (PINB & 0x10U) == 0U;
   stream_2(output);
 }
 

@@ -51,7 +51,7 @@ static void stream_10(bool input_0) {
 
 static void stream_2() {
   bool output;
-  output = (PINB & 0x10U) == 0x10U;
+  output = (PINB & 0x10U) == 0U;
   stream_3(output);
 }
 
@@ -66,7 +66,7 @@ static void stream_3(bool input_0) {
 
 static void stream_4() {
   bool output;
-  output = (PINB & 0x10U) == 0x10U;
+  output = (PINB & 0x10U) == 0U;
   stream_5(0, (void*)(&output));
 }
 
@@ -102,7 +102,7 @@ static void stream_6(bool input_0) {
 
 static void stream_7() {
   bool output;
-  output = (PINB & 0x10U) == 0x10U;
+  output = (PINB & 0x10U) == 0U;
   stream_9(0, (void*)(&output));
 }
 
