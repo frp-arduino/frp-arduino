@@ -25,7 +25,7 @@ pin10 :: DSL.Output Bool
 pin10 = DSL.outputPin "pin10" "DDRB" "PORTB" "0x04U"
 
 pin12in :: Stream Bool
-pin12in = DSL.inputPin "pin12in" "DDRB" "PORTB" "PINB" "0x10U"
+pin12in = DSL.inputPin "pin12" "DDRB" "PORTB" "PINB" "0x10U"
 
 uart :: DSL.Output String
 uart = DSL.Output $ DAG.Pin $ DAG.PinDefinition

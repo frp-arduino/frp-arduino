@@ -5,29 +5,29 @@
 
 static void clock();
 
-static void stream_1();
+static void input_pin12();
 
-static void stream_2(bool input_0);
+static void stream_1(bool input_0);
 
-static void stream_3(unsigned int input_0);
+static void stream_2(unsigned int input_0);
 
-static void stream_4(bool input_0);
+static void stream_3(bool input_0);
 
 static void clock() {
   unsigned int output;
   static unsigned int temp0 = 0U;
   temp0++;
   output = temp0;
-  stream_3(output);
-}
-
-static void stream_1() {
-  bool output;
-  output = (PINB & 0x10U) == 0U;
   stream_2(output);
 }
 
-static void stream_2(bool input_0) {
+static void input_pin12() {
+  bool output;
+  output = (PINB & 0x10U) == 0U;
+  stream_1(output);
+}
+
+static void stream_1(bool input_0) {
   bool output;
   if (input_0) {
     PORTB |= 0x20U;
@@ -36,13 +36,13 @@ static void stream_2(bool input_0) {
   }
 }
 
-static void stream_3(unsigned int input_0) {
+static void stream_2(unsigned int input_0) {
   bool output;
   output = (input_0) % 2 == 0;
-  stream_4(output);
+  stream_3(output);
 }
 
-static void stream_4(bool input_0) {
+static void stream_3(bool input_0) {
   bool output;
   if (input_0) {
     PORTB |= 0x08U;
@@ -62,7 +62,7 @@ int main(void) {
       TCNT1 = 0;
       clock();
     }
-    stream_1();
+    input_pin12();
   }
   return 0;
 }

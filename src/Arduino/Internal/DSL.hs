@@ -45,10 +45,6 @@ def stream = do
     let outputStream = fn (Stream (return streamName))
     unStream $ outputStream
 
-input :: DAG.Body -> Stream a
-input body = Stream $ do
-    addAnonymousStream body
-
 clock :: Stream Int
 clock = Stream $ do
     addBuiltinStream "clock"
@@ -142,12 +138,14 @@ outputPin name directionRegister portRegister pinMask =
 
 inputPin :: String -> String -> String -> String -> String -> Stream Bool
 inputPin name directionRegister portRegister pinRegister pinMask =
-    input $ DAG.Pin $ DAG.PinDefinition
-    { DAG.pinName  = name
-    , DAG.cType    = "bool"
-    , DAG.initCode = do
-        line $ directionRegister ++ " &= ~(" ++ pinMask ++ ");"
-        line $ portRegister ++ " |= " ++ pinMask ++ ";"
-    , DAG.bodyCode = do
-        line $ "output = (" ++ pinRegister ++ " & " ++ pinMask ++ ") == 0U;"
-    }
+    Stream $ do
+        let body = DAG.Pin $ DAG.PinDefinition
+                      { DAG.pinName  = name
+                      , DAG.cType    = "bool"
+                      , DAG.initCode = do
+                          line $ directionRegister ++ " &= ~(" ++ pinMask ++ ");"
+                          line $ portRegister ++ " |= " ++ pinMask ++ ";"
+                      , DAG.bodyCode = do
+                          line $ "output = (" ++ pinRegister ++ " & " ++ pinMask ++ ") == 0U;"
+                      }
+        addStream ("input_" ++ name) body
