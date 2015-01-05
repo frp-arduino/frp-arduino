@@ -10,8 +10,8 @@ import Arduino.Internal.DSL
     , (=:)
     , (~>)
     , clock
-    , streamMap
-    , combine
+    , mapS
+    , mapS2
     , isEven
     , if_
     , not

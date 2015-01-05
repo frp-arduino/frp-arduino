@@ -49,19 +49,19 @@ clock :: Stream Int
 clock = Stream $ do
     addBuiltinStream "clock"
 
-streamMap :: (Expression a -> Expression b) -> Stream a -> Stream b
-streamMap fn stream = Stream $ do
+mapS :: (Expression a -> Expression b) -> Stream a -> Stream b
+mapS fn stream = Stream $ do
     streamName <- unStream stream
     expressionStreamName <- addAnonymousStream (DAG.Transform expression)
     addDependency streamName expressionStreamName
     where
         expression = unExpression $ fn $ Expression $ DAG.Input 0
 
-combine :: (Expression a -> Expression b -> Expression c)
-        -> Stream a
-        -> Stream b
-        -> Stream c
-combine fn left right = Stream $ do
+mapS2 :: (Expression a -> Expression b -> Expression c)
+      -> Stream a
+      -> Stream b
+      -> Stream c
+mapS2 fn left right = Stream $ do
     leftName <- unStream left
     rightName <- unStream right
     expressionStreamName <- addAnonymousStream (DAG.Transform expression)

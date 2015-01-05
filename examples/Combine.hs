@@ -2,18 +2,15 @@ import Arduino.Uno
 
 main = compileProgram $ do
 
-    let button = pin12in
-    let greenLed = pin13
-    let redLed1 = pin11
-    let redLed2 = pin10
+    let buttonPressStream = pin12in
+    let greenLed          = pin13
+    let redLed1           = pin11
+    let redLed2           = pin10
 
-    toggled <- def $ clock ~> toggle
+    blinkStream <- def $ clock ~> toggle
 
-    greenLed =: button
+    greenLed =: buttonPressStream
 
-    redLed1 =: combine pick button toggled
+    redLed1 =: keepWhen buttonPressStream (boolConstant False) blinkStream
 
-    redLed2 =: combine pick button (invert toggled)
-
-pick :: Expression Bool -> Expression Bool -> Expression Bool
-pick first second = if_ first second (boolConstant False)
+    redLed2 =: keepWhen buttonPressStream (boolConstant False) (invert blinkStream)
