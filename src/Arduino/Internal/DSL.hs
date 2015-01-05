@@ -5,6 +5,7 @@ import qualified Data.Map as M
 import Prelude hiding (not)
 
 import Arduino.Internal.CodeGen (streamsToC)
+import CCodeGen
 import qualified Arduino.Internal.DAG as DAG
 
 data DAGState = DAGState
@@ -123,3 +124,30 @@ addDependency :: DAG.Identifier -> DAG.Identifier -> Action DAG.Identifier
 addDependency source destination = do
     modify (\x -> x { dag = DAG.addDependency source destination (dag x) })
     return destination
+
+outputPin :: String -> String -> String -> String -> Output Bool
+outputPin name directionRegister portRegister pinMask =
+    Output $ DAG.Pin $ DAG.PinDefinition
+    { DAG.pinName  = name
+    , DAG.cType    = "bool"
+    , DAG.initCode = do
+        line $ directionRegister ++ " |= " ++ pinMask ++ ";"
+    , DAG.bodyCode = do
+        block "if (input_0) {" $ do
+            line $ portRegister ++ " |= " ++ pinMask ++ ";"
+        block "} else {" $ do
+            line $ portRegister ++ " &= ~(" ++ pinMask ++ ");"
+        line "}"
+    }
+
+inputPin :: String -> String -> String -> String -> String -> Stream Bool
+inputPin name directionRegister portRegister pinRegister pinMask =
+    input $ DAG.Pin $ DAG.PinDefinition
+    { DAG.pinName  = name
+    , DAG.cType    = "bool"
+    , DAG.initCode = do
+        line $ directionRegister ++ " &= ~(" ++ pinMask ++ ");"
+        line $ portRegister ++ " |= " ++ pinMask ++ ";"
+    , DAG.bodyCode = do
+        line $ "output = (" ++ pinRegister ++ " & " ++ pinMask ++ ") == " ++ pinMask ++ ";"
+    }

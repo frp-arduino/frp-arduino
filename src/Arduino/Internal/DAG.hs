@@ -4,6 +4,8 @@ import Control.Monad.State
 import Data.Maybe (fromJust)
 import qualified Data.Map as M
 
+import CCodeGen (Gen)
+
 type Streams = M.Map Identifier Stream
 
 data Stream = Stream
@@ -13,13 +15,16 @@ data Stream = Stream
     , outputs :: [Identifier]
     }
 
-data Body = OutputPin Output
-          | InputPin Output
-          | Builtin String
+data Body = Builtin String
+          | Pin PinDefinition
           | Transform Expression
 
-data Output = Pin String String String String String
-            | UART
+data PinDefinition = PinDefinition
+    { pinName  :: String
+    , initCode :: Gen ()
+    , bodyCode :: Gen ()
+    , cType    :: String
+    }
 
 data Expression = Input Int
                 | Not Expression

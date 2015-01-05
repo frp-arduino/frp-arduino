@@ -6,6 +6,7 @@ import Data.Maybe (fromJust)
 import qualified Data.Map as M
 
 import Arduino.Internal.DAG
+import CCodeGen
 
 streamsToC :: Streams -> String
 streamsToC = runGen . genStreamsCFile
@@ -68,11 +69,9 @@ genStreamInputParsing args = do
 
 streamCType :: Streams -> String -> String
 streamCType streams streamName = case body stream of
-    (OutputPin (Pin _ _ _ _ _)) -> "bool"
-    (InputPin (Pin _ _ _ _ _))  -> "bool"
-    (OutputPin (UART))          -> "char *"
-    (Builtin "clock")           -> "unsigned int"
-    (Transform expression)      -> expressionCType inputMap expression
+    (Pin pin)              -> cType pin
+    (Builtin "clock")      -> "unsigned int"
+    (Transform expression) -> expressionCType inputMap expression
     where
         inputMap = M.fromList $ zip [0..] inputTypes
         inputTypes = map (streamCType streams) (inputs stream)
@@ -89,21 +88,8 @@ expressionCType inputMap expression = case expression of
 
 genStreamBody :: Body -> Gen ()
 genStreamBody body = case body of
-    (OutputPin (Pin _ portRegister _ _ pinMask)) -> do
-        block "if (input_0) {" $ do
-            line $ portRegister ++ " |= " ++ pinMask ++ ";"
-        block "} else {" $ do
-            line $ portRegister ++ " &= ~(" ++ pinMask ++ ");"
-        line "}"
-    (OutputPin UART) -> do
-        block "while (*input_0 != 0) {" $ do
-            line $ "while ((UCSR0A & (1 << UDRE0)) == 0) {"
-            line $ "}"
-            line $ "UDR0 = *input_0;"
-            line $ "input_0++;"
-        line $ "}"
-    (InputPin (Pin _ _ pinRegister _ pinMask)) -> do
-        line $ "output = (" ++ pinRegister ++ " & " ++ pinMask ++ ") == " ++ pinMask ++ ";"
+    (Pin pin) -> do
+        bodyCode pin
     (Transform expression) -> do
         e <- genExpression expression
         line $ "output = " ++ e ++ ";"
@@ -155,24 +141,8 @@ genExpression expression = case expression of
 
 genInit :: Stream -> Gen ()
 genInit stream = case body stream of
-    (InputPin (Pin _ portRegister _ directionRegister pinMask)) -> do
-        line $ directionRegister ++ " &= ~(" ++ pinMask ++ ");"
-        line $ portRegister ++ " |= " ++ pinMask ++ ";"
-    (OutputPin (Pin _ _ _ directionRegister pinMask)) -> do
-        line $ directionRegister ++ " |= " ++ pinMask ++ ";"
-    (OutputPin UART) -> do
-        line $ "#define F_CPU 16000000UL"
-        line $ "#define BAUD 9600"
-        line $ "#include <util/setbaud.h>"
-        line $ "UBRR0H = UBRRH_VALUE;"
-        line $ "UBRR0L = UBRRL_VALUE;"
-        block "#if USE_2X" $ do
-            line $ "UCSR0A |= (1 << U2X0);"
-        block "#else" $ do
-            line $ "UCSR0A &= ~((1 << U2X0));"
-        line $ "#endif"
-        line $ "UCSR0C = (1 << UCSZ01) |(1 << UCSZ00);"
-        line $ "UCSR0B = (1 << RXEN0) | (1 << TXEN0);"
+    (Pin pin) -> do
+        initCode pin
     (Builtin "clock") -> do
         line $ "TCCR1B = (1 << CS12) | (1 << CS10);"
     _ -> do
@@ -180,8 +150,9 @@ genInit stream = case body stream of
 
 genInputCall :: Stream -> Gen ()
 genInputCall stream = case body stream of
-    (InputPin _) -> do
-        line (name stream ++ "();")
+    (Pin _) -> do
+        when (length (inputs stream) == 0) $ do
+            line (name stream ++ "();")
     (Builtin "clock") -> do
         block "if (TCNT1 >= 10000) {" $ do
             line "TCNT1 = 0;"
@@ -189,60 +160,3 @@ genInputCall stream = case body stream of
         line "}"
     _ -> do
         return ()
-
-data GenState = GenState
-    { labelCounter :: Int
-    , indentLevel  :: Int
-    , headerLines  :: [String]
-    , bodyLines    :: [String]
-    }
-
-type Gen a = State GenState a
-
-runGen :: Gen a -> String
-runGen gen = unlines $ reverse (headerLines genState) ++
-                       reverse (bodyLines genState)
-    where
-        genState = execState gen emptyGenState
-
-emptyGenState :: GenState
-emptyGenState = GenState 0 0 [] []
-
-label :: Gen String
-label = do
-    genState <- get
-    modify $ \genState -> genState { labelCounter = 1 + labelCounter genState }
-    return $ "temp" ++ show (labelCounter genState)
-
-block :: String -> Gen a -> Gen a
-block x gen = do
-    line x
-    indent gen
-    where
-        indent :: Gen a -> Gen a
-        indent gen = do
-            modify $ \genState -> genState { indentLevel = indentLevel genState + 1 }
-            x <- gen
-            modify $ \genState -> genState { indentLevel = indentLevel genState - 1 }
-            return x
-
-header :: String -> Gen ()
-header line = do
-    modify (prependLine line)
-    where
-        prependLine line genState = genState { headerLines = line : headerLines genState }
-
-line :: String -> Gen ()
-line line = do
-    modify (prependLine line)
-    where
-        prependLine line genState = genState { bodyLines = ((concat (replicate (indentLevel genState) "  ")) ++ line) : bodyLines genState }
-
-cFunction :: String -> Gen a -> Gen a
-cFunction declaration gen = do
-    header $ ""
-    header $ declaration ++ ";"
-    line $ ""
-    x <- block (declaration ++ " {") gen
-    line $ "}"
-    return x
