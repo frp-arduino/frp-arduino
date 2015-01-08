@@ -3,6 +3,7 @@
   * [FRP](#frp)
   * [EDSL](#edsl)
   * [Compiles to C](#compiles-to-c)
+* [Contributing](#contributing)
 * [License](#license)
 
 ## Introduction
@@ -39,6 +40,19 @@ time depending on if a button connected to that input is pressed or not.
 ### EDSL
 
 ### Compiles to C
+
+## Contributing
+
+The contributors are listed in (AUTHORS)[AUTHORS] (add yourself).
+
+We use the [C4.1 (Collective Code Construction Contract)](http://rfc.zeromq.org/spec:22) process for contributions.
+
+Comments on the process:
+
+    A patch MUST compile cleanly and pass project self-tests on at least the
+    principle target platform.
+
+In our case, this means that `./test` should run without failure.
 
 ## License
 
