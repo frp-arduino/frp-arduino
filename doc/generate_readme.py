@@ -32,7 +32,7 @@ class Document(object):
             self._body += f.read()
             self._body += "```\n"
             self._body += "\n"
-            self._body += "*Source code: (%s)[%s]. Generated C code: (%s)[%s].*\n" % (
+            self._body += "Source code: (%s)[%s]. Generated C code: (%s)[%s].\n" % (
                 "examples/%s.hs" % name,
                 "examples/%s.hs" % name,
                 "examples/%s.c" % name,
