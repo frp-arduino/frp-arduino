@@ -14,6 +14,7 @@ class Document(object):
         with open(os.path.join(os.path.dirname(__file__), name)) as f:
             title_line = f.readline()
             self._toc += "* [%s](#%s)\n" % (title_line.strip(), slug(title_line))
+            self._body += "\n"
             self._body += title_line
             for line in f:
                 if line.startswith("INCLUDE_EXAMPLE:"):
@@ -29,7 +30,7 @@ class Document(object):
 
     def write(self):
         with open(self._path, "w") as f:
-            f.write(self._toc + "\n" + self._body)
+            f.write(self._toc + self._body)
 
 def slug(title_line):
     return title_line.strip().lower().replace(" ", "-")
@@ -40,4 +41,10 @@ def generate(path, docs):
         doc.cat(x)
     doc.write()
 
-generate("README.md", ["intro.md"])
+generate("README.md", [
+    "intro.md",
+    "language.md",
+    "frp.md",
+    "edsl.md",
+    "compile-c.md",
+])

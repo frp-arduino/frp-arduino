@@ -1,12 +1,45 @@
-* [Arduino programming without the hassle of C](#arduino-programming-without-the-hassle-of-c)
+* [Introduction](#introduction)
+* [The language](#the-language)
+* [FRP](#frp)
+* [EDSL](#edsl)
+* [Compiles to C](#compiles-to-c)
 
-Arduino programming without the hassle of C
--------------------------------------------
+Introduction
+------------
 
-```haskell
-import Arduino.Uno
+We believe that programming the [Arduino](http://arduino.cc/) can be *more fun*
+if we don't have to use the C language to program it. We aim to create a new
+language that allows us to program the Arduino using higher-level
+constructs. Our mission:
 
-main = compileProgram $ do
+**Arduino programming without the hassle of C**
 
-    pin13 =: (clock ~> toggle)
-```
+The language
+------------
+
+The language we create has the following properties:
+
+* Based on the functional reactive programming (FRP) paradigm
+* Implemented as a deeply embedded domain specific language (EDSL) in Haskell
+* Compiles to C code
+
+Lets explore them in more detail.
+
+FRP
+---
+
+This sections introduces FRP and how it fits in the domain of programming an
+Arduino.
+
+The central building block in FRP is a **stream**. A stream contains values
+that change over time. Consider an input port on the Arduino. If you constantly
+read the value of the input you will get different values (high or low) over
+time depending on if a button connected to that input is pressed or not.
+
+... insert image of stream ...
+
+EDSL
+----
+
+Compiles to C
+-------------
