@@ -88,18 +88,20 @@ file which we then turn into avr assembly code by using the avr gcc toolchain.
 
 ## Examples
 
+In this section we will see what our EDSL looks like and what kinds of programs
+we can write using it.
+
 ### Running the examples
 
-To compile an example:
+Compile an example with the following command:
 
     ./make [name of example]
 
-To compile and upload an example:
+Compile and upload an example to your Arduino with the following command:
 
     ./make [name of example] upload
 
-In order to be able to compile and upload the examples with the above commands,
-you need two major dependencies:
+Before you can run these commands, you need to install a few dependencies:
 
 * [The Haskell platform](https://www.haskell.org/platform/)
 * [Arduino-Makefile](https://github.com/sudar/Arduino-Makefile)
