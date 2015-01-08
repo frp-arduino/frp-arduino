@@ -3,6 +3,7 @@
   * [FRP](#frp)
   * [EDSL](#edsl)
   * [Compiles to C](#compiles-to-c)
+* [License](#license)
 
 ## Introduction
 
@@ -38,3 +39,8 @@ time depending on if a button connected to that input is pressed or not.
 ### EDSL
 
 ### Compiles to C
+
+## License
+
+The language is free software, distributed under the GNU General Public
+License, version 3. For more information, see [COPYING](COPYING).

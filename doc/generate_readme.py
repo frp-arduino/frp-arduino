@@ -54,4 +54,5 @@ generate("README.md", [
         "edsl.md",
         "compile-c.md",
     ],
+    "license.md",
 ])
