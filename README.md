@@ -5,6 +5,7 @@
   * [Compiles to C](#compiles-to-c)
 * [Contributing](#contributing)
 * [License](#license)
+* [This document](#this-document)
 
 ## Introduction
 
@@ -59,3 +60,8 @@ In our case, this means that `./test` should run without failure.
 The Haskell library that implements the language and all examples are free
 software, distributed under the GNU General Public License, version 3. For more
 information, see [COPYING](COPYING).
+
+## This document
+
+This document ([README.md](README.md)) is automatically generated from the
+sources in the [doc](doc) folder by running `python doc/generate_readme.py`.

@@ -56,4 +56,5 @@ generate("README.md", [
     ],
     "contributing.md",
     "license.md",
+    "this-document.md",
 ])
