@@ -1,11 +1,10 @@
 * [Introduction](#introduction)
 * [The language](#the-language)
-* [FRP](#frp)
-* [EDSL](#edsl)
-* [Compiles to C](#compiles-to-c)
+  * [FRP](#frp)
+  * [EDSL](#edsl)
+  * [Compiles to C](#compiles-to-c)
 
-Introduction
-------------
+## Introduction
 
 We believe that programming the [Arduino](http://arduino.cc/) can be *more fun*
 if we don't have to use the C language to program it. We aim to create a new
@@ -14,8 +13,7 @@ constructs. Our mission:
 
 **Arduino programming without the hassle of C**
 
-The language
-------------
+## The language
 
 The language we create has the following properties:
 
@@ -25,8 +23,7 @@ The language we create has the following properties:
 
 Lets explore them in more detail.
 
-FRP
----
+### FRP
 
 This sections introduces FRP and how it fits in the domain of programming an
 Arduino.
@@ -38,8 +35,6 @@ time depending on if a button connected to that input is pressed or not.
 
 ... insert image of stream ...
 
-EDSL
-----
+### EDSL
 
-Compiles to C
--------------
+### Compiles to C

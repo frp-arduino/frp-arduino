@@ -1,5 +1,4 @@
 Introduction
-------------
 
 We believe that programming the [Arduino](http://arduino.cc/) can be *more fun*
 if we don't have to use the C language to program it. We aim to create a new

@@ -1,5 +1,4 @@
 FRP
----
 
 This sections introduces FRP and how it fits in the domain of programming an
 Arduino.
