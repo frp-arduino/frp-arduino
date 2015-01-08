@@ -1,6 +1,6 @@
 Contributing
 
-The contributors are listed in (AUTHORS)[AUTHORS] (add yourself).
+The contributors are listed in [AUTHORS](AUTHORS) (add yourself).
 
 We use the [C4.1 (Collective Code Construction Contract)](http://rfc.zeromq.org/spec:22) process for contributions.
 
