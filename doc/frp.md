@@ -4,8 +4,8 @@ This sections introduces FRP and shows how it fits in the domain of programming
 an Arduino.
 
 The central building block in FRP is a **stream**. A stream contains values
-that change over time. Consider an input pin on the Arduino. If you constantly
-read the value of the pin you will get different values (high or low) over time
+that change over time. Consider an input pin on the Arduino. If we constantly
+read the value of the pin we will get different values (high or low) over time
 depending on if a button connected to that pin is pressed or not:
 
 ![Example input stream.](doc/input-stream.png)

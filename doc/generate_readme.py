@@ -38,7 +38,7 @@ class Document(object):
                 "examples/%s.c" % name[:-3],
                 "examples/%s.c" % name[:-3],
             )
-            self._body += "Compile and upload this example to your Arduino:\n"
+            self._body += "Compile and upload command:\n"
             self._body += "\n"
             self._body += "    ./make %s upload\n" % name[:-3]
 

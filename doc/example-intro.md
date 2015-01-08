@@ -1,14 +1,14 @@
 Running the examples
 
-Compile an example with the following command:
+Command to compile an example:
 
     ./make [name of example]
 
-Compile and upload an example to your Arduino with the following command:
+Command to compile and upload an example to a connected Arduino:
 
     ./make [name of example] upload
 
-Before you can run these commands, you need to install a few dependencies:
+Before we can run these commands, we need to install a few dependencies:
 
 * [The Haskell platform](https://www.haskell.org/platform/)
 * [Arduino-Makefile](https://github.com/sudar/Arduino-Makefile)
@@ -16,10 +16,10 @@ Before you can run these commands, you need to install a few dependencies:
 Haskell should be installed system wide, but Arduino-Makefile should just be
 copied to the root of this repository.
 
-In order to use Arduino-Makefile, you also need standard build tools like make
+In order to use Arduino-Makefile, we also need standard build tools like make
 and gcc, and in particular, the [gcc toolchain for avr](http://www.nongnu.org/avr-libc/).
 
-On a Fedora system, you can install all dependencies with the following
+On a Fedora system, we can install all dependencies with the following
 commands:
 
     yum install haskell-platform
