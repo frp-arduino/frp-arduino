@@ -59,7 +59,7 @@ main = compileProgram $ do
     pin13 =: (clock ~> toggle)
 ```
 
-Source code: [examples/Blink.hs.hs](examples/Blink.hs.hs). Generated C code: [examples/Blink.hs.c](examples/Blink.hs.c).
+Source code: [examples/Blink.hs](examples/Blink.hs). Generated C code: [examples/Blink.c](examples/Blink.c).
 
 ## Contributing
 

@@ -33,10 +33,10 @@ class Document(object):
             self._body += "```\n"
             self._body += "\n"
             self._body += "Source code: [%s](%s). Generated C code: [%s](%s).\n" % (
-                "examples/%s.hs" % name,
-                "examples/%s.hs" % name,
-                "examples/%s.c" % name,
-                "examples/%s.c" % name,
+                "examples/%s.hs" % name[:-3],
+                "examples/%s.hs" % name[:-3],
+                "examples/%s.c" % name[:-3],
+                "examples/%s.c" % name[:-3],
             )
 
     def write(self):
