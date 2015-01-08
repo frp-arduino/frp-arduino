@@ -3,6 +3,9 @@
   * [FRP](#frp)
   * [EDSL](#edsl)
   * [Compiles to C](#compiles-to-c)
+* [Examples](#examples)
+  * [Running the examples](#running-the-examples)
+  * [Blink](#blink)
 * [Contributing](#contributing)
 * [License](#license)
 * [This document](#this-document)
@@ -41,6 +44,22 @@ time depending on if a button connected to that input is pressed or not.
 ### EDSL
 
 ### Compiles to C
+
+## Examples
+
+### Running the examples
+
+### Blink
+
+```haskell
+import Arduino.Uno
+
+main = compileProgram $ do
+
+    pin13 =: (clock ~> toggle)
+```
+
+*Source code: (examples/Blink.hs.hs)[examples/Blink.hs.hs]. Generated C code: (examples/Blink.hs.c)[examples/Blink.hs.c].*
 
 ## Contributing
 

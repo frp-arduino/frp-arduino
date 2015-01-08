@@ -25,9 +25,19 @@ class Document(object):
 
     def example(self, name):
         with open(os.path.join(os.path.dirname(__file__), "..", "examples", name)) as f:
+            # Drop license text
+            for n in range(15):
+                f.readline()
             self._body += "```haskell\n"
             self._body += f.read()
             self._body += "```\n"
+            self._body += "\n"
+            self._body += "*Source code: (%s)[%s]. Generated C code: (%s)[%s].*\n" % (
+                "examples/%s.hs" % name,
+                "examples/%s.hs" % name,
+                "examples/%s.c" % name,
+                "examples/%s.c" % name,
+            )
 
     def write(self):
         with open(self._path, "w") as f:
@@ -53,6 +63,10 @@ generate("README.md", [
         "frp.md",
         "edsl.md",
         "compile-c.md",
+    ],
+    "examples.md", [
+        "example-intro.md",
+        "example-blink.md",
     ],
     "contributing.md",
     "license.md",
