@@ -79,11 +79,11 @@ that, when run, will produce a C file:
 
 ![The EDSL workflow.](doc/edsl.png)
 
-The executable is a compiler from our DSL to C.
+The executable is a compiler from our EDSL to C.
 
 ### Compiles to C
 
-In order to make our DSL execute on the Arduino, we compile it to a C source
+In order to make our EDSL execute on the Arduino, we compile it to a C source
 file which we then turn into avr assembly code by using the avr gcc toolchain.
 
 ## Examples

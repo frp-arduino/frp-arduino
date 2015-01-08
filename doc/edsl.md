@@ -17,4 +17,4 @@ that, when run, will produce a C file:
 
 ![The EDSL workflow.](doc/edsl.png)
 
-The executable is a compiler from our DSL to C.
+The executable is a compiler from our EDSL to C.
