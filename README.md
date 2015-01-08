@@ -23,23 +23,24 @@ constructs. Our mission:
 
 The language we create has the following properties:
 
-* Based on the functional reactive programming (FRP) paradigm
-* Implemented as a deeply embedded domain specific language (EDSL) in Haskell
-* Compiles to C code
+* It is based on the functional reactive programming (FRP) paradigm
+* It is implemented as a deeply embedded domain specific language (EDSL) in
+  Haskell
+* It compiles to C code
 
 Lets explore them in more detail.
 
 ### FRP
 
-This sections introduces FRP and how it fits in the domain of programming an
-Arduino.
+This sections introduces FRP and shows how it fits in the domain of programming
+an Arduino.
 
 The central building block in FRP is a **stream**. A stream contains values
 that change over time. Consider an input port on the Arduino. If you constantly
 read the value of the input you will get different values (high or low) over
 time depending on if a button connected to that input is pressed or not.
 
-... insert image of stream ...
+![Example input stream.](doc/input-stream.png)
 
 ### EDSL
 
