@@ -65,9 +65,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.98994949"
-     inkscape:cx="312.96082"
-     inkscape:cy="815.35644"
+     inkscape:zoom="0.49497475"
+     inkscape:cx="216.66251"
+     inkscape:cy="686.24126"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -230,7 +230,8 @@
        id="g4810"
        inkscape:export-filename="/home/rick/projects/frp-arduino/doc/map-even-clock-stream.png"
        inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90">
+       inkscape:export-ydpi="90"
+       transform="translate(0,-2)">
       <path
          style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#TriangleOutL)"
          d="m 174.75639,220.54281 369.71583,0"
@@ -246,7 +247,7 @@
            sodipodi:cy="514.961"
            sodipodi:rx="12.121831"
            sodipodi:ry="12.121831"
-           d="m 241.42646,514.961 a 12.121831,12.121831 0 1 1 -24.24366,0 12.121831,12.121831 0 1 1 24.24366,0 z"
+           d="m 241.42646,514.961 c 0,6.6947 -5.42713,12.12183 -12.12183,12.12183 -6.69471,0 -12.12183,-5.42713 -12.12183,-12.12183 0,-6.6947 5.42712,-12.12183 12.12183,-12.12183 6.6947,0 12.12183,5.42713 12.12183,12.12183 z"
            transform="matrix(0.83333339,0,0,0.83333339,-15.843474,-208.59139)" />
         <text
            sodipodi:linespacing="125%"
@@ -413,7 +414,7 @@
            sodipodi:cy="514.961"
            sodipodi:rx="12.121831"
            sodipodi:ry="12.121831"
-           d="m 241.42646,514.961 a 12.121831,12.121831 0 1 1 -24.24366,0 12.121831,12.121831 0 1 1 24.24366,0 z"
+           d="m 241.42646,514.961 c 0,6.6947 -5.42713,12.12183 -12.12183,12.12183 -6.69471,0 -12.12183,-5.42713 -12.12183,-12.12183 0,-6.6947 5.42712,-12.12183 12.12183,-12.12183 6.6947,0 12.12183,5.42713 12.12183,12.12183 z"
            transform="matrix(0.83333339,0,0,0.83333339,286.15656,-208.59139)" />
         <text
            sodipodi:linespacing="125%"
