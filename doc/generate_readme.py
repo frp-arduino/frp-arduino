@@ -44,7 +44,7 @@ class Document(object):
             f.write(self._toc + self._body)
 
 def slug(title_line):
-    return title_line.strip().lower().replace(" ", "-")
+    return title_line.strip().lower().replace(" ", "-").replace(":", "")
 
 def generate(path, files):
     def process(doc, files, depth):

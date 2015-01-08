@@ -5,7 +5,7 @@
   * [Compiles to C](#compiles-to-c)
 * [Examples](#examples)
   * [Running the examples](#running-the-examples)
-  * [Example: Blinking a led](#example:-blinking-a-led)
+  * [Example: Blinking a led](#example-blinking-a-led)
 * [Contributing](#contributing)
 * [License](#license)
 * [This document](#this-document)
