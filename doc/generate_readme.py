@@ -13,9 +13,7 @@ class Document(object):
     def cat(self, name):
         with open(os.path.join(os.path.dirname(__file__), name)) as f:
             title_line = f.readline()
-            self._toc += "* [%s](%s#%s)\n" % (title_line.strip(),
-                                              self._name,
-                                              slug(title_line))
+            self._toc += "* [%s](#%s)\n" % (title_line.strip(), slug(title_line))
             self._body += title_line
             for line in f:
                 if line.startswith("INCLUDE_EXAMPLE:"):

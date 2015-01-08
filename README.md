@@ -1,4 +1,4 @@
-* [Arduino programming without the hassle of C](README.md#arduino-programming-without-the-hassle-of-c)
+* [Arduino programming without the hassle of C](#arduino-programming-without-the-hassle-of-c)
 
 Arduino programming without the hassle of C
 -------------------------------------------
