@@ -57,6 +57,34 @@
          style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
          transform="scale(0.8,0.8)" />
     </marker>
+    <marker
+       inkscape:stockid="TriangleOutL"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutL-3"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3901-0"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="scale(0.8,0.8)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleOutL"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutL-43"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3901-2"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="scale(0.8,0.8)" />
+    </marker>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -65,9 +93,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.49497475"
-     inkscape:cx="216.66251"
-     inkscape:cy="686.24126"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="386.72935"
+     inkscape:cy="760.04892"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -671,6 +699,149 @@
          id="path4964"
          d="m 477.24377,235.19627 0,25.73276"
          style="fill:none;stroke:#ff0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0;marker-end:url(#TriangleOutL)" />
+    </g>
+    <g
+       id="g5173"
+       inkscape:export-filename="/home/rick/projects/frp-arduino/doc/edsl.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <g
+         transform="translate(39.285714,15)"
+         id="g5034">
+        <rect
+           style="fill:none;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           id="rect5009"
+           width="78.084343"
+           height="41.416256"
+           x="134.70784"
+           y="390.22549"
+           rx="1.812647"
+           ry="1.812647" />
+        <text
+           sodipodi:linespacing="125%"
+           id="text4851-3"
+           y="406.74417"
+           x="173.93752"
+           style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+           xml:space="preserve"><tspan
+             style="font-size:12px;text-align:center;text-anchor:middle"
+             y="406.74417"
+             x="173.93752"
+             id="tspan4853-8"
+             sodipodi:role="line">frp-arduino</tspan><tspan
+             id="tspan5039"
+             style="font-size:12px;text-align:center;text-anchor:middle"
+             y="421.74417"
+             x="173.93752"
+             sodipodi:role="line">source</tspan></text>
+      </g>
+      <g
+         transform="translate(39.285714,-42.5)"
+         id="g5041">
+        <rect
+           ry="1.812647"
+           rx="1.812647"
+           y="390.22549"
+           x="134.70784"
+           height="41.416256"
+           width="78.084343"
+           id="rect5043"
+           style="fill:none;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+        <text
+           xml:space="preserve"
+           style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+           x="173.93752"
+           y="406.74417"
+           id="text5045"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan5047"
+             x="173.93752"
+             y="406.74417"
+             style="font-size:12px;text-align:center;text-anchor:middle">frp-arduino</tspan><tspan
+             sodipodi:role="line"
+             x="173.93752"
+             y="421.74417"
+             style="font-size:12px;text-align:center;text-anchor:middle"
+             id="tspan5049">library</tspan></text>
+      </g>
+      <g
+         id="g5051"
+         transform="translate(160,-12.857143)">
+        <rect
+           style="fill:none;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           id="rect5053"
+           width="78.084343"
+           height="41.416256"
+           x="134.70784"
+           y="390.22549"
+           rx="1.812647"
+           ry="1.812647" />
+        <text
+           sodipodi:linespacing="125%"
+           id="text5055"
+           y="406.74417"
+           x="173.93752"
+           style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+           xml:space="preserve"><tspan
+             style="font-size:12px;text-align:center;text-anchor:middle"
+             y="406.74417"
+             x="173.93752"
+             id="tspan5057"
+             sodipodi:role="line">frp-arduino</tspan><tspan
+             id="tspan5059"
+             style="font-size:12px;text-align:center;text-anchor:middle"
+             y="421.74417"
+             x="173.93752"
+             sodipodi:role="line">executable</tspan></text>
+      </g>
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path4845-5"
+         d="m 255.6761,367.50105 30.78549,25.49285"
+         style="fill:none;stroke:#000000;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#TriangleOutL)" />
+      <path
+         sodipodi:nodetypes="cc"
+         style="fill:none;stroke:#000000;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#TriangleOutL)"
+         d="m 254.7522,430.16412 31.26678,-23.18475"
+         id="path5085"
+         inkscape:connector-curvature="0" />
+      <g
+         transform="translate(293.34013,-12.857143)"
+         id="g5123">
+        <rect
+           ry="1.812647"
+           rx="1.812647"
+           y="390.22549"
+           x="134.70784"
+           height="41.416256"
+           width="78.084343"
+           id="rect5125"
+           style="fill:none;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+        <text
+           xml:space="preserve"
+           style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+           x="173.93752"
+           y="406.74417"
+           id="text5127"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan5129"
+             x="173.93752"
+             y="406.74417"
+             style="font-size:12px;text-align:center;text-anchor:middle">C</tspan><tspan
+             sodipodi:role="line"
+             x="173.93752"
+             y="421.74417"
+             style="font-size:12px;text-align:center;text-anchor:middle"
+             id="tspan5131">source</tspan></text>
+      </g>
+      <path
+         inkscape:connector-curvature="0"
+         id="path4845-3"
+         d="m 379.52966,398.79348 37.04073,0"
+         style="fill:none;stroke:#000000;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#TriangleOutL)" />
     </g>
   </g>
 </svg>
