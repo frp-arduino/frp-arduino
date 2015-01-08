@@ -52,12 +52,10 @@ time depending on if a button connected to that input is pressed or not.
 To compile an example:
 
     ./make [name of example]
-    ./make Blink
 
 To compile and upload an example:
 
     ./make [name of example] upload
-    ./make Blink upload
 
 In order to be able to compile and upload the examples with the above commands,
 you need two major dependencies:
@@ -96,6 +94,9 @@ main = compileProgram $ do
 ```
 
 Source code: [examples/Blink.hs](examples/Blink.hs). Generated C code: [examples/Blink.c](examples/Blink.c).
+Compile and upload this example to your Arduino:
+
+    ./make Blink upload
 
 ## Contributing
 

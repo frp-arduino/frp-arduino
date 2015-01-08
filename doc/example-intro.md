@@ -3,12 +3,10 @@ Running the examples
 To compile an example:
 
     ./make [name of example]
-    ./make Blink
 
 To compile and upload an example:
 
     ./make [name of example] upload
-    ./make Blink upload
 
 In order to be able to compile and upload the examples with the above commands,
 you need two major dependencies:
