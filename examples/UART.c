@@ -29,7 +29,6 @@ static void stream_1(unsigned int input_0) {
 }
 
 static void stream_2(bool input_0) {
-  bool output;
   if (input_0) {
     PORTB |= 0x20U;
   } else {

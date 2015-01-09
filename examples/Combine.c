@@ -45,7 +45,6 @@ static void stream_1(unsigned int input_0) {
 }
 
 static void stream_2(bool input_0) {
-  bool output;
   if (input_0) {
     PORTB |= 0x20U;
   } else {
@@ -75,7 +74,6 @@ static void stream_3(int arg, void* value) {
 }
 
 static void stream_4(bool input_0) {
-  bool output;
   if (input_0) {
     PORTB |= 0x08U;
   } else {
@@ -111,7 +109,6 @@ static void stream_6(int arg, void* value) {
 }
 
 static void stream_7(bool input_0) {
-  bool output;
   if (input_0) {
     PORTB |= 0x04U;
   } else {

@@ -142,7 +142,7 @@ outputPin :: String -> String -> String -> String -> Output Bool
 outputPin name directionRegister portRegister pinMask =
     Output $ DAG.Pin $ DAG.PinDefinition
     { DAG.pinName  = name
-    , DAG.cType    = "bool"
+    , DAG.cType    = "void"
     , DAG.initCode = do
         line $ directionRegister ++ " |= " ++ pinMask ++ ";"
     , DAG.bodyCode = do

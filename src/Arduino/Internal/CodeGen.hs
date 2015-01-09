@@ -50,7 +50,9 @@ genStreamCFunction streams stream = do
     let declaration = ("static void " ++ name stream ++
                        "(" ++ streamToArgumentList streams stream ++ ")")
     cFunction declaration $ do
-        line $ streamCType streams (name stream) ++ " output;"
+        let t = streamCType streams (name stream)
+        unless (t == "void") $ do
+            line $ t ++ " output;"
         genStreamInputParsing args
         genStreamBody (body stream)
         genStreamOuputCalling streams stream
