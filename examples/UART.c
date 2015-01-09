@@ -14,18 +14,16 @@ static void stream_3(unsigned int input_0);
 static void stream_4(char * input_0);
 
 static void clock() {
-  unsigned int output;
   static unsigned int temp0 = 0U;
   temp0++;
-  output = temp0;
-  stream_1(output);
-  stream_3(output);
+  stream_1(temp0);
+  stream_3(temp0);
 }
 
 static void stream_1(unsigned int input_0) {
-  bool output;
-  output = (input_0) % 2 == 0;
-  stream_2(output);
+  bool temp1;
+  temp1 = (input_0) % 2 == 0;
+  stream_2(temp1);
 }
 
 static void stream_2(bool input_0) {
@@ -37,14 +35,13 @@ static void stream_2(bool input_0) {
 }
 
 static void stream_3(unsigned int input_0) {
-  char * output;
-  char temp1[] = "hello\r\n";
-  output = temp1;
-  stream_4(output);
+  char * temp2;
+  char temp3[] = "hello\r\n";
+  temp2 = temp3;
+  stream_4(temp2);
 }
 
 static void stream_4(char * input_0) {
-  char * output;
   while (*input_0 != 0) {
     while ((UCSR0A & (1 << UDRE0)) == 0) {
     }

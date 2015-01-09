@@ -22,26 +22,24 @@ static void stream_6(int arg, void* value);
 static void stream_7(bool input_0);
 
 static void clock() {
-  unsigned int output;
   static unsigned int temp0 = 0U;
   temp0++;
-  output = temp0;
-  stream_1(output);
+  stream_1(temp0);
 }
 
 static void input_pin12() {
-  bool output;
-  output = (PINB & 0x10U) == 0U;
-  stream_2(output);
-  stream_3(0, (void*)(&output));
-  stream_6(0, (void*)(&output));
+  bool temp1;
+  temp1 = (PINB & 0x10U) == 0U;
+  stream_2(temp1);
+  stream_3(0, (void*)(&temp1));
+  stream_6(0, (void*)(&temp1));
 }
 
 static void stream_1(unsigned int input_0) {
-  bool output;
-  output = (input_0) % 2 == 0;
-  stream_3(1, (void*)(&output));
-  stream_5(output);
+  bool temp2;
+  temp2 = (input_0) % 2 == 0;
+  stream_3(1, (void*)(&temp2));
+  stream_5(temp2);
 }
 
 static void stream_2(bool input_0) {
@@ -53,7 +51,6 @@ static void stream_2(bool input_0) {
 }
 
 static void stream_3(int arg, void* value) {
-  bool output;
   static bool input_0;
   static bool input_1;
   switch (arg) {
@@ -64,14 +61,15 @@ static void stream_3(int arg, void* value) {
       input_1 = *((bool*)value);
       break;
   }
-  bool temp1;
+  bool temp3;
+  bool temp4;
   if (input_0) {
-    temp1 = input_1;
+    temp4 = input_1;
   } else {
-    temp1 = false;
+    temp4 = false;
   }
-  output = temp1;
-  stream_4(output);
+  temp3 = temp4;
+  stream_4(temp3);
 }
 
 static void stream_4(bool input_0) {
@@ -83,13 +81,12 @@ static void stream_4(bool input_0) {
 }
 
 static void stream_5(bool input_0) {
-  bool output;
-  output = !(input_0);
-  stream_6(1, (void*)(&output));
+  bool temp5;
+  temp5 = !(input_0);
+  stream_6(1, (void*)(&temp5));
 }
 
 static void stream_6(int arg, void* value) {
-  bool output;
   static bool input_0;
   static bool input_1;
   switch (arg) {
@@ -100,14 +97,15 @@ static void stream_6(int arg, void* value) {
       input_1 = *((bool*)value);
       break;
   }
-  bool temp2;
+  bool temp6;
+  bool temp7;
   if (input_0) {
-    temp2 = input_1;
+    temp7 = input_1;
   } else {
-    temp2 = false;
+    temp7 = false;
   }
-  output = temp2;
-  stream_7(output);
+  temp6 = temp7;
+  stream_7(temp6);
 }
 
 static void stream_7(bool input_0) {

@@ -14,17 +14,15 @@ static void stream_2(unsigned int input_0);
 static void stream_3(bool input_0);
 
 static void clock() {
-  unsigned int output;
   static unsigned int temp0 = 0U;
   temp0++;
-  output = temp0;
-  stream_2(output);
+  stream_2(temp0);
 }
 
 static void input_pin12() {
-  bool output;
-  output = (PINB & 0x10U) == 0U;
-  stream_1(output);
+  bool temp1;
+  temp1 = (PINB & 0x10U) == 0U;
+  stream_1(temp1);
 }
 
 static void stream_1(bool input_0) {
@@ -36,9 +34,9 @@ static void stream_1(bool input_0) {
 }
 
 static void stream_2(unsigned int input_0) {
-  bool output;
-  output = (input_0) % 2 == 0;
-  stream_3(output);
+  bool temp2;
+  temp2 = (input_0) % 2 == 0;
+  stream_3(temp2);
 }
 
 static void stream_3(bool input_0) {

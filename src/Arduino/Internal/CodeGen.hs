@@ -51,13 +51,11 @@ genStreamCFunction streams stream = do
                        "(" ++ streamToArgumentList streams stream ++ ")")
     cFunction declaration $ do
         let t = streamCType streams (name stream)
-        unless (t == "void") $ do
-            line $ t ++ " output;"
         genStreamInputParsing args
         let inputTypes = map (streamCType streams) (inputs stream)
         let inputMap = M.fromList $ zip [0..] inputTypes
-        genStreamBody (expressionCType inputMap) (body stream)
-        genStreamOuputCalling streams stream
+        outputName <- genStreamBody (expressionCType inputMap) (body stream)
+        genStreamOuputCalling outputName streams stream
 
 streamToArgumentList :: Streams -> Stream -> String
 streamToArgumentList streams stream
@@ -107,28 +105,30 @@ expressionCType inputMap expression = case expression of
     (BoolConstant _)   -> "bool"
     (If _ _ x)         -> expressionCType inputMap x
 
-genStreamBody :: (Expression -> String) -> Body -> Gen ()
+genStreamBody :: (Expression -> String) -> Body -> Gen (Maybe String)
 genStreamBody expressionCType body = case body of
     (Pin pin) -> do
         bodyCode pin
     (Transform expression) -> do
+        name <- var (expressionCType expression)
         e <- genExpression expressionCType expression
-        line $ "output = " ++ e ++ ";"
+        line $ name ++ " = " ++ e ++ ";"
+        return (Just name)
     (Builtin "clock") -> do
         temp <- label
         line $ "static unsigned int " ++ temp ++ " = 0U;"
         line $ temp ++ "++;"
-        line $ "output = " ++ temp ++ ";"
+        return (Just temp)
 
-genStreamOuputCalling :: Streams -> Stream -> Gen ()
-genStreamOuputCalling streams stream = do
+genStreamOuputCalling :: (Maybe Identifier) -> Streams -> Stream -> Gen ()
+genStreamOuputCalling outputName streams stream = do
     forM_ (outputs stream) $ \x -> do
         if (length (inputs (streamFromId streams x))) > 1
             then do
                 let n = fromJust $ elemIndex (name stream) (inputs (streamFromId streams x))
-                line (x ++ "(" ++ show n ++ ", (void*)(&output));")
+                line (x ++ "(" ++ show n ++ ", (void*)(&" ++ fromJust outputName ++ "));")
             else do
-                line (x ++ "(output);")
+                line (x ++ "(" ++ fromJust outputName ++ ");")
 
 genExpression :: (Expression -> String) -> Expression -> Gen String
 genExpression expressionCType expression = case expression of

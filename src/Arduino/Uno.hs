@@ -68,4 +68,5 @@ uart = DSL.Output $ DAG.Pin $ DAG.PinDefinition
             line $ "UDR0 = *input_0;"
             line $ "input_0++;"
         line $ "}"
+        return Nothing
     }

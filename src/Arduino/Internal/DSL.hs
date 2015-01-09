@@ -151,6 +151,7 @@ outputPin name directionRegister portRegister pinMask =
         block "} else {" $ do
             line $ portRegister ++ " &= ~(" ++ pinMask ++ ");"
         line "}"
+        return Nothing
     }
 
 inputPin :: String -> String -> String -> String -> String -> Stream Bool
@@ -163,6 +164,8 @@ inputPin name directionRegister portRegister pinRegister pinMask =
                           line $ directionRegister ++ " &= ~(" ++ pinMask ++ ");"
                           line $ portRegister ++ " |= " ++ pinMask ++ ";"
                       , DAG.bodyCode = do
-                          line $ "output = (" ++ pinRegister ++ " & " ++ pinMask ++ ") == 0U;"
+                          x <- var "bool"
+                          line $ x ++ " = (" ++ pinRegister ++ " & " ++ pinMask ++ ") == 0U;"
+                          return (Just x)
                       }
         addStream ("input_" ++ name) body

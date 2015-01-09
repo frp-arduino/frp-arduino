@@ -10,17 +10,15 @@ static void stream_1(unsigned int input_0);
 static void stream_2(bool input_0);
 
 static void clock() {
-  unsigned int output;
   static unsigned int temp0 = 0U;
   temp0++;
-  output = temp0;
-  stream_1(output);
+  stream_1(temp0);
 }
 
 static void stream_1(unsigned int input_0) {
-  bool output;
-  output = (input_0) % 2 == 0;
-  stream_2(output);
+  bool temp1;
+  temp1 = (input_0) % 2 == 0;
+  stream_2(temp1);
 }
 
 static void stream_2(bool input_0) {

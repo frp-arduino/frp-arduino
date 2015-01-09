@@ -39,7 +39,7 @@ data Body = Builtin String
 data PinDefinition = PinDefinition
     { pinName  :: String
     , initCode :: Gen ()
-    , bodyCode :: Gen ()
+    , bodyCode :: Gen (Maybe String)
     , cType    :: String
     }
 
