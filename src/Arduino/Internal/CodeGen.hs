@@ -54,7 +54,9 @@ genStreamCFunction streams stream = do
         unless (t == "void") $ do
             line $ t ++ " output;"
         genStreamInputParsing args
-        genStreamBody (body stream)
+        let inputTypes = map (streamCType streams) (inputs stream)
+        let inputMap = M.fromList $ zip [0..] inputTypes
+        genStreamBody (expressionCType inputMap) (body stream)
         genStreamOuputCalling streams stream
 
 streamToArgumentList :: Streams -> Stream -> String
@@ -105,12 +107,12 @@ expressionCType inputMap expression = case expression of
     (BoolConstant _)   -> "bool"
     (If _ _ x)         -> expressionCType inputMap x
 
-genStreamBody :: Body -> Gen ()
-genStreamBody body = case body of
+genStreamBody :: (Expression -> String) -> Body -> Gen ()
+genStreamBody expressionCType body = case body of
     (Pin pin) -> do
         bodyCode pin
     (Transform expression) -> do
-        e <- genExpression expression
+        e <- genExpression expressionCType expression
         line $ "output = " ++ e ++ ";"
     (Builtin "clock") -> do
         temp <- label
@@ -128,13 +130,13 @@ genStreamOuputCalling streams stream = do
             else do
                 line (x ++ "(output);")
 
-genExpression :: Expression -> Gen String
-genExpression expression = case expression of
+genExpression :: (Expression -> String) -> Expression -> Gen String
+genExpression expressionCType expression = case expression of
     (Not expression) -> do
-        inner <- genExpression expression
+        inner <- genExpression expressionCType expression
         return $ "!(" ++ inner ++ ")"
     (Even expression) -> do
-        inner <- genExpression expression
+        inner <- genExpression expressionCType expression
         return $ "(" ++ inner ++ ") % 2 == 0"
     (Input value) -> do
         return $ "input_" ++ show value
@@ -147,10 +149,10 @@ genExpression expression = case expression of
             then (return "true")
             else (return "false")
     (If conditionExpression trueExpression falseExpression) -> do
-        let temp = "output"
-        conditionResult <- genExpression conditionExpression
-        trueResult <- genExpression trueExpression
-        falseResult <- genExpression falseExpression
+        temp <- var (expressionCType falseExpression)
+        conditionResult <- genExpression expressionCType conditionExpression
+        trueResult <- genExpression expressionCType trueExpression
+        falseResult <- genExpression expressionCType falseExpression
         block ("if (" ++ conditionResult ++ ") {") $ do
             line $ temp ++ " = " ++ trueResult ++ ";"
         block "} else {" $ do

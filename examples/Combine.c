@@ -64,12 +64,13 @@ static void stream_3(int arg, void* value) {
       input_1 = *((bool*)value);
       break;
   }
+  bool temp1;
   if (input_0) {
-    output = input_1;
+    temp1 = input_1;
   } else {
-    output = false;
+    temp1 = false;
   }
-  output = output;
+  output = temp1;
   stream_4(output);
 }
 
@@ -99,12 +100,13 @@ static void stream_6(int arg, void* value) {
       input_1 = *((bool*)value);
       break;
   }
+  bool temp2;
   if (input_0) {
-    output = input_1;
+    temp2 = input_1;
   } else {
-    output = false;
+    temp2 = false;
   }
-  output = output;
+  output = temp2;
   stream_7(output);
 }
 

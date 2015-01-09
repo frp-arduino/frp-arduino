@@ -43,6 +43,12 @@ label = do
     modify $ \genState -> genState { labelCounter = 1 + labelCounter genState }
     return $ "temp" ++ show (labelCounter genState)
 
+var :: String -> Gen String
+var cType = do
+    l <- label
+    line $ cType ++ " " ++ l ++ ";"
+    return l
+
 block :: String -> Gen a -> Gen a
 block x gen = do
     line x
