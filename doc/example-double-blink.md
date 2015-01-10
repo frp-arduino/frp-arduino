@@ -1,5 +1,9 @@
 Example: Blinking two leds
 
-INCLUDE_EXAMPLE:DoubleBlink.hs
+<p align="center">
+  <a href="http://youtu.be/dWl3nfAJy08">
+      <img src="http://img.youtube.com/vi/dWl3nfAJy08/0.jpg">
+  </a>
+</p>
 
-[![DoubleBlink demo video.](http://img.youtube.com/vi/dWl3nfAJy08/0.jpg)](http://youtu.be/dWl3nfAJy08)
+INCLUDE_EXAMPLE:DoubleBlink.hs

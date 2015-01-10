@@ -227,6 +227,12 @@ time interval.
 
 ### Example: Blinking two leds
 
+<p align="center">
+  <a href="http://youtu.be/dWl3nfAJy08">
+      <img src="http://img.youtube.com/vi/dWl3nfAJy08/0.jpg">
+  </a>
+</p>
+
 ```haskell
 import Arduino.Uno
 
@@ -243,8 +249,6 @@ Source code: [examples/DoubleBlink.hs](examples/DoubleBlink.hs). Generated C cod
 Compile and upload command:
 
     ./make DoubleBlink upload
-
-[![DoubleBlink demo video.](http://img.youtube.com/vi/dWl3nfAJy08/0.jpg)](http://youtu.be/dWl3nfAJy08)
 
 ## Contributing
 
