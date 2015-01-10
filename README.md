@@ -240,7 +240,7 @@ Compile and upload command:
 
     ./make DoubleBlink upload
 
-[![DoubleBlink demo video.](http://img.youtube.com/vi/dWl3nfAJy08/0.jpg)](http://www.youtube.com/dWl3nfAJy08)
+[![DoubleBlink demo video.](http://img.youtube.com/vi/dWl3nfAJy08/0.jpg)](http://youtu.be/dWl3nfAJy08)
 
 ## Contributing
 
