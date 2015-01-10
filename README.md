@@ -52,7 +52,7 @@ integer at some time interval:
 
 ![The clock stream.](doc/clock-stream.png)
 
-We can convert this stream to a stream of booleans by mapping the [`isEven`](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:isEven)
+We can convert this stream to a stream of booleans by mapping the [isEven](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:isEven)
 function on it:
 
 ![The clock stream mapped with the isEven function.](doc/map-even-clock-stream.png)
@@ -176,16 +176,16 @@ So what action is defined by the last line in the example?
 pin13 =: clock ~> toggle
 ```
 
-Let's look at the type for the `=:` operator:
+Let's look at the type for the [=:](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:-61-:) operator:
 
 ```haskell
 (=:) :: Output a -> Stream a -> Action ()
 ```
 
-It takes an `Output` of a specific type `a` and connects it to a `Stream` of
-values of the same type.
+It takes an output of a specific type and connects it to a sream of values of
+the same type.
 
-The type of `pin13` reveals that it accepts booleans:
+The type of [pin13](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:pin13) reveals that it accepts booleans:
 
 ```haskell
 pin13 :: Output Bool
@@ -208,14 +208,14 @@ clock :: Stream Int
 toggle :: Stream Int -> Stream Bool
 ```
 
-`clock` is a built in stream that produces incrementing integers at a given
+[clock](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:clock) is a built in stream that produces incrementing integers at a given
 time interval.
 
-`toggle` is a function that converts a stream of integers to a stream of
-booleans by mapping the [`isEven`](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:isEven) function: Even integers are converted to
+[toggle](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:toggle) is a function that converts a stream of integers to a stream of
+booleans by mapping the [isEven](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:isEven) function: Even integers are converted to
 true and odd integers are converted to false.
 
-`~>` is an operator that takes a stream on the left hand side and a function on
+[~>](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:-126--62-) is an operator that takes a stream on the left hand side and a function on
 the right hand side. The result is a stream that we get by applying the
 function to the stream on the left hand side.
 
