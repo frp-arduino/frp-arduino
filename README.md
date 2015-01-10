@@ -240,6 +240,8 @@ Compile and upload command:
 
     ./make DoubleBlink upload
 
+[![DoubleBlink demo video.](http://img.youtube.com/vi/dWl3nfAJy08/0.jpg)](http://www.youtube.com/dWl3nfAJy08)
+
 ## Contributing
 
 The contributors are listed in [AUTHORS](AUTHORS) (add yourself).
