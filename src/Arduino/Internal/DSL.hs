@@ -56,6 +56,8 @@ def stream = do
     addDependency streamName outputName
     return ()
 
+infixr 0 =:
+
 (~>) :: Stream a -> (Stream a -> Stream b) -> Stream b
 (~>) stream fn = Stream $ do
     streamName <- unStream stream

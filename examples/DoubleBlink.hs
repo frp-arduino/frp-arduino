@@ -21,4 +21,4 @@ main = compileProgram $ do
 
     pin13 =: toggled
 
-    pin12 =: (toggled ~> invert)
+    pin12 =: toggled ~> invert

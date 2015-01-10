@@ -133,7 +133,7 @@ import Arduino.Uno
 
 main = compileProgram $ do
 
-    pin13 =: (clock ~> toggle)
+    pin13 =: clock ~> toggle
 ```
 
 Source code: [examples/Blink.hs](examples/Blink.hs). Generated C code: [examples/Blink.c](examples/Blink.c).
