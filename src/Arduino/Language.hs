@@ -16,22 +16,26 @@
 -- along with frp-arduino.  If not, see <http://www.gnu.org/licenses/>.
 
 module Arduino.Language
-    ( module Arduino.Internal.DSL
-    ) where
-
-import Arduino.Internal.DSL
-    ( Stream
+    (
+    -- * Core language
+      Stream
     , Expression
+    , Output
     , compileProgram
     , def
     , (=:)
+    -- ** Stream operations
     , (~>)
     , clock
     , mapS
     , mapS2
+    -- ** Expression operations
     , isEven
     , if_
     , not
     , stringConstant
     , boolConstant
-    )
+    ) where
+
+import Arduino.Internal.DSL
+import Prelude hiding (not)

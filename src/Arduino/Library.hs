@@ -15,7 +15,11 @@
 -- You should have received a copy of the GNU General Public License
 -- along with frp-arduino.  If not, see <http://www.gnu.org/licenses/>.
 
-module Arduino.Library where
+module Arduino.Library
+    (
+    -- * Standard library
+      module Arduino.Library
+    ) where
 
 import Prelude hiding (not)
 

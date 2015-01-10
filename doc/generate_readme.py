@@ -1,4 +1,6 @@
 import os.path
+import shutil
+import subprocess
 
 class Document(object):
 
@@ -69,19 +71,37 @@ def generate(path, files):
     process(doc, files, 0)
     doc.write()
 
-generate("README.md", [
-    "intro.md",
-    "language.md", [
-        "frp.md",
-        "edsl.md",
-        "compile-c.md",
-    ],
-    "examples.md", [
-        "example-intro.md",
-        "example-blink.md",
-        "example-double-blink.md",
-    ],
-    "contributing.md",
-    "license.md",
-    "this-document.md",
-])
+def haddock():
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    haddock_dir = os.path.join(root_dir, "doc", "haddock")
+    src_dir = os.path.join(root_dir, "src")
+    shutil.rmtree(haddock_dir)
+    subprocess.call(["haddock", "-h",
+                     "--odir", haddock_dir,
+                     "--hide", "CCodeGen",
+                     "--hide", "Arduino.Internal.DAG",
+                     "--hide", "Arduino.Internal.CodeGen",
+                     "--hide", "Arduino.Internal.DSL",
+                     "--hide", "Arduino.Language",
+                     "--hide", "Arduino.Library",
+                     "Arduino/Uno.hs"],
+                    cwd=src_dir)
+
+if __name__ == "__main__":
+    generate("README.md", [
+        "intro.md",
+        "language.md", [
+            "frp.md",
+            "edsl.md",
+            "compile-c.md",
+        ],
+        "examples.md", [
+            "example-intro.md",
+            "example-blink.md",
+            "example-double-blink.md",
+        ],
+        "contributing.md",
+        "license.md",
+        "this-document.md",
+    ])
+    haddock()

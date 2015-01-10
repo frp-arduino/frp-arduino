@@ -18,6 +18,7 @@
 module Arduino.Uno
     ( module Arduino.Language
     , module Arduino.Library
+    -- * Uno outputs and streams
     , module Arduino.Uno
     ) where
 
