@@ -251,19 +251,19 @@ main = compileProgram $ do
 
 ## API
 
-**<a name="compileProgram">compileProgram</a>**
+<a name="compileProgram"></a>**compileProgram**
 
 ```haskell
 compileProgram :: Action a -> IO ()
 ```
 
-**<a name="(-61-:)">(=:)</a>**
+<a name="(-61-:)"></a>**(=:)**
 
 ```haskell
 (=:) :: Output a -> Stream a -> Action ()
 ```
 
-**<a name="(-126--62-)">(~>)</a>**
+<a name="(-126--62-)"></a>**(~>)**
 
 ```haskell
 (~>) :: Stream a -> (Stream a -> Stream b) -> Stream b

@@ -70,7 +70,7 @@ class Document(object):
                 with open(os.path.join(root, file_)) as f:
                     for line in f:
                         if line.startswith("%s :: " % name):
-                            self._body += "**<a name=\"%s\">%s</a>**\n" % (sanitize(name), name)
+                            self._body += "<a name=\"%s\"></a>**%s**\n" % (sanitize(name), name)
                             self._body += "\n"
                             self._body += "```haskell\n"
                             self._body += line
