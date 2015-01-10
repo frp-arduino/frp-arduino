@@ -31,7 +31,7 @@ class Document(object):
     def _replace_api_refs(self, line):
         return re.sub(
             r"`api:(.+?)`",
-            r"`[\1](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:\1)`",
+            r"[`\1`](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:\1)",
             line)
 
     def example(self, name):

@@ -19,10 +19,10 @@ integer at some time interval:
 
 ![The clock stream.](doc/clock-stream.png)
 
-We can convert this stream to a stream of booleans by mapping the `even`
+We can convert this stream to a stream of booleans by mapping the `api:isEven`
 function on it:
 
-![The clock stream mapped with the even function.](doc/map-even-clock-stream.png)
+![The clock stream mapped with the isEven function.](doc/map-even-clock-stream.png)
 
 We now have a stream that alternates its boolean value at a time interval.
 This stream can be connected to an output pin that has a led connected to it to

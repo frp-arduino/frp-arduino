@@ -69,8 +69,8 @@ toggle :: Stream Int -> Stream Bool
 time interval.
 
 `toggle` is a function that converts a stream of integers to a stream of
-booleans by mapping the `api:even` function: Even integers are converted to true
-and odd integers are converted to false.
+booleans by mapping the `api:isEven` function: Even integers are converted to
+true and odd integers are converted to false.
 
 `~>` is an operator that takes a stream on the left hand side and a function on
 the right hand side. The result is a stream that we get by applying the

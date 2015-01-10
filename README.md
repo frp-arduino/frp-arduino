@@ -52,10 +52,10 @@ integer at some time interval:
 
 ![The clock stream.](doc/clock-stream.png)
 
-We can convert this stream to a stream of booleans by mapping the `even`
+We can convert this stream to a stream of booleans by mapping the [`isEven`](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:isEven)
 function on it:
 
-![The clock stream mapped with the even function.](doc/map-even-clock-stream.png)
+![The clock stream mapped with the isEven function.](doc/map-even-clock-stream.png)
 
 We now have a stream that alternates its boolean value at a time interval.
 This stream can be connected to an output pin that has a led connected to it to
@@ -212,8 +212,8 @@ toggle :: Stream Int -> Stream Bool
 time interval.
 
 `toggle` is a function that converts a stream of integers to a stream of
-booleans by mapping the `[even](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:even)` function: Even integers are converted to true
-and odd integers are converted to false.
+booleans by mapping the [`isEven`](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:isEven) function: Even integers are converted to
+true and odd integers are converted to false.
 
 `~>` is an operator that takes a stream on the left hand side and a function on
 the right hand side. The result is a stream that we get by applying the
