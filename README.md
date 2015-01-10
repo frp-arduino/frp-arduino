@@ -141,6 +141,9 @@ Compile and upload command:
 
     ./make Blink upload
 
+<iframe width="560" height="315" src="//www.youtube.com/embed/UdIXmmp-6tw"
+frameborder="0" allowfullscreen></iframe>
+
 ## Contributing
 
 The contributors are listed in [AUTHORS](AUTHORS) (add yourself).
