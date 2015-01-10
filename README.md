@@ -51,8 +51,8 @@ integer at some time interval:
 
 ![The clock stream.](doc/clock-stream.png)
 
-We can convert this stream to a stream of booleans by mapping the function
-even on it:
+We can convert this stream to a stream of booleans by mapping the `even`
+function on it:
 
 ![The clock stream mapped with the even function.](doc/map-even-clock-stream.png)
 
