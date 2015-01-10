@@ -7,34 +7,30 @@ class Document(object):
 
     def __init__(self, name):
         self._name = name
-        self._path = os.path.join(os.path.dirname(__file__),
-                                                  "..",
-                                                  name)
+        self._path = os.path.join(ROOT_DIR, name)
         self._toc = ""
         self._body = ""
 
     def cat(self, name, depth):
-        with open(os.path.join(os.path.dirname(__file__), name)) as f:
-            title_line = f.readline()
-            title = title_line.strip()
-            self._toc += "%s* [%s](#%s)\n" % ("  "*depth, title, slug(title_line))
-            self._body += "\n%s " % ("#" * (2+depth))
-            self._body += title_line
+        with open(os.path.join(ROOT_DIR, "doc", name)) as f:
+            self._gen_toc(f.readline(), depth)
             for line in f:
                 if line.startswith("INCLUDE_EXAMPLE:"):
-                    self.example(line.split(":", 1)[1].strip())
+                    self._read_example(line.split(":", 1)[1].strip())
                 elif line.startswith("INCLUDE_VIDEO:"):
-                    self.video(line.split(":", 1)[1].strip())
+                    self._embed_youtube_video(line.split(":", 1)[1].strip())
                 elif line.startswith("INCLUDE_API:"):
-                    self.api(line.split(":", 1)[1].strip())
+                    self._gen_api_doc(line.split(":", 1)[1].strip())
                 elif line.startswith("# "):
-                    title_line = line[2:]
-                    title = title_line.strip()
-                    self._toc += "%s* [%s](#%s)\n" % ("  "*(depth+1), title, slug(title_line))
-                    self._body += "\n%s " % ("#" * (3+depth))
-                    self._body += title_line
+                    self._gen_toc(line[2:], depth+1)
                 else:
                     self._body += self._replace_api_refs(line)
+
+    def _gen_toc(self, title_line, depth):
+        title = title_line.strip()
+        self._toc += "%s* [%s](#%s)\n" % ("  "*depth, title, slug(title_line))
+        self._body += "\n%s " % ("#" * (2+depth))
+        self._body += title_line
 
     def _replace_api_refs(self, line):
         def replace(m):
@@ -42,8 +38,8 @@ class Document(object):
             return "[`%s`](#%s)" % (name, sanitize(name))
         return re.sub(r"`api:(.+?)`", replace, line)
 
-    def example(self, name):
-        with open(os.path.join(os.path.dirname(__file__), "..", "examples", name)) as f:
+    def _read_example(self, name):
+        with open(os.path.join(ROOT_DIR, "examples", name)) as f:
             # Drop license text
             for n in range(15):
                 f.readline()
@@ -61,14 +57,16 @@ class Document(object):
             )
             self._body += "* Compile and upload command: `./make %s upload`\n" % name[:-3]
 
-    def video(self, name):
-        self._body += "<p align=\"center\">\n"
-        self._body += "  <a href=\"http://youtu.be/%s\">\n" % name
-        self._body += "      <img src=\"http://img.youtube.com/vi/%s/0.jpg\">\n" % name
-        self._body += "  </a>\n"
-        self._body += "</p>\n"
+    def _embed_youtube_video(self, name):
+        self._body += "".join([
+            "<p align=\"center\">\n",
+            "  <a href=\"http://youtu.be/%s\">\n" % name,
+            "      <img src=\"http://img.youtube.com/vi/%s/0.jpg\">\n" % name,
+            "  </a>\n",
+            "</p>\n",
+        ])
 
-    def api(self, name):
+    def _gen_api_doc(self, name):
         matches = 0
         for (root, dirs, files) in os.walk(os.path.join(ROOT_DIR, "src")):
             for file_ in files:
