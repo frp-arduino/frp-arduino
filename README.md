@@ -164,9 +164,8 @@ compileProgram :: Action a -> IO ()
 ```
 
 That means that we can define a set of actions in the do-block that we pass to
-`compileProgram`. It will then take those actions, build an internal
-representation of the program, and then generate C code and write that to a
-file.
+`compileProgram`. It takes those actions, builds an internal representation of
+the program, and then generates C code and writes that to a file.
 
 So what action is defined by the last line in the example?
 
@@ -210,12 +209,17 @@ toggle :: Stream Int -> Stream Bool
 time interval.
 
 `toggle` is a function that converts a stream of integers to a stream of
-booleans. Even integers are converted to True and odd integers are converted to
-False.
+booleans by mapping the `even` function: Even integers are converted to true
+and odd integers are converted to false.
 
 `~>` is an operator that takes a stream on the left hand side and a function on
 the right hand side. The result is a stream that we get by applying the
 function to the stream on the left hand side.
+
+The resulting stream in the example is a stream of booleans that toggles
+between true and false values at a specific time interval. When we connect that
+stream to the pin where the led is connect, the led will blink at a specific
+time interval.
 
 ### Example: Blinking two leds
 
