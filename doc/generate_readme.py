@@ -27,10 +27,11 @@ class Document(object):
                     self._body += self._replace_api_refs(line)
 
     def _replace_api_refs(self, line):
-        return re.sub(
-            r"`api:(.+?)`",
-            r"[`\1`](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:\1)",
-            line)
+        def replace(m):
+            name = m.group(1)
+            a_name = m.group(1).replace("=", "-61-").replace("~", "-126-").replace(">", "-62-")
+            return "[%s](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:%s)" % (name, a_name)
+        return re.sub(r"`api:(.+?)`", replace, line)
 
     def example(self, name):
         with open(os.path.join(os.path.dirname(__file__), "..", "examples", name)) as f:

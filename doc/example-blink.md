@@ -33,16 +33,16 @@ So what action is defined by the last line in the example?
 pin13 =: clock ~> toggle
 ```
 
-Let's look at the type for the `=:` operator:
+Let's look at the type for the `api:=:` operator:
 
 ```haskell
 (=:) :: Output a -> Stream a -> Action ()
 ```
 
-It takes an `Output` of a specific type `a` and connects it to a `Stream` of
-values of the same type.
+It takes an output of a specific type and connects it to a sream of values of
+the same type.
 
-The type of `pin13` reveals that it accepts booleans:
+The type of `api:pin13` reveals that it accepts booleans:
 
 ```haskell
 pin13 :: Output Bool
@@ -65,14 +65,14 @@ clock :: Stream Int
 toggle :: Stream Int -> Stream Bool
 ```
 
-`clock` is a built in stream that produces incrementing integers at a given
+`api:clock` is a built in stream that produces incrementing integers at a given
 time interval.
 
-`toggle` is a function that converts a stream of integers to a stream of
+`api:toggle` is a function that converts a stream of integers to a stream of
 booleans by mapping the `api:isEven` function: Even integers are converted to
 true and odd integers are converted to false.
 
-`~>` is an operator that takes a stream on the left hand side and a function on
+`api:~>` is an operator that takes a stream on the left hand side and a function on
 the right hand side. The result is a stream that we get by applying the
 function to the stream on the left hand side.
 
