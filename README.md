@@ -129,6 +129,12 @@ The arduino-core package depends on the following packages:
 
 ### Example: Blinking a led
 
+<p align="center">
+  <a href="http://youtu.be/UdIXmmp-6tw">
+      <img src="http://img.youtube.com/vi/UdIXmmp-6tw/0.jpg">
+  </a>
+</p>
+
 ```haskell
 import Arduino.Uno
 
@@ -141,8 +147,6 @@ Source code: [examples/Blink.hs](examples/Blink.hs). Generated C code: [examples
 Compile and upload command:
 
     ./make Blink upload
-
-[![Blink demo video.](http://img.youtube.com/vi/UdIXmmp-6tw/0.jpg)](http://youtu.be/UdIXmmp-6tw)
 
 Lets examine this example line by line:
 

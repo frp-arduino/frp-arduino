@@ -1,8 +1,12 @@
 Example: Blinking a led
 
-INCLUDE_EXAMPLE:Blink.hs
+<p align="center">
+  <a href="http://youtu.be/UdIXmmp-6tw">
+      <img src="http://img.youtube.com/vi/UdIXmmp-6tw/0.jpg">
+  </a>
+</p>
 
-[![Blink demo video.](http://img.youtube.com/vi/UdIXmmp-6tw/0.jpg)](http://youtu.be/UdIXmmp-6tw)
+INCLUDE_EXAMPLE:Blink.hs
 
 Lets examine this example line by line:
 
