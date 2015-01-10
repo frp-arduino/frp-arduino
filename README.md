@@ -48,12 +48,12 @@ We could take this stream and assign it to an output pin. Whenever there is a
 new value on the input stream, that value will be sent to the output pin.
 
 The most common thing we to with streams is to convert the values in some way.
-It is called map. There is a built in stream called [`clock`](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:clock) that increments
+It is called map. There is a built in stream called [`clock`](#api-clock) that increments
 an integer at some time interval:
 
 ![The clock stream.](doc/clock-stream.png)
 
-We can convert this stream to a stream of booleans by mapping the [`isEven`](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:isEven)
+We can convert this stream to a stream of booleans by mapping the [`isEven`](#api-isEven)
 function on it:
 
 ![The clock stream mapped with the isEven function.](doc/map-even-clock-stream.png)
@@ -161,14 +161,14 @@ main = compileProgram $ do
 ```
 
 The `main` function is the standard `main` function in Haskell. The
-[`compileProgram`](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:compileProgram) function has the following type:
+[`compileProgram`](#api-compileProgram) function has the following type:
 
 ```haskell
 compileProgram :: Action a -> IO ()
 ```
 
 That means that we can define a set of actions in the do-block that we pass to
-[`compileProgram`](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:compileProgram). It takes those actions, builds an internal representation
+[`compileProgram`](#api-compileProgram). It takes those actions, builds an internal representation
 of the program, and then generates C code and writes that to a file.
 
 So what action is defined by the last line in the example?
@@ -177,7 +177,7 @@ So what action is defined by the last line in the example?
 pin13 =: clock ~> toggle
 ```
 
-Let's look at the type for the [`=:`](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:-61-:) operator:
+Let's look at the type for the [`=:`](#api--61-:) operator:
 
 ```haskell
 (=:) :: Output a -> Stream a -> Action ()
@@ -186,7 +186,7 @@ Let's look at the type for the [`=:`](http://rickardlindberg.github.io/frp-ardui
 It takes an output of a specific type and connects it to a sream of values of
 the same type.
 
-The type of [`pin13`](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:pin13) reveals that it accepts booleans:
+The type of [`pin13`](#api-pin13) reveals that it accepts booleans:
 
 ```haskell
 pin13 :: Output Bool
@@ -209,14 +209,14 @@ clock :: Stream Int
 toggle :: Stream Int -> Stream Bool
 ```
 
-[`clock`](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:clock) is a built in stream that produces incrementing integers at a given
+[`clock`](#api-clock) is a built in stream that produces incrementing integers at a given
 time interval.
 
-[`toggle`](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:toggle) is a function that converts a stream of integers to a stream of
-booleans by mapping the [`isEven`](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:isEven) function: Even integers are converted to
+[`toggle`](#api-toggle) is a function that converts a stream of integers to a stream of
+booleans by mapping the [`isEven`](#api-isEven) function: Even integers are converted to
 true and odd integers are converted to false.
 
-[`~>`](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:-126--62-) is an operator that takes a stream on the left hand side and a function on
+[`~>`](#api--126--62-) is an operator that takes a stream on the left hand side and a function on
 the right hand side. The result is a stream that we get by applying the
 function to the stream on the left hand side.
 
@@ -251,19 +251,19 @@ main = compileProgram $ do
 
 ## API
 
-<a name="compileProgram"></a>**compileProgram**
+<a name="api-compileProgram"></a>**compileProgram**
 
 ```haskell
 compileProgram :: Action a -> IO ()
 ```
 
-<a name="(-61-:)"></a>**(=:)**
+<a name="api-(-61-:)"></a>**(=:)**
 
 ```haskell
 (=:) :: Output a -> Stream a -> Action ()
 ```
 
-<a name="(-126--62-)"></a>**(~>)**
+<a name="api-(-126--62-)"></a>**(~>)**
 
 ```haskell
 (~>) :: Stream a -> (Stream a -> Stream b) -> Stream b

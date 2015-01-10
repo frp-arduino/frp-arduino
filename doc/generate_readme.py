@@ -33,8 +33,7 @@ class Document(object):
     def _replace_api_refs(self, line):
         def replace(m):
             name = m.group(1)
-            a_name = m.group(1).replace("=", "-61-").replace("~", "-126-").replace(">", "-62-")
-            return "[`%s`](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:%s)" % (name, a_name)
+            return "[`%s`](#%s)" % (name, sanitize(name))
         return re.sub(r"`api:(.+?)`", replace, line)
 
     def example(self, name):
@@ -86,7 +85,7 @@ def slug(title_line):
     return title_line.strip().lower().replace(" ", "-").replace(":", "")
 
 def sanitize(name):
-    return name.replace("=", "-61-").replace("~", "-126-").replace(">", "-62-")
+    return "api-" + name.replace("=", "-61-").replace("~", "-126-").replace(">", "-62-")
 
 def generate(path, files):
     def process(doc, files, depth):
