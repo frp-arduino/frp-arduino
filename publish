@@ -24,11 +24,11 @@ haddock -h \
 
 cd ../$GH_PAGES_REPO_NAME
 git add .
-(git commit -m 'Publishing' && git push) || echo Nothing to commit
+(git commit -m 'Publishing haddock.' && git push) || echo Nothing to commit
 
 cd ..
 rm -rf $GH_PAGES_REPO_NAME
 
 python doc/generate_readme.py
 git add README.md
-git commit -m 'Publishing'
+git commit -m 'Publishing README.'
