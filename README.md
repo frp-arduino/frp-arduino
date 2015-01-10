@@ -6,6 +6,7 @@
 * [Examples](#examples)
   * [Running the examples](#running-the-examples)
   * [Example: Blinking a led](#example-blinking-a-led)
+  * [Example: Blinking two leds](#example-blinking-two-leds)
 * [Contributing](#contributing)
 * [License](#license)
 * [This document](#this-document)
@@ -141,10 +142,26 @@ Compile and upload command:
 
     ./make Blink upload
 
-<iframe width="560" height="315" src="//www.youtube.com/embed/UdIXmmp-6tw"
-frameborder="0" allowfullscreen></iframe>
-
 [![Blink demo video.](http://img.youtube.com/vi/UdIXmmp-6tw/0.jpg)](http://youtu.be/UdIXmmp-6tw)
+
+### Example: Blinking two leds
+
+```haskell
+import Arduino.Uno
+
+main = compileProgram $ do
+
+    toggled <- def $ clock ~> toggle
+
+    pin13 =: toggled
+
+    pin12 =: toggled ~> invert
+```
+
+Source code: [examples/DoubleBlink.hs](examples/DoubleBlink.hs). Generated C code: [examples/DoubleBlink.c](examples/DoubleBlink.c).
+Compile and upload command:
+
+    ./make DoubleBlink upload
 
 ## Contributing
 

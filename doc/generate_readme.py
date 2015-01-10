@@ -70,6 +70,7 @@ generate("README.md", [
     "examples.md", [
         "example-intro.md",
         "example-blink.md",
+        "example-double-blink.md",
     ],
     "contributing.md",
     "license.md",
