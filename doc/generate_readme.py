@@ -30,7 +30,7 @@ class Document(object):
         def replace(m):
             name = m.group(1)
             a_name = m.group(1).replace("=", "-61-").replace("~", "-126-").replace(">", "-62-")
-            return "[%s](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:%s)" % (name, a_name)
+            return "[`%s`](http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:%s)" % (name, a_name)
         return re.sub(r"`api:(.+?)`", replace, line)
 
     def example(self, name):
