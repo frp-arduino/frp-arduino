@@ -29,6 +29,7 @@ class Document(object):
                     self.api(line.split(":", 1)[1].strip())
                 elif line.startswith("# "):
                     title_line = line[2:]
+                    title = title_line.strip()
                     self._toc += "%s* [%s](#%s)\n" % ("  "*(depth+1), title, slug(title_line))
                     self._body += "\n%s " % ("#" * (3+depth))
                     self._body += title_line
