@@ -1,0 +1,34 @@
+#!/bin/sh
+
+set -e
+
+GH_PAGES_REPO_NAME=gh-pages-clone
+
+git clone . $GH_PAGES_REPO_NAME
+
+cd $GH_PAGES_REPO_NAME
+git checkout gh-pages
+git rm -r .
+cd ..
+
+cd src
+haddock -h \
+    --odir ../$GH_PAGES_REPO_NAME \
+    --hide CCodeGen \
+    --hide Arduino.Internal.DAG \
+    --hide Arduino.Internal.CodeGen \
+    --hide Arduino.Internal.DSL \
+    --hide Arduino.Language \
+    --hide Arduino.Library \
+    Arduino/Uno.hs
+
+cd ../$GH_PAGES_REPO_NAME
+git add .
+(git commit -m 'Publishing' && git push) || echo Nothing to commit
+
+cd ..
+rm -rf $GH_PAGES_REPO_NAME
+
+python doc/generate_readme.py
+git add README.md
+git commit -m 'Publishing'
