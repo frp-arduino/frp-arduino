@@ -95,7 +95,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
      inkscape:cx="386.72935"
-     inkscape:cy="760.04892"
+     inkscape:cy="840.86112"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -192,7 +192,7 @@
            y="581.4176"
            x="147.14403"
            id="tspan4397"
-           sodipodi:role="line">on</tspan></text>
+           sodipodi:role="line">high</tspan></text>
       <text
          xml:space="preserve"
          style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
@@ -204,7 +204,7 @@
            id="tspan4405"
            x="194.51707"
            y="581.4176"
-           style="font-size:12px;text-align:center;text-anchor:middle">off</tspan></text>
+           style="font-size:12px;text-align:center;text-anchor:middle">low</tspan></text>
       <text
          sodipodi:linespacing="125%"
          id="text4407"
@@ -216,7 +216,7 @@
            y="581.4176"
            x="334.47"
            id="tspan4409"
-           sodipodi:role="line">off</tspan></text>
+           sodipodi:role="line">low</tspan></text>
       <text
          xml:space="preserve"
          style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
@@ -228,7 +228,7 @@
            id="tspan4413"
            x="236.85492"
            y="581.4176"
-           style="font-size:12px;text-align:center;text-anchor:middle">on</tspan></text>
+           style="font-size:12px;text-align:center;text-anchor:middle">high</tspan></text>
       <text
          sodipodi:linespacing="125%"
          id="text4415"
@@ -240,7 +240,7 @@
            y="581.4176"
            x="415.14401"
            id="tspan4417"
-           sodipodi:role="line">on</tspan></text>
+           sodipodi:role="line">high</tspan></text>
       <text
          xml:space="preserve"
          style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
