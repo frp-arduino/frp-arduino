@@ -279,20 +279,14 @@ compileProgram :: Action a -> IO ()
 (~>) :: Stream a -> (Stream a -> Stream b) -> Stream b
 ```
 
-<a name="api-clock"></a>**clock**
-
-```haskell
-clock :: Stream Int
-```
-
-
-### Expression operators
-
 <a name="api-toggle"></a>**toggle**
 
 ```haskell
 toggle :: Stream Int -> Stream Bool
 ```
+
+
+### Expression operators
 
 <a name="api-isEven"></a>**isEven**
 
@@ -313,6 +307,12 @@ pin12 :: DSL.Output Bool
 
 ```haskell
 pin13 :: DSL.Output Bool
+```
+
+<a name="api-clock"></a>**clock**
+
+```haskell
+clock :: Stream Int
 ```
 
 ## Contributing

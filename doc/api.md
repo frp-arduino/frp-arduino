@@ -10,11 +10,9 @@ INCLUDE_API:(=:)
 
 INCLUDE_API:(~>)
 
-INCLUDE_API:clock
+INCLUDE_API:toggle
 
 # Expression operators
-
-INCLUDE_API:toggle
 
 INCLUDE_API:isEven
 
@@ -23,3 +21,5 @@ INCLUDE_API:isEven
 INCLUDE_API:pin12
 
 INCLUDE_API:pin13
+
+INCLUDE_API:clock
