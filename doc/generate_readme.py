@@ -27,6 +27,11 @@ class Document(object):
                     self.video(line.split(":", 1)[1].strip())
                 elif line.startswith("INCLUDE_API:"):
                     self.api(line.split(":", 1)[1].strip())
+                elif line.startswith("# "):
+                    title_line = line[2:]
+                    self._toc += "%s* [%s](#%s)\n" % ("  "*(depth+1), title, slug(title_line))
+                    self._body += "\n%s " % ("#" * (3+depth))
+                    self._body += title_line
                 else:
                     self._body += self._replace_api_refs(line)
 

@@ -8,6 +8,8 @@
   * [Example: Blinking a led](#example-blinking-a-led)
   * [Example: Blinking two leds](#example-blinking-two-leds)
 * [API](#api)
+  * [API](#actions)
+  * [API](#stream-operations)
 * [Contributing](#contributing)
 * [License](#license)
 * [This document](#this-document)
@@ -251,6 +253,9 @@ main = compileProgram $ do
 
 ## API
 
+
+### Actions
+
 <a name="api-compileProgram"></a>**compileProgram**
 
 ```haskell
@@ -262,6 +267,9 @@ compileProgram :: Action a -> IO ()
 ```haskell
 (=:) :: Output a -> Stream a -> Action ()
 ```
+
+
+### Stream operations
 
 <a name="api-(-126--62-)"></a>**(~>)**
 
