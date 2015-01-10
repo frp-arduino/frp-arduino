@@ -20,6 +20,8 @@ class Document(object):
             for line in f:
                 if line.startswith("INCLUDE_EXAMPLE:"):
                     self.example(line.split(":")[1].strip())
+                elif line.startswith("INCLUDE_VIDEO:"):
+                    self.video(line.split(":")[1].strip())
                 else:
                     self._body += line
 
@@ -32,15 +34,22 @@ class Document(object):
             self._body += f.read()
             self._body += "```\n"
             self._body += "\n"
-            self._body += "Source code: [%s](%s). Generated C code: [%s](%s).\n" % (
+            self._body += "* Source code: [%s](%s)\n" % (
                 "examples/%s.hs" % name[:-3],
                 "examples/%s.hs" % name[:-3],
+            )
+            self._body += "* Generated C code (no need to understand this): [%s](%s)\n" % (
                 "examples/%s.c" % name[:-3],
                 "examples/%s.c" % name[:-3],
             )
-            self._body += "Compile and upload command:\n"
-            self._body += "\n"
-            self._body += "    ./make %s upload\n" % name[:-3]
+            self._body += "* Compile and upload command: `./make %s upload`\n" % name[:-3]
+
+    def video(self, name):
+        self._body += "<p align=\"center\">\n"
+        self._body += "  <a href=\"http://youtu.be/%s\">\n" % name
+        self._body += "      <img src=\"http://img.youtube.com/vi/%s/0.jpg\">\n" % name
+        self._body += "  </a>\n"
+        self._body += "</p>\n"
 
     def write(self):
         with open(self._path, "w") as f:

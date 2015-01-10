@@ -143,10 +143,9 @@ main = compileProgram $ do
     pin13 =: clock ~> toggle
 ```
 
-Source code: [examples/Blink.hs](examples/Blink.hs). Generated C code: [examples/Blink.c](examples/Blink.c).
-Compile and upload command:
-
-    ./make Blink upload
+* Source code: [examples/Blink.hs](examples/Blink.hs)
+* Generated C code (no need to understand this): [examples/Blink.c](examples/Blink.c)
+* Compile and upload command: `./make Blink upload`
 
 Lets examine this example line by line:
 
@@ -245,10 +244,9 @@ main = compileProgram $ do
     pin12 =: toggled ~> invert
 ```
 
-Source code: [examples/DoubleBlink.hs](examples/DoubleBlink.hs). Generated C code: [examples/DoubleBlink.c](examples/DoubleBlink.c).
-Compile and upload command:
-
-    ./make DoubleBlink upload
+* Source code: [examples/DoubleBlink.hs](examples/DoubleBlink.hs)
+* Generated C code (no need to understand this): [examples/DoubleBlink.c](examples/DoubleBlink.c)
+* Compile and upload command: `./make DoubleBlink upload`
 
 ## Contributing
 

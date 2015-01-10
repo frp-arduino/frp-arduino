@@ -1,10 +1,6 @@
 Example: Blinking a led
 
-<p align="center">
-  <a href="http://youtu.be/UdIXmmp-6tw">
-      <img src="http://img.youtube.com/vi/UdIXmmp-6tw/0.jpg">
-  </a>
-</p>
+INCLUDE_VIDEO:UdIXmmp-6tw
 
 INCLUDE_EXAMPLE:Blink.hs
 
