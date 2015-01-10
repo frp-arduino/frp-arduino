@@ -7,6 +7,7 @@
   * [Running the examples](#running-the-examples)
   * [Example: Blinking a led](#example-blinking-a-led)
   * [Example: Blinking two leds](#example-blinking-two-leds)
+* [API](#api)
 * [Contributing](#contributing)
 * [License](#license)
 * [This document](#this-document)
@@ -247,6 +248,26 @@ main = compileProgram $ do
 * Source code: [examples/DoubleBlink.hs](examples/DoubleBlink.hs)
 * Generated C code (no need to understand this): [examples/DoubleBlink.c](examples/DoubleBlink.c)
 * Compile and upload command: `./make DoubleBlink upload`
+
+## API
+
+**<a name="compileProgram">compileProgram</a>**
+
+```haskell
+compileProgram :: Action a -> IO ()
+```
+
+**<a name="(-61-:)">(=:)</a>**
+
+```haskell
+(=:) :: Output a -> Stream a -> Action ()
+```
+
+**<a name="(-126--62-)">(~>)</a>**
+
+```haskell
+(~>) :: Stream a -> (Stream a -> Stream b) -> Stream b
+```
 
 ## Contributing
 

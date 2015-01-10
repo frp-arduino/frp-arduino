@@ -1,6 +1,8 @@
 import os.path
 import re
 
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
 class Document(object):
 
     def __init__(self, name):
@@ -20,9 +22,11 @@ class Document(object):
             self._body += title_line
             for line in f:
                 if line.startswith("INCLUDE_EXAMPLE:"):
-                    self.example(line.split(":")[1].strip())
+                    self.example(line.split(":", 1)[1].strip())
                 elif line.startswith("INCLUDE_VIDEO:"):
-                    self.video(line.split(":")[1].strip())
+                    self.video(line.split(":", 1)[1].strip())
+                elif line.startswith("INCLUDE_API:"):
+                    self.api(line.split(":", 1)[1].strip())
                 else:
                     self._body += self._replace_api_refs(line)
 
@@ -59,12 +63,30 @@ class Document(object):
         self._body += "  </a>\n"
         self._body += "</p>\n"
 
+    def api(self, name):
+        matches = 0
+        for (root, dirs, files) in os.walk(os.path.join(ROOT_DIR, "src")):
+            for file_ in files:
+                with open(os.path.join(root, file_)) as f:
+                    for line in f:
+                        if line.startswith("%s :: " % name):
+                            self._body += "**<a name=\"%s\">%s</a>**\n" % (sanitize(name), name)
+                            self._body += "\n"
+                            self._body += "```haskell\n"
+                            self._body += line
+                            self._body += "```\n"
+                            matches += 1
+        assert matches == 1, "api for %r" % name
+
     def write(self):
         with open(self._path, "w") as f:
             f.write(self._toc + self._body)
 
 def slug(title_line):
     return title_line.strip().lower().replace(" ", "-").replace(":", "")
+
+def sanitize(name):
+    return name.replace("=", "-61-").replace("~", "-126-").replace(">", "-62-")
 
 def generate(path, files):
     def process(doc, files, depth):
@@ -90,6 +112,7 @@ if __name__ == "__main__":
             "example-blink.md",
             "example-double-blink.md",
         ],
+        "api.md",
         "contributing.md",
         "license.md",
         "this-document.md",
