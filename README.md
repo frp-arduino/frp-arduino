@@ -212,7 +212,7 @@ toggle :: Stream Int -> Stream Bool
 time interval.
 
 `toggle` is a function that converts a stream of integers to a stream of
-booleans by mapping the `even` function: Even integers are converted to true
+booleans by mapping the (even)[http://rickardlindberg.github.io/frp-arduino/Arduino-Uno.html#v:even] function: Even integers are converted to true
 and odd integers are converted to false.
 
 `~>` is an operator that takes a stream on the left hand side and a function on
