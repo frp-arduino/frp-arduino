@@ -14,8 +14,8 @@ We could take this stream and assign it to an output pin. Whenever there is a
 new value on the input stream, that value will be sent to the output pin.
 
 The most common thing we to with streams is to convert the values in some way.
-It is called map. There is a built in stream called `clock` that increments an
-integer at some time interval:
+It is called map. There is a built in stream called `api:clock` that increments
+an integer at some time interval:
 
 ![The clock stream.](doc/clock-stream.png)
 

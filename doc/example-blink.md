@@ -17,15 +17,15 @@ main = compileProgram $ do
 ```
 
 The `main` function is the standard `main` function in Haskell. The
-`compileProgram` function has the following type:
+`api:compileProgram` function has the following type:
 
 ```haskell
 compileProgram :: Action a -> IO ()
 ```
 
 That means that we can define a set of actions in the do-block that we pass to
-`compileProgram`. It takes those actions, builds an internal representation of
-the program, and then generates C code and writes that to a file.
+`api:compileProgram`. It takes those actions, builds an internal representation
+of the program, and then generates C code and writes that to a file.
 
 So what action is defined by the last line in the example?
 
