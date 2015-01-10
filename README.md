@@ -10,6 +10,8 @@
 * [API](#api)
   * [Actions](#actions)
   * [Stream operations](#stream-operations)
+  * [Expression operators](#expression-operators)
+  * [Uno outputs and streams](#uno-outputs-and-streams)
 * [Contributing](#contributing)
 * [License](#license)
 * [This document](#this-document)
@@ -275,6 +277,42 @@ compileProgram :: Action a -> IO ()
 
 ```haskell
 (~>) :: Stream a -> (Stream a -> Stream b) -> Stream b
+```
+
+<a name="api-clock"></a>**clock**
+
+```haskell
+clock :: Stream Int
+```
+
+
+### Expression operators
+
+<a name="api-toggle"></a>**toggle**
+
+```haskell
+toggle :: Stream Int -> Stream Bool
+```
+
+<a name="api-isEven"></a>**isEven**
+
+```haskell
+isEven :: Expression Int -> Expression Bool
+```
+
+
+### Uno outputs and streams
+
+<a name="api-pin12"></a>**pin12**
+
+```haskell
+pin12 :: DSL.Output Bool
+```
+
+<a name="api-pin13"></a>**pin13**
+
+```haskell
+pin13 :: DSL.Output Bool
 ```
 
 ## Contributing
