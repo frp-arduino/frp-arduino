@@ -30,6 +30,22 @@ import qualified Arduino.Internal.DSL as DSL
 
 -- For mappings, see http://arduino.cc/en/Hacking/PinMapping168
 
+data GPIO = GPIO
+    { name              :: String
+    , directionRegister :: String
+    , portRegister      :: String
+    , pinRegister       :: String
+    , bitName           :: String
+    }
+
+pin12GPIO = GPIO
+    { name              = "pin12"
+    , directionRegister = "DDRB"
+    , portRegister      = "PORTB"
+    , pinRegister       = "PINB"
+    , bitName           = "PB4"
+    }
+
 pin13 :: DSL.Output Bool
 pin13 = DSL.outputPin "pin13" "DDRB" "PORTB" "0x20U"
 
@@ -43,7 +59,7 @@ pin10 :: DSL.Output Bool
 pin10 = DSL.outputPin "pin10" "DDRB" "PORTB" "0x04U"
 
 pin12in :: Stream Bool
-pin12in = DSL.inputPin "pin12" "DDRB" "PORTB" "PINB" "PB4"
+pin12in = gpioInput pin12GPIO
 
 uart :: DSL.Output String
 uart = DSL.Output $ DAG.Pin $ DAG.PinDefinition
@@ -71,3 +87,11 @@ uart = DSL.Output $ DAG.Pin $ DAG.PinDefinition
         line $ "}"
         return Nothing
     }
+
+gpioInput :: GPIO -> Stream Bool
+gpioInput gpio = DSL.createInput
+    (name gpio)
+    (DSL.writeBit (directionRegister gpio) (bitName gpio) DAG.Low $
+     DSL.writeBit (portRegister gpio) (bitName gpio) DAG.High $
+     DSL.end)
+    (DSL.readBit (pinRegister gpio) (bitName gpio))

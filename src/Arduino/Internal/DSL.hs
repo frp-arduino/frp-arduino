@@ -38,6 +38,8 @@ newtype Expression a = Expression { unExpression :: DAG.Expression }
 
 newtype Output a = Output { unOutput :: DAG.Body }
 
+newtype LLI a = LLI { unLLI :: DAG.LLI }
+
 compileProgram :: Action a -> IO ()
 compileProgram action = do
     let dagState = execState action (DAGState 1 DAG.emptyStreams)
@@ -156,10 +158,17 @@ outputPin name directionRegister portRegister pinMask =
         return Nothing
     }
 
-inputPin :: String -> String -> String -> String -> String -> Stream Bool
-inputPin name directionRegister portRegister pinRegister pinMask =
-    Stream $ do
-        let body = DAG.Driver (DAG.WriteBit directionRegister pinMask DAG.Low (
-                               DAG.WriteBit portRegister pinMask DAG.High DAG.End))
-                              (DAG.ReadBit pinRegister pinMask)
-        addStream ("input_" ++ name) body
+createInput :: String -> LLI () -> LLI a -> Stream a
+createInput name initLLI bodyLLI =
+    Stream $ addStream ("input_" ++ name) body
+    where
+        body = DAG.Driver (unLLI initLLI) (unLLI bodyLLI)
+
+writeBit :: String -> String -> DAG.Bit -> LLI a -> LLI a
+writeBit register bit value next = LLI $ DAG.WriteBit register bit value (unLLI next)
+
+readBit :: String -> String -> LLI Bool
+readBit register bit = LLI $ DAG.ReadBit register bit
+
+end :: LLI ()
+end = LLI $ DAG.End
