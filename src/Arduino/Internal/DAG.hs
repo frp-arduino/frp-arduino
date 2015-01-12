@@ -51,6 +51,7 @@ data Expression = Input Int
                 | CharConstant Char
                 | BoolConstant Bool
                 | If Expression Expression Expression
+                | Filter Expression Expression
                 | Many [Expression]
 
 type Identifier = String

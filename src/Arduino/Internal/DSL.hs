@@ -92,6 +92,14 @@ mapS2 fn left right = Stream $ do
         expression = unExpression $ fn (Expression $ DAG.Input 0)
                                        (Expression $ DAG.Input 1)
 
+filterS :: (Expression a -> Expression Bool) -> Stream a -> Stream a
+filterS fn stream = Stream $ do
+    streamName <- unStream stream
+    expressionStreamName <- addAnonymousStream (DAG.Transform (DAG.Filter expression (DAG.Input 0)))
+    addDependency streamName expressionStreamName
+    where
+        expression = unExpression $ fn $ Expression $ DAG.Input 0
+
 if_ :: Expression Bool -> Expression a -> Expression a -> Expression a
 if_ condition trueExpression falseExpression =
     Expression (DAG.If (unExpression condition)

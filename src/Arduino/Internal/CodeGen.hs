@@ -25,6 +25,8 @@ import qualified Data.Map as M
 import Arduino.Internal.DAG
 import CCodeGen
 
+data ResultVariable = ResultVariable String (Maybe String)
+
 streamsToC :: Streams -> String
 streamsToC = runGen . genStreamsCFile
 
@@ -103,10 +105,11 @@ expressionCType inputMap expression = case expression of
     (Even _)         -> "bool"
     (CharConstant _) -> "char"
     (BoolConstant _) -> "bool"
+    (Filter _ x)     -> expressionCType inputMap x
     (Many (x:_))     -> expressionCType inputMap x
     (If _ _ x)       -> expressionCType inputMap x
 
-genStreamBody :: (Expression -> String) -> Body -> Gen [String]
+genStreamBody :: (Expression -> String) -> Body -> Gen [ResultVariable]
 genStreamBody expressionCType body = case body of
     (Driver _ bodyLLI)     -> genLLI bodyLLI
     (Transform expression) -> do
@@ -115,53 +118,71 @@ genStreamBody expressionCType body = case body of
         temp <- label
         line $ "static unsigned int " ++ temp ++ " = 0U;"
         line $ temp ++ "++;"
-        return [temp]
+        return [ResultVariable temp Nothing]
 
-genStreamOuputCalling :: [Identifier] -> Streams -> Stream -> Gen ()
-genStreamOuputCalling outputNames streams stream = do
-    forM_ outputNames $ \outputName -> do
-    forM_ (outputs stream) $ \x -> do
-        if (length (inputs (streamFromId streams x))) > 1
-            then do
-                let n = fromJust $ elemIndex (name stream) (inputs (streamFromId streams x))
-                line (x ++ "(" ++ show n ++ ", (void*)(&" ++ outputName ++ "));")
-            else do
-                line (x ++ "(" ++ outputName ++ ");")
+genStreamOuputCalling :: [ResultVariable] -> Streams -> Stream -> Gen ()
+genStreamOuputCalling results streams stream = do
+    forM_ (outputs stream) $ \outputStreamName -> do
+        forM_ results $ \(ResultVariable resultVariable condition) -> do
+            case condition of
+                Nothing -> do
+                    generateCall outputStreamName resultVariable
+                Just x -> do
+                    block ("if (" ++ x ++ ") {") $ do
+                        generateCall outputStreamName resultVariable
+                    line "}"
+    where
+        generateCall outputStreamName resultVariable =
+            if (length (inputs (streamFromId streams outputStreamName))) > 1
+                then do
+                    let n = fromJust $ elemIndex (name stream) (inputs (streamFromId streams outputStreamName))
+                    line (outputStreamName ++ "(" ++ show n ++ ", (void*)(&" ++ resultVariable ++ "));")
+                else do
+                    line (outputStreamName ++ "(" ++ resultVariable ++ ");")
 
-genExpression :: (Expression -> String) -> Expression -> Gen [String]
+genExpression :: (Expression -> String) -> Expression -> Gen [ResultVariable]
 genExpression expressionCType expression = case expression of
     (Not expression) -> do
-        [inner] <- genExpression expressionCType expression
+        [ResultVariable inner Nothing] <- genExpression expressionCType expression
         wrap ("!(" ++ inner ++ ")")
     (Even expression) -> do
-        [inner] <- genExpression expressionCType expression
+        [ResultVariable inner Nothing] <- genExpression expressionCType expression
         wrap ("(" ++ inner ++ ") % 2 == 0")
     (Input value) -> do
-        return ["input_" ++ show value]
+        return [ResultVariable ("input_" ++ show value) Nothing]
     (CharConstant value) -> do
-        return [show value]
+        return [ResultVariable (show value) Nothing]
     (BoolConstant value) -> do
         if value
             then (wrap "true")
             else (wrap "false")
     (If conditionExpression trueExpression falseExpression) -> do
         temp <- var (expressionCType falseExpression)
-        [conditionResult] <- genExpression expressionCType conditionExpression
-        [trueResult] <- genExpression expressionCType trueExpression
-        [falseResult] <- genExpression expressionCType falseExpression
+        [ResultVariable conditionResult Nothing] <- genExpression expressionCType conditionExpression
+        [ResultVariable trueResult Nothing] <- genExpression expressionCType trueExpression
+        [ResultVariable falseResult Nothing] <- genExpression expressionCType falseExpression
         block ("if (" ++ conditionResult ++ ") {") $ do
             line $ temp ++ " = " ++ trueResult ++ ";"
         block "} else {" $ do
             line $ temp ++ " = " ++ falseResult ++ ";"
         line $ "}"
-        return [temp]
+        return [ResultVariable temp Nothing]
+    (Filter condition value) -> do
+        [ResultVariable conditionResult Nothing] <- genExpression expressionCType condition
+        [ResultVariable valueResult Nothing] <- genExpression expressionCType value
+        temp <- var "bool"
+        line $ temp ++ " = false;"
+        block ("if (" ++ conditionResult ++ ") {") $ do
+            line $ temp ++ " = true;"
+        line $ "}"
+        return [ResultVariable valueResult (Just temp)]
     (Many values) -> do
         mapM (\x -> genExpression expressionCType x >>= \[y] -> return y) values
     where
         wrap e = do
             name <- var (expressionCType expression)
             line $ name ++ " = " ++ e ++ ";"
-            return [name]
+            return [ResultVariable name Nothing]
 
 genInit :: Stream -> Gen ()
 genInit stream = case body stream of
@@ -182,7 +203,7 @@ genInputCall stream = case body stream of
         when (length (inputs stream) == 0) $ do
             line (name stream ++ "();")
 
-genLLI :: LLI -> Gen [String]
+genLLI :: LLI -> Gen [ResultVariable]
 genLLI lli = case lli of
     (WriteBit register bit value next) ->
         case value of
@@ -198,7 +219,7 @@ genLLI lli = case lli of
     (ReadBit register bit) -> do
         x <- var "bool"
         line $ x ++ " = (" ++ register ++ " & (1 << " ++ bit ++ ")) == 0U;"
-        return [x]
+        return [ResultVariable x Nothing]
     (WaitBit register bit value next) -> do
         case value of
             High -> do

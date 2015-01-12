@@ -29,6 +29,7 @@ module Arduino.Language
     , clock
     , mapS
     , mapS2
+    , filterS
     -- ** Expression operations
     , isEven
     , if_
