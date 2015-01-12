@@ -24,7 +24,11 @@ F_CPU = 16000000L
 AVRDUDE_ARD_PROGRAMMER = arduino
 AVRDUDE_ARD_BAUDRATE = 115200
 
-include ../../Arduino-Makefile/Arduino.mk
+include $ARDUINO_MAKEFILE_PATH
+
 EOF
+    if ! [ -n "$ARDUINO_MAKEFILE_PATH" ]; then
+        ARDUINO_MAKEFILE_PATH="../../Arduino-Makefile/Arduino.mk"
+    fi    
     make $TARGET
 fi
