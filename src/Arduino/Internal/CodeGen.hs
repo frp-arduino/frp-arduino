@@ -89,6 +89,7 @@ genStreamInputParsing args = do
 streamCType :: Streams -> String -> String
 streamCType streams streamName = case body stream of
     (Pin pin)              -> cType pin
+    (Driver _ bodyLLI)     -> lliCType bodyLLI
     (Builtin "clock")      -> "unsigned int"
     (Transform expression) -> expressionCType inputMap expression
     where
@@ -107,8 +108,8 @@ expressionCType inputMap expression = case expression of
 
 genStreamBody :: (Expression -> String) -> Body -> Gen (Maybe String)
 genStreamBody expressionCType body = case body of
-    (Pin pin) -> do
-        bodyCode pin
+    (Pin pin)              -> bodyCode pin
+    (Driver _ bodyLLI)     -> genLLI bodyLLI
     (Transform expression) -> do
         name <- var (expressionCType expression)
         e <- genExpression expressionCType expression
@@ -162,16 +163,16 @@ genExpression expressionCType expression = case expression of
 
 genInit :: Stream -> Gen ()
 genInit stream = case body stream of
-    (Pin pin) -> do
-        initCode pin
-    (Builtin "clock") -> do
+    (Pin pin)          -> initCode pin
+    (Driver initLLI _) -> genLLI initLLI >> return ()
+    (Builtin "clock")  -> do
         line $ "TCCR1B = (1 << CS12) | (1 << CS10);"
     _ -> do
         return ()
 
 genInputCall :: Stream -> Gen ()
 genInputCall stream = case body stream of
-    (Pin _) -> do
+    (Driver _ _) -> do
         when (length (inputs stream) == 0) $ do
             line (name stream ++ "();")
     (Builtin "clock") -> do
@@ -181,3 +182,25 @@ genInputCall stream = case body stream of
         line "}"
     _ -> do
         return ()
+
+genLLI :: LLI -> Gen (Maybe String)
+genLLI lli = case lli of
+    (WriteBit register bit value next) ->
+        case value of
+            High -> do
+                line (register ++ " |= (1 << " ++ bit ++ ");")
+                genLLI next
+            Low -> do
+                line (register ++ " &= ~(1 << " ++ bit ++ ");")
+                genLLI next
+    (ReadBit register bit) -> do
+        x <- var "bool"
+        line $ x ++ " = (" ++ register ++ " & (1 << " ++ bit ++ ")) == 0U;"
+        return (Just x)
+    End -> do
+        return Nothing
+
+lliCType :: LLI -> String
+lliCType (WriteBit _ _ _ next) = lliCType next
+lliCType (ReadBit _ _)         = "bool"
+lliCType End                   = "void"

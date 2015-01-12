@@ -35,6 +35,13 @@ data Stream = Stream
 data Body = Builtin String
           | Pin PinDefinition
           | Transform Expression
+          | Driver LLI LLI
+
+data LLI = WriteBit String String Bit LLI
+         | ReadBit String String
+         | End
+
+data Bit = High | Low
 
 data PinDefinition = PinDefinition
     { pinName  :: String

@@ -159,15 +159,7 @@ outputPin name directionRegister portRegister pinMask =
 inputPin :: String -> String -> String -> String -> String -> Stream Bool
 inputPin name directionRegister portRegister pinRegister pinMask =
     Stream $ do
-        let body = DAG.Pin $ DAG.PinDefinition
-                      { DAG.pinName  = name
-                      , DAG.cType    = "bool"
-                      , DAG.initCode = do
-                          line $ directionRegister ++ " &= ~(" ++ pinMask ++ ");"
-                          line $ portRegister ++ " |= " ++ pinMask ++ ";"
-                      , DAG.bodyCode = do
-                          x <- var "bool"
-                          line $ x ++ " = (" ++ pinRegister ++ " & " ++ pinMask ++ ") == 0U;"
-                          return (Just x)
-                      }
+        let body = DAG.Driver (DAG.WriteBit directionRegister pinMask DAG.Low (
+                               DAG.WriteBit portRegister pinMask DAG.High DAG.End))
+                              (DAG.ReadBit pinRegister pinMask)
         addStream ("input_" ++ name) body

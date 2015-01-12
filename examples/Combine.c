@@ -29,7 +29,7 @@ static void clock() {
 
 static void input_pin12() {
   bool temp1;
-  temp1 = (PINB & 0x10U) == 0U;
+  temp1 = (PINB & (1 << PB4)) == 0U;
   stream_2(temp1);
   stream_3(0, (void*)(&temp1));
   stream_6(0, (void*)(&temp1));
@@ -118,8 +118,8 @@ static void stream_7(bool input_0) {
 
 int main(void) {
   TCCR1B = (1 << CS12) | (1 << CS10);
-  DDRB &= ~(0x10U);
-  PORTB |= 0x10U;
+  DDRB &= ~(1 << PB4);
+  PORTB |= (1 << PB4);
   DDRB |= 0x20U;
   DDRB |= 0x08U;
   DDRB |= 0x04U;
