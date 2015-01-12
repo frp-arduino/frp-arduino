@@ -47,16 +47,17 @@ data Bit = High | Low
 data PinDefinition = PinDefinition
     { pinName  :: String
     , initCode :: Gen ()
-    , bodyCode :: Gen (Maybe String)
+    , bodyCode :: Gen [String]
     , cType    :: String
     }
 
 data Expression = Input Int
                 | Not Expression
                 | Even Expression
-                | StringConstant String
+                | CharConstant Char
                 | BoolConstant Bool
                 | If Expression Expression Expression
+                | Many [Expression]
 
 type Identifier = String
 

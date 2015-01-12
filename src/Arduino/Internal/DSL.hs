@@ -104,8 +104,8 @@ not = Expression . DAG.Not . unExpression
 isEven :: Expression Int -> Expression Bool
 isEven = Expression . DAG.Even . unExpression
 
-stringConstant :: String -> Expression String
-stringConstant = Expression . DAG.StringConstant
+stringConstant :: String -> Expression Char
+stringConstant = Expression . DAG.Many . map DAG.CharConstant
 
 boolConstant :: Bool -> Expression Bool
 boolConstant = Expression . DAG.BoolConstant

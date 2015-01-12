@@ -63,12 +63,12 @@ static void stream_3(int arg, void* value) {
   }
   bool temp3;
   bool temp4;
+  temp4 = false;
   if (input_0) {
-    temp4 = input_1;
+    temp3 = input_1;
   } else {
-    temp4 = false;
+    temp3 = temp4;
   }
-  temp3 = temp4;
   stream_4(temp3);
 }
 
@@ -99,12 +99,12 @@ static void stream_6(int arg, void* value) {
   }
   bool temp6;
   bool temp7;
+  temp7 = false;
   if (input_0) {
-    temp7 = input_1;
+    temp6 = input_1;
   } else {
-    temp7 = false;
+    temp6 = temp7;
   }
-  temp6 = temp7;
   stream_7(temp6);
 }
 

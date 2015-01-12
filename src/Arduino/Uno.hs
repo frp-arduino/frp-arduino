@@ -85,10 +85,10 @@ pin10 = gpioOutput pin10GPIO
 pin12in :: Stream Bool
 pin12in = gpioInput pin12GPIO
 
-uart :: DSL.Output String
+uart :: DSL.Output Char
 uart = DSL.Output $ DAG.Pin $ DAG.PinDefinition
     { DAG.pinName  = "uart"
-    , DAG.cType    = "char *"
+    , DAG.cType    = "void"
     , DAG.initCode = do
         line $ "#define F_CPU 16000000UL"
         line $ "#define BAUD 9600"
@@ -103,13 +103,10 @@ uart = DSL.Output $ DAG.Pin $ DAG.PinDefinition
         line $ "UCSR0C = (1 << UCSZ01) |(1 << UCSZ00);"
         line $ "UCSR0B = (1 << RXEN0) | (1 << TXEN0);"
     , DAG.bodyCode = do
-        block "while (*input_0 != 0) {" $ do
-            line $ "while ((UCSR0A & (1 << UDRE0)) == 0) {"
-            line $ "}"
-            line $ "UDR0 = *input_0;"
-            line $ "input_0++;"
+        line $ "while ((UCSR0A & (1 << UDRE0)) == 0) {"
         line $ "}"
-        return Nothing
+        line $ "UDR0 = input_0;"
+        return []
     }
 
 gpioOutput :: GPIO -> Output Bool
