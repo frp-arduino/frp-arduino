@@ -44,9 +44,9 @@ static void stream_1(unsigned int input_0) {
 
 static void stream_2(bool input_0) {
   if (input_0) {
-    PORTB |= 0x20U;
+    PORTB |= (1 << PB5);
   } else {
-    PORTB &= ~(0x20U);
+    PORTB &= ~(1 << PB5);
   }
 }
 
@@ -74,9 +74,9 @@ static void stream_3(int arg, void* value) {
 
 static void stream_4(bool input_0) {
   if (input_0) {
-    PORTB |= 0x08U;
+    PORTB |= (1 << PB3);
   } else {
-    PORTB &= ~(0x08U);
+    PORTB &= ~(1 << PB3);
   }
 }
 
@@ -110,9 +110,9 @@ static void stream_6(int arg, void* value) {
 
 static void stream_7(bool input_0) {
   if (input_0) {
-    PORTB |= 0x04U;
+    PORTB |= (1 << PB2);
   } else {
-    PORTB &= ~(0x04U);
+    PORTB &= ~(1 << PB2);
   }
 }
 
@@ -120,9 +120,9 @@ int main(void) {
   TCCR1B = (1 << CS12) | (1 << CS10);
   DDRB &= ~(1 << PB4);
   PORTB |= (1 << PB4);
-  DDRB |= 0x20U;
-  DDRB |= 0x08U;
-  DDRB |= 0x04U;
+  DDRB |= (1 << PB5);
+  DDRB |= (1 << PB3);
+  DDRB |= (1 << PB2);
   while (1) {
     if (TCNT1 >= 10000) {
       TCNT1 = 0;

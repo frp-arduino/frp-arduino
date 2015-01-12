@@ -142,33 +142,24 @@ addDependency source destination = do
     modify (\x -> x { dag = DAG.addDependency source destination (dag x) })
     return destination
 
-outputPin :: String -> String -> String -> String -> Output Bool
-outputPin name directionRegister portRegister pinMask =
-    Output $ DAG.Pin $ DAG.PinDefinition
-    { DAG.pinName  = name
-    , DAG.cType    = "void"
-    , DAG.initCode = do
-        line $ directionRegister ++ " |= " ++ pinMask ++ ";"
-    , DAG.bodyCode = do
-        block "if (input_0) {" $ do
-            line $ portRegister ++ " |= " ++ pinMask ++ ";"
-        block "} else {" $ do
-            line $ portRegister ++ " &= ~(" ++ pinMask ++ ");"
-        line "}"
-        return Nothing
-    }
-
 createInput :: String -> LLI () -> LLI a -> Stream a
 createInput name initLLI bodyLLI =
     Stream $ addStream ("input_" ++ name) body
     where
         body = DAG.Driver (unLLI initLLI) (unLLI bodyLLI)
 
+createOutput :: String -> LLI () -> LLI () -> Output a
+createOutput name initLLI bodyLLI =
+    Output $ DAG.Driver (unLLI initLLI) (unLLI bodyLLI)
+
 writeBit :: String -> String -> DAG.Bit -> LLI a -> LLI a
 writeBit register bit value next = LLI $ DAG.WriteBit register bit value (unLLI next)
 
 readBit :: String -> String -> LLI Bool
 readBit register bit = LLI $ DAG.ReadBit register bit
+
+switch :: String -> LLI () -> LLI () -> LLI a -> LLI a
+switch name t f next = LLI $ DAG.Switch name (unLLI t) (unLLI f) (unLLI next)
 
 end :: LLI ()
 end = LLI $ DAG.End

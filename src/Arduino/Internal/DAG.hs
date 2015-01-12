@@ -39,6 +39,7 @@ data Body = Builtin String
 
 data LLI = WriteBit String String Bit LLI
          | ReadBit String String
+         | Switch String LLI LLI LLI
          | End
 
 data Bit = High | Low

@@ -197,10 +197,18 @@ genLLI lli = case lli of
         x <- var "bool"
         line $ x ++ " = (" ++ register ++ " & (1 << " ++ bit ++ ")) == 0U;"
         return (Just x)
+    (Switch name t f next) -> do
+        block "if (input_0) {" $ do
+            genLLI t
+        block "} else {" $ do
+            genLLI f
+        line "}"
+        genLLI next
     End -> do
         return Nothing
 
 lliCType :: LLI -> String
 lliCType (WriteBit _ _ _ next) = lliCType next
+lliCType (Switch _ _ _ next)   = lliCType next
 lliCType (ReadBit _ _)         = "bool"
 lliCType End                   = "void"

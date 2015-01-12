@@ -27,9 +27,9 @@ static void input_pin12() {
 
 static void stream_1(bool input_0) {
   if (input_0) {
-    PORTB |= 0x20U;
+    PORTB |= (1 << PB5);
   } else {
-    PORTB &= ~(0x20U);
+    PORTB &= ~(1 << PB5);
   }
 }
 
@@ -41,9 +41,9 @@ static void stream_2(unsigned int input_0) {
 
 static void stream_3(bool input_0) {
   if (input_0) {
-    PORTB |= 0x08U;
+    PORTB |= (1 << PB3);
   } else {
-    PORTB &= ~(0x08U);
+    PORTB &= ~(1 << PB3);
   }
 }
 
@@ -51,8 +51,8 @@ int main(void) {
   TCCR1B = (1 << CS12) | (1 << CS10);
   DDRB &= ~(1 << PB4);
   PORTB |= (1 << PB4);
-  DDRB |= 0x20U;
-  DDRB |= 0x08U;
+  DDRB |= (1 << PB5);
+  DDRB |= (1 << PB3);
   while (1) {
     if (TCNT1 >= 10000) {
       TCNT1 = 0;

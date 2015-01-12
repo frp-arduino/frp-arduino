@@ -23,15 +23,15 @@ static void stream_1(unsigned int input_0) {
 
 static void stream_2(bool input_0) {
   if (input_0) {
-    PORTB |= 0x20U;
+    PORTB |= (1 << PB5);
   } else {
-    PORTB &= ~(0x20U);
+    PORTB &= ~(1 << PB5);
   }
 }
 
 int main(void) {
   TCCR1B = (1 << CS12) | (1 << CS10);
-  DDRB |= 0x20U;
+  DDRB |= (1 << PB5);
   while (1) {
     if (TCNT1 >= 10000) {
       TCNT1 = 0;

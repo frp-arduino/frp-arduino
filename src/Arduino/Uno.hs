@@ -38,6 +38,22 @@ data GPIO = GPIO
     , bitName           :: String
     }
 
+pin10GPIO = GPIO
+    { name              = "pin12"
+    , directionRegister = "DDRB"
+    , portRegister      = "PORTB"
+    , pinRegister       = "PINB"
+    , bitName           = "PB2"
+    }
+
+pin11GPIO = GPIO
+    { name              = "pin13"
+    , directionRegister = "DDRB"
+    , portRegister      = "PORTB"
+    , pinRegister       = "PINB"
+    , bitName           = "PB3"
+    }
+
 pin12GPIO = GPIO
     { name              = "pin12"
     , directionRegister = "DDRB"
@@ -46,17 +62,25 @@ pin12GPIO = GPIO
     , bitName           = "PB4"
     }
 
+pin13GPIO = GPIO
+    { name              = "pin13"
+    , directionRegister = "DDRB"
+    , portRegister      = "PORTB"
+    , pinRegister       = "PINB"
+    , bitName           = "PB5"
+    }
+
 pin13 :: DSL.Output Bool
-pin13 = DSL.outputPin "pin13" "DDRB" "PORTB" "0x20U"
+pin13 = gpioOutput pin13GPIO
 
 pin12 :: DSL.Output Bool
-pin12 = DSL.outputPin "pin12" "DDRB" "PORTB" "0x10U"
+pin12 = gpioOutput pin12GPIO
 
 pin11 :: DSL.Output Bool
-pin11 = DSL.outputPin "pin11" "DDRB" "PORTB" "0x08U"
+pin11 = gpioOutput pin11GPIO
 
 pin10 :: DSL.Output Bool
-pin10 = DSL.outputPin "pin10" "DDRB" "PORTB" "0x04U"
+pin10 = gpioOutput pin10GPIO
 
 pin12in :: Stream Bool
 pin12in = gpioInput pin12GPIO
@@ -87,6 +111,20 @@ uart = DSL.Output $ DAG.Pin $ DAG.PinDefinition
         line $ "}"
         return Nothing
     }
+
+gpioOutput :: GPIO -> Output Bool
+gpioOutput gpio =
+    DSL.createOutput
+        (name gpio)
+        (DSL.writeBit (directionRegister gpio) (bitName gpio) DAG.High $
+         DSL.end)
+        (DSL.switch
+           identifier
+           (DSL.writeBit (portRegister gpio) (bitName gpio) DAG.High DSL.end)
+           (DSL.writeBit (portRegister gpio) (bitName gpio) DAG.Low DSL.end) $
+         DSL.end)
+    where
+        identifier = "input_0"
 
 gpioInput :: GPIO -> Stream Bool
 gpioInput gpio = DSL.createInput
