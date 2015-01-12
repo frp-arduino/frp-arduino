@@ -88,7 +88,6 @@ genStreamInputParsing args = do
 
 streamCType :: Streams -> String -> String
 streamCType streams streamName = case body stream of
-    (Pin pin)              -> cType pin
     (Driver _ bodyLLI)     -> lliCType bodyLLI
     (Builtin "clock")      -> "unsigned int"
     (Transform expression) -> expressionCType inputMap expression
@@ -109,7 +108,6 @@ expressionCType inputMap expression = case expression of
 
 genStreamBody :: (Expression -> String) -> Body -> Gen [String]
 genStreamBody expressionCType body = case body of
-    (Pin pin)              -> bodyCode pin
     (Driver _ bodyLLI)     -> genLLI bodyLLI
     (Transform expression) -> do
         genExpression expressionCType expression
@@ -167,7 +165,6 @@ genExpression expressionCType expression = case expression of
 
 genInit :: Stream -> Gen ()
 genInit stream = case body stream of
-    (Pin pin)          -> initCode pin
     (Driver initLLI _) -> genLLI initLLI >> return ()
     (Builtin "clock")  -> do
         line $ "TCCR1B = (1 << CS12) | (1 << CS10);"
@@ -176,16 +173,14 @@ genInit stream = case body stream of
 
 genInputCall :: Stream -> Gen ()
 genInputCall stream = case body stream of
-    (Driver _ _) -> do
-        when (length (inputs stream) == 0) $ do
-            line (name stream ++ "();")
     (Builtin "clock") -> do
         block "if (TCNT1 >= 10000) {" $ do
             line "TCNT1 = 0;"
             line "clock();"
         line "}"
     _ -> do
-        return ()
+        when (length (inputs stream) == 0) $ do
+            line (name stream ++ "();")
 
 genLLI :: LLI -> Gen [String]
 genLLI lli = case lli of

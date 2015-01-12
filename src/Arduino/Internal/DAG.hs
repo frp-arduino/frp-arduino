@@ -33,7 +33,6 @@ data Stream = Stream
     }
 
 data Body = Builtin String
-          | Pin PinDefinition
           | Transform Expression
           | Driver LLI LLI
 
@@ -45,13 +44,6 @@ data LLI = WriteBit String String Bit LLI
          | End
 
 data Bit = High | Low
-
-data PinDefinition = PinDefinition
-    { pinName  :: String
-    , initCode :: Gen ()
-    , bodyCode :: Gen [String]
-    , cType    :: String
-    }
 
 data Expression = Input Int
                 | Not Expression
