@@ -53,18 +53,12 @@ static void stream_4(char input_0) {
 int main(void) {
   TCCR1B = (1 << CS12) | (1 << CS10);
   DDRB |= (1 << PB5);
-  #define F_CPU 16000000UL
-  #define BAUD 9600
-  #include <util/setbaud.h>
-  UBRR0H = UBRRH_VALUE;
-  UBRR0L = UBRRL_VALUE;
-  #if USE_2X
-    UCSR0A |= (1 << U2X0);
-  #else
-    UCSR0A &= ~((1 << U2X0));
-  #endif
-  UCSR0C = (1 << UCSZ01) |(1 << UCSZ00);
-  UCSR0B = (1 << RXEN0) | (1 << TXEN0);
+  UBRR0H = 0;
+  UBRR0L = 103;
+  UCSR0C |= (1 << UCSZ01);
+  UCSR0C |= (1 << UCSZ00);
+  UCSR0B |= (1 << RXEN0);
+  UCSR0B |= (1 << TXEN0);
   while (1) {
     if (TCNT1 >= 10000) {
       TCNT1 = 0;

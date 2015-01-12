@@ -197,10 +197,19 @@ genLLI lli = case lli of
             Low -> do
                 line (register ++ " &= ~(1 << " ++ bit ++ ");")
                 genLLI next
+    (WriteByte register value next) -> do
+        line (register ++ " = " ++ value ++ ";")
+        genLLI next
     (ReadBit register bit) -> do
         x <- var "bool"
         line $ x ++ " = (" ++ register ++ " & (1 << " ++ bit ++ ")) == 0U;"
         return [x]
+    (WaitBit register bit value next) -> do
+        case value of
+            High -> do
+                line $ "while ((" ++ register ++ " & (1 << " ++ bit ++ ")) == 0) {"
+                line $ "}"
+        genLLI next
     (Switch name t f next) -> do
         block "if (input_0) {" $ do
             genLLI t

@@ -155,8 +155,14 @@ createOutput name initLLI bodyLLI =
 writeBit :: String -> String -> DAG.Bit -> LLI a -> LLI a
 writeBit register bit value next = LLI $ DAG.WriteBit register bit value (unLLI next)
 
+writeByte :: String -> String -> LLI a -> LLI a
+writeByte register value next = LLI $ DAG.WriteByte register value (unLLI next)
+
 readBit :: String -> String -> LLI Bool
 readBit register bit = LLI $ DAG.ReadBit register bit
+
+waitBit :: String -> String -> DAG.Bit -> LLI a -> LLI a
+waitBit register bit value next = LLI $ DAG.WaitBit register bit value (unLLI next)
 
 switch :: String -> LLI () -> LLI () -> LLI a -> LLI a
 switch name t f next = LLI $ DAG.Switch name (unLLI t) (unLLI f) (unLLI next)

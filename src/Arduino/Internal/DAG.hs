@@ -38,7 +38,9 @@ data Body = Builtin String
           | Driver LLI LLI
 
 data LLI = WriteBit String String Bit LLI
+         | WriteByte String String LLI
          | ReadBit String String
+         | WaitBit String String Bit LLI
          | Switch String LLI LLI LLI
          | End
 
