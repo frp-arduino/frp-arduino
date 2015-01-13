@@ -39,6 +39,11 @@ newtype Output a = Output { unOutput :: DAG.Body }
 
 newtype LLI a = LLI { unLLI :: DAG.LLI }
 
+instance Num (Expression a) where
+    (+) left right = Expression $ DAG.Add (unExpression left) (unExpression right)
+    (-) left right = Expression $ DAG.Sub (unExpression left) (unExpression right)
+    fromInteger value = Expression $ DAG.NumberConstant $ fromIntegral value
+
 compileProgram :: Action a -> IO ()
 compileProgram action = do
     let dagState = execState action (DAGState 1 DAG.emptyStreams)
@@ -113,12 +118,6 @@ if_ condition trueExpression falseExpression =
                        (unExpression trueExpression)
                        (unExpression falseExpression))
 
-add :: Expression Int -> Expression Int -> Expression Int
-add left right = Expression $ DAG.Add (unExpression left) (unExpression right)
-
-sub :: Expression Int -> Expression Int -> Expression Int
-sub left right = Expression $ DAG.Sub (unExpression left) (unExpression right)
-
 greater :: Expression Int -> Expression Int -> Expression Bool
 greater left right = Expression $ DAG.Greater (unExpression left) (unExpression right)
 
@@ -139,9 +138,6 @@ stringConstant = Expression . DAG.Many . map DAG.CharConstant
 
 bitLow :: Expression DAG.Bit
 bitLow = Expression $ DAG.BitConstant DAG.Low
-
-numberConstant :: Int -> Expression Int
-numberConstant = Expression . DAG.NumberConstant
 
 addAnonymousStream :: DAG.Body -> Action DAG.Identifier
 addAnonymousStream body = do

@@ -61,17 +61,16 @@ pin12in :: Stream Bit
 pin12in = gpioInput pin12GPIO
 
 clock :: Stream Int
-clock = foldpS (\tick state -> if_ (greater state (numberConstant n))
-                                   (sub (add tick state)
-                                        (numberConstant n))
-                                   (add tick state))
-                      (numberConstant 0)
-                      timerDelta
-            ~> filterS (\value -> greater value (numberConstant n))
-            ~> foldpS (\tick state -> add state (numberConstant 1))
-                      (numberConstant 0)
+clock = every 10000
+
+every :: Expression Int -> Stream Int
+every limit = timerDelta ~> accumulate ~> keepOverflowing ~> count
     where
-        n = 10000
+        accumulate = foldpS (\delta total -> if_ (greater total limit)
+                                                 (delta + total - limit)
+                                                 (delta + total))
+                            0
+        keepOverflowing = filterS (\value -> greater value limit)
 
 uart :: Output Char
 uart =

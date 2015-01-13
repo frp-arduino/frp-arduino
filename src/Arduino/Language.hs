@@ -36,14 +36,11 @@ module Arduino.Language
     , isEven
     , if_
     , flipBit
-    , add
-    , sub
     , greater
     , boolToBit
     , isHigh
     , bitLow
     , stringConstant
-    , numberConstant
     ) where
 
 import Arduino.Internal.DAG (Bit)
