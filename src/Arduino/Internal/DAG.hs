@@ -78,6 +78,9 @@ emptyStreams = M.empty
 liftStream :: Stream -> Streams
 liftStream = addStream emptyStreams
 
+liftStreams :: [Stream] -> Streams
+liftStreams = mconcat . map liftStream
+
 addStream :: Streams -> Stream -> Streams
 addStream streams stream = M.insert (name stream) stream streams
 
