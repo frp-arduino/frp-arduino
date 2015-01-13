@@ -282,7 +282,7 @@ compileProgram :: Action a -> IO ()
 <a name="api-toggle"></a>**toggle**
 
 ```haskell
-toggle :: Stream Int -> Stream Bool
+toggle :: Stream Int -> Stream Bit
 ```
 
 
@@ -300,13 +300,13 @@ isEven :: Expression Int -> Expression Bool
 <a name="api-pin12"></a>**pin12**
 
 ```haskell
-pin12 :: DSL.Output Bool
+pin12 :: Output Bit
 ```
 
 <a name="api-pin13"></a>**pin13**
 
 ```haskell
-pin13 :: DSL.Output Bool
+pin13 :: Output Bit
 ```
 
 <a name="api-clock"></a>**clock**
