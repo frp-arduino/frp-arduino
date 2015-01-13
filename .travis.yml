@@ -1,0 +1,7 @@
+language: haskell
+install:
+    - cabal install mtl
+    - sudo apt-get install arduino-core
+    - git clone https://github.com/sudar/Arduino-Makefile.git
+script:
+    - ./test

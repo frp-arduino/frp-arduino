@@ -328,6 +328,8 @@ Comments on the process:
 
 In our case, this means that `./test` should run without failure.
 
+[![Build Status](https://travis-ci.org/frp-arduino/frp-arduino.svg)](https://travis-ci.org/frp-arduino/frp-arduino)
+
 ## License
 
 The Haskell library that implements the language and all examples are free
