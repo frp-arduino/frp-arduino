@@ -10,3 +10,5 @@ Comments on the process:
 > principle target platform.
 
 In our case, this means that `./test` should run without failure.
+
+[![Build Status](https://travis-ci.org/frp-arduino/frp-arduino.svg)](https://travis-ci.org/frp-arduino/frp-arduino)
