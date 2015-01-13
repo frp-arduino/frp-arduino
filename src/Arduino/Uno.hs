@@ -22,6 +22,7 @@ module Arduino.Uno
     , module Arduino.Uno
     ) where
 
+import Arduino.Internal.DAG (Bit)
 import Arduino.Internal.DSL
 import Arduino.Language
 import Arduino.Library
@@ -44,19 +45,19 @@ pin11GPIO = GPIO "pin11" "DDRB" "PORTB" "PINB" "PB3"
 pin12GPIO = GPIO "pin12" "DDRB" "PORTB" "PINB" "PB4"
 pin13GPIO = GPIO "pin13" "DDRB" "PORTB" "PINB" "PB5"
 
-pin13 :: Output Bool
+pin13 :: Output Bit
 pin13 = gpioOutput pin13GPIO
 
-pin12 :: Output Bool
+pin12 :: Output Bit
 pin12 = gpioOutput pin12GPIO
 
-pin11 :: Output Bool
+pin11 :: Output Bit
 pin11 = gpioOutput pin11GPIO
 
-pin10 :: Output Bool
+pin10 :: Output Bit
 pin10 = gpioOutput pin10GPIO
 
-pin12in :: Stream Bool
+pin12in :: Stream Bit
 pin12in = gpioInput pin12GPIO
 
 clock :: Stream Int
@@ -91,7 +92,7 @@ uart =
          writeByte "UDR0" inputValue $
          end)
 
-gpioOutput :: GPIO -> Output Bool
+gpioOutput :: GPIO -> Output Bit
 gpioOutput gpio =
     createOutput
         (name gpio)
@@ -103,7 +104,7 @@ gpioOutput gpio =
            (clearBit (portRegister gpio) (bitName gpio) end) $
          end)
 
-gpioInput :: GPIO -> Stream Bool
+gpioInput :: GPIO -> Stream Bit
 gpioInput gpio = createInput
     (name gpio)
     (clearBit (directionRegister gpio) (bitName gpio) $

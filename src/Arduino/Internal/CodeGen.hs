@@ -99,10 +99,12 @@ streamCType streams streamName = case body stream of
 
 expressionCType :: M.Map Int String -> Expression -> String
 expressionCType inputMap expression = case expression of
+    (IsHigh _)         -> "bool"
+    (BoolToBit _)      -> "bool"
     (Not _)            -> "bool"
     (Even _)           -> "bool"
     (Greater _ _)      -> "bool"
-    (BoolConstant _)   -> "bool"
+    (BitConstant _)    -> "bool"
     (NumberConstant _) -> "int"
     (Add _ _)          -> "int"
     (Sub _ _)          -> "int"
@@ -164,10 +166,14 @@ genExpression expressionCType expression = case expression of
         return [ResultVariable ("input_" ++ show value) Nothing]
     (CharConstant value) -> do
         return [ResultVariable (show value) Nothing]
-    (BoolConstant value) -> do
-        if value
-            then (wrap "true")
-            else (wrap "false")
+    (BoolToBit value) -> do
+        genExpression expressionCType value
+    (IsHigh value) -> do
+        genExpression expressionCType value
+    (BitConstant value) -> do
+        case value of
+            High -> (wrap "true")
+            Low  -> (wrap "false")
     (NumberConstant value) -> do
         return [ResultVariable (show value) Nothing]
     (FoldState) -> do

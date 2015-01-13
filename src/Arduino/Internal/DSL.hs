@@ -19,7 +19,6 @@ module Arduino.Internal.DSL where
 
 import Control.Monad.State
 import qualified Data.Map as M
-import Prelude hiding (not)
 
 import Arduino.Internal.CodeGen (streamsToC)
 import CCodeGen
@@ -123,17 +122,23 @@ sub left right = Expression $ DAG.Sub (unExpression left) (unExpression right)
 greater :: Expression Int -> Expression Int -> Expression Bool
 greater left right = Expression $ DAG.Greater (unExpression left) (unExpression right)
 
-not :: Expression Bool -> Expression Bool
-not = Expression . DAG.Not . unExpression
+flipBit :: Expression DAG.Bit -> Expression DAG.Bit
+flipBit = Expression . DAG.Not . unExpression
 
 isEven :: Expression Int -> Expression Bool
 isEven = Expression . DAG.Even . unExpression
 
+boolToBit :: Expression Bool -> Expression DAG.Bit
+boolToBit = Expression . DAG.BoolToBit . unExpression
+
+isHigh :: Expression DAG.Bit -> Expression Bool
+isHigh = Expression . DAG.IsHigh . unExpression
+
 stringConstant :: String -> Expression Char
 stringConstant = Expression . DAG.Many . map DAG.CharConstant
 
-boolConstant :: Bool -> Expression Bool
-boolConstant = Expression . DAG.BoolConstant
+bitLow :: Expression DAG.Bit
+bitLow = Expression $ DAG.BitConstant DAG.Low
 
 numberConstant :: Int -> Expression Int
 numberConstant = Expression . DAG.NumberConstant
@@ -192,7 +197,7 @@ writeByte register value next = LLI $ DAG.WriteByte register (unLLI value) (unLL
 writeWord :: String -> LLI String -> LLI a -> LLI a
 writeWord register value next = LLI $ DAG.WriteWord register (unLLI value) (unLLI next)
 
-readBit :: String -> String -> LLI Bool
+readBit :: String -> String -> LLI DAG.Bit
 readBit register bit = LLI $ DAG.ReadBit register bit
 
 readWord :: String -> LLI a -> LLI Int

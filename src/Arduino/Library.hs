@@ -21,22 +21,20 @@ module Arduino.Library
       module Arduino.Library
     ) where
 
-import Prelude hiding (not)
-
 import Arduino.Language
 
-toggle :: Stream Int -> Stream Bool
-toggle = mapS isEven
+toggle :: Stream Int -> Stream Bit
+toggle = mapS (boolToBit . isEven)
 
-invert :: Stream Bool -> Stream Bool
-invert = mapS not
+invert :: Stream Bit -> Stream Bit
+invert = mapS flipBit
 
-keepWhen :: Stream Bool
+keepWhen :: Stream Bit
          -> Expression a
          -> Stream a
          -> Stream a
 keepWhen filterStream defaultValue valueStream =
     mapS2 (pick defaultValue) filterStream valueStream
     where
-        pick :: Expression a -> Expression Bool -> Expression a -> Expression a
-        pick defaultValue first second = if_ first second defaultValue
+        pick :: Expression a -> Expression Bit -> Expression a -> Expression a
+        pick defaultValue first second = if_ (isHigh first) second defaultValue

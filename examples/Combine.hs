@@ -26,6 +26,6 @@ main = compileProgram $ do
 
     greenLed =: buttonPressStream
 
-    redLed1 =: keepWhen buttonPressStream (boolConstant False) blinkStream
+    redLed1 =: keepWhen buttonPressStream bitLow blinkStream
 
-    redLed2 =: keepWhen buttonPressStream (boolConstant False) (invert blinkStream)
+    redLed2 =: keepWhen buttonPressStream bitLow (invert blinkStream)

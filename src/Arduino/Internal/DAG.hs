@@ -55,15 +55,18 @@ data Expression = Input Int
                 -- Expression transformations
                 | If Expression Expression Expression
                 -- Unary operations
-                | Not  Expression
-                | Even Expression
+                | Not    Expression
+                | Even   Expression
+                | IsHigh Expression
                 -- Binary operations
                 | Add     Expression Expression
                 | Sub     Expression Expression
                 | Greater Expression Expression
+                -- Conversion
+                | BoolToBit Expression
                 -- Constants
                 | CharConstant Char
-                | BoolConstant Bool
+                | BitConstant Bit
                 | NumberConstant Int
 
 type Identifier = String

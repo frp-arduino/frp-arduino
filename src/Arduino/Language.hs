@@ -24,6 +24,8 @@ module Arduino.Language
     , compileProgram
     , def
     , (=:)
+    -- ** Types
+    , Bit
     -- ** Stream operations
     , (~>)
     , mapS
@@ -33,14 +35,16 @@ module Arduino.Language
     -- ** Expression operations
     , isEven
     , if_
-    , not
+    , flipBit
     , add
     , sub
     , greater
+    , boolToBit
+    , isHigh
+    , bitLow
     , stringConstant
-    , boolConstant
     , numberConstant
     ) where
 
+import Arduino.Internal.DAG (Bit)
 import Arduino.Internal.DSL
-import Prelude hiding (not)
