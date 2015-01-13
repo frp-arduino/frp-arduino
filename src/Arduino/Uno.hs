@@ -22,12 +22,12 @@ module Arduino.Uno
     , module Arduino.Uno
     ) where
 
+import Arduino.Internal.DSL
 import Arduino.Language
 import Arduino.Library
 import CCodeGen
-import Data.Bits
-import qualified Arduino.Internal.DAG as DAG
-import qualified Arduino.Internal.DSL as DSL
+import Data.Bits (shiftR, (.&.))
+import Prelude hiding (const)
 
 -- For mappings, see http://arduino.cc/en/Hacking/PinMapping168
 
@@ -39,48 +39,21 @@ data GPIO = GPIO
     , bitName           :: String
     }
 
-pin10GPIO = GPIO
-    { name              = "pin12"
-    , directionRegister = "DDRB"
-    , portRegister      = "PORTB"
-    , pinRegister       = "PINB"
-    , bitName           = "PB2"
-    }
+pin10GPIO = GPIO "pin10" "DDRB" "PORTB" "PINB" "PB2"
+pin11GPIO = GPIO "pin11" "DDRB" "PORTB" "PINB" "PB3"
+pin12GPIO = GPIO "pin12" "DDRB" "PORTB" "PINB" "PB4"
+pin13GPIO = GPIO "pin13" "DDRB" "PORTB" "PINB" "PB5"
 
-pin11GPIO = GPIO
-    { name              = "pin13"
-    , directionRegister = "DDRB"
-    , portRegister      = "PORTB"
-    , pinRegister       = "PINB"
-    , bitName           = "PB3"
-    }
-
-pin12GPIO = GPIO
-    { name              = "pin12"
-    , directionRegister = "DDRB"
-    , portRegister      = "PORTB"
-    , pinRegister       = "PINB"
-    , bitName           = "PB4"
-    }
-
-pin13GPIO = GPIO
-    { name              = "pin13"
-    , directionRegister = "DDRB"
-    , portRegister      = "PORTB"
-    , pinRegister       = "PINB"
-    , bitName           = "PB5"
-    }
-
-pin13 :: DSL.Output Bool
+pin13 :: Output Bool
 pin13 = gpioOutput pin13GPIO
 
-pin12 :: DSL.Output Bool
+pin12 :: Output Bool
 pin12 = gpioOutput pin12GPIO
 
-pin11 :: DSL.Output Bool
+pin11 :: Output Bool
 pin11 = gpioOutput pin11GPIO
 
-pin10 :: DSL.Output Bool
+pin10 :: Output Bool
 pin10 = gpioOutput pin10GPIO
 
 pin12in :: Stream Bool
@@ -99,51 +72,51 @@ clock = foldpS (\tick state -> if_ (greater state (numberConstant n))
     where
         n = 10000
 
-uart :: DSL.Output Char
+uart :: Output Char
 uart =
     let ubrr = floor ((16000000 / (16 * 9600)) - 1)
         ubrrlValue = ubrr .&. 0xFF :: Int
         ubrrhValue = shiftR ubrr 8 .&. 0xFF :: Int
     in
-    DSL.createOutput
+    createOutput
         "uart"
-        (DSL.writeByte "UBRR0H" (DSL.const $ show ubrrhValue) $
-         DSL.writeByte "UBRR0L" (DSL.const $ show ubrrlValue) $
-         DSL.writeBit "UCSR0C" "UCSZ01" DAG.High $
-         DSL.writeBit "UCSR0C" "UCSZ00" DAG.High $
-         DSL.writeBit "UCSR0B" "RXEN0" DAG.High $
-         DSL.writeBit "UCSR0B" "TXEN0" DAG.High $
-         DSL.end)
-        (DSL.waitBit "UCSR0A" "UDRE0" DAG.High $
-         DSL.writeByte "UDR0" DSL.inputValue $
-         DSL.end)
+        (writeByte "UBRR0H" (const $ show ubrrhValue) $
+         writeByte "UBRR0L" (const $ show ubrrlValue) $
+         setBit "UCSR0C" "UCSZ01" $
+         setBit "UCSR0C" "UCSZ00" $
+         setBit "UCSR0B" "RXEN0" $
+         setBit "UCSR0B" "TXEN0" $
+         end)
+        (waitBitSet "UCSR0A" "UDRE0" $
+         writeByte "UDR0" inputValue $
+         end)
 
 gpioOutput :: GPIO -> Output Bool
 gpioOutput gpio =
-    DSL.createOutput
+    createOutput
         (name gpio)
-        (DSL.writeBit (directionRegister gpio) (bitName gpio) DAG.High $
-         DSL.end)
-        (DSL.switch
-           DSL.inputValue
-           (DSL.writeBit (portRegister gpio) (bitName gpio) DAG.High DSL.end)
-           (DSL.writeBit (portRegister gpio) (bitName gpio) DAG.Low DSL.end) $
-         DSL.end)
+        (setBit (directionRegister gpio) (bitName gpio) $
+         end)
+        (switch
+           inputValue
+           (setBit (portRegister gpio) (bitName gpio) end)
+           (clearBit (portRegister gpio) (bitName gpio) end) $
+         end)
 
 gpioInput :: GPIO -> Stream Bool
-gpioInput gpio = DSL.createInput
+gpioInput gpio = createInput
     (name gpio)
-    (DSL.writeBit (directionRegister gpio) (bitName gpio) DAG.Low $
-     DSL.writeBit (portRegister gpio) (bitName gpio) DAG.High $
-     DSL.end)
-    (DSL.readBit (pinRegister gpio) (bitName gpio))
+    (clearBit (directionRegister gpio) (bitName gpio) $
+     setBit (portRegister gpio) (bitName gpio) $
+     end)
+    (readBit (pinRegister gpio) (bitName gpio))
 
 timerDelta :: Stream Int
-timerDelta = DSL.createInput
+timerDelta = createInput
     "timer"
-    (DSL.writeBit "TCCR1B" "CS12" DAG.High $
-     DSL.writeBit "TCCR1B" "CS10" DAG.High $
-     DSL.end)
-    (DSL.readWord "TCNT1" $
-     DSL.writeWord "TCNT1" (DSL.const "0") $
-     DSL.end)
+    (setBit "TCCR1B" "CS12" $
+     setBit "TCCR1B" "CS10" $
+     end)
+    (readWord "TCNT1" $
+     writeWord "TCNT1" (const "0") $
+     end)

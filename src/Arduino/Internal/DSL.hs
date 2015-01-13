@@ -177,6 +177,12 @@ createOutput :: String -> LLI () -> LLI () -> Output a
 createOutput name initLLI bodyLLI =
     Output $ DAG.Driver (unLLI initLLI) (unLLI bodyLLI)
 
+setBit :: String -> String -> LLI a -> LLI a
+setBit register bit next = writeBit register bit DAG.High next
+
+clearBit :: String -> String -> LLI a -> LLI a
+clearBit register bit next = writeBit register bit DAG.Low next
+
 writeBit :: String -> String -> DAG.Bit -> LLI a -> LLI a
 writeBit register bit value next = LLI $ DAG.WriteBit register bit value (unLLI next)
 
@@ -191,6 +197,9 @@ readBit register bit = LLI $ DAG.ReadBit register bit
 
 readWord :: String -> LLI a -> LLI Int
 readWord register next = LLI $ DAG.ReadWord register (unLLI next)
+
+waitBitSet :: String -> String -> LLI a -> LLI a
+waitBitSet register bit next = waitBit register bit DAG.High next
 
 waitBit :: String -> String -> DAG.Bit -> LLI a -> LLI a
 waitBit register bit value next = LLI $ DAG.WaitBit register bit value (unLLI next)
