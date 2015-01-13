@@ -1,4 +1,4 @@
-Running the examples
+# Running the examples
 
 Command to compile an example:
 

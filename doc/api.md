@@ -1,22 +1,22 @@
-API
+# API
 
-# Actions
+## Actions
 
 INCLUDE_API:compileProgram
 
 INCLUDE_API:(=:)
 
-# Stream operations
+## Stream operations
 
 INCLUDE_API:(~>)
 
 INCLUDE_API:toggle
 
-# Expression operators
+## Expression operators
 
 INCLUDE_API:isEven
 
-# Uno outputs and streams
+## Uno outputs and streams
 
 INCLUDE_API:pin12
 

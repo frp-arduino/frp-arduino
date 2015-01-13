@@ -1,4 +1,4 @@
-Example: Blinking a led
+# Example: Blinking a led
 
 INCLUDE_VIDEO:UdIXmmp-6tw
 

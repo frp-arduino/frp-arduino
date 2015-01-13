@@ -13,7 +13,6 @@ class Document(object):
 
     def cat(self, name, depth):
         with open(os.path.join(ROOT_DIR, "doc", name)) as f:
-            self._gen_toc(f.readline(), depth)
             for line in f:
                 if line.startswith("INCLUDE_EXAMPLE:"):
                     self._read_example(line.split(":", 1)[1].strip())
@@ -22,7 +21,9 @@ class Document(object):
                 elif line.startswith("INCLUDE_API:"):
                     self._gen_api_doc(line.split(":", 1)[1].strip())
                 elif line.startswith("# "):
-                    self._gen_toc(line[2:], depth+1)
+                    self._gen_toc(line[2:], depth)
+                elif line.startswith("## "):
+                    self._gen_toc(line[3:], depth+1)
                 else:
                     self._body += self._replace_api_refs(line)
 

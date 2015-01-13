@@ -1,4 +1,4 @@
-Contributing
+# Contributing
 
 The contributors are listed in [AUTHORS](AUTHORS) (add yourself).
 

@@ -1,4 +1,4 @@
-FRP
+# FRP
 
 This sections introduces FRP and shows how it fits in the domain of programming
 an Arduino.

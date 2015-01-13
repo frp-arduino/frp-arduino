@@ -1,4 +1,4 @@
-EDSL
+# EDSL
 
 Our language is embedded in the Haskell language. That means that when we write
 programs in our language, we are actually writing Haskell programs.
