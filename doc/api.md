@@ -10,6 +10,8 @@ INCLUDE_API:(=:)
 
 INCLUDE_API:(~>)
 
+INCLUDE_API:mapS
+
 INCLUDE_API:toggle
 
 ## Expression operators
