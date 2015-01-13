@@ -14,6 +14,9 @@ else
     ghc --make -isrc -outputdir $OUTPUT_DIR -o $OUTPUT_DIR/$EXAMPLE examples/$EXAMPLE.hs
     cd $OUTPUT_DIR
     ./$EXAMPLE
+    if ! [ -n "$ARDUINO_MAKEFILE_PATH" ]; then
+        ARDUINO_MAKEFILE_PATH="../../Arduino-Makefile/Arduino.mk"
+    fi
     cat << EOF > Makefile
 NO_CORE = Yes
 
@@ -27,8 +30,5 @@ AVRDUDE_ARD_BAUDRATE = 115200
 include $ARDUINO_MAKEFILE_PATH
 
 EOF
-    if ! [ -n "$ARDUINO_MAKEFILE_PATH" ]; then
-        ARDUINO_MAKEFILE_PATH="../../Arduino-Makefile/Arduino.mk"
-    fi    
     make $TARGET
 fi
