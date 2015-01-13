@@ -107,18 +107,16 @@ uart =
     in
     DSL.createOutput
         "uart"
-        (DSL.writeByte "UBRR0H" (show ubrrhValue) $
-         DSL.writeByte "UBRR0L" (show ubrrlValue) $
+        (DSL.writeByte "UBRR0H" (DSL.const $ show ubrrhValue) $
+         DSL.writeByte "UBRR0L" (DSL.const $ show ubrrlValue) $
          DSL.writeBit "UCSR0C" "UCSZ01" DAG.High $
          DSL.writeBit "UCSR0C" "UCSZ00" DAG.High $
          DSL.writeBit "UCSR0B" "RXEN0" DAG.High $
          DSL.writeBit "UCSR0B" "TXEN0" DAG.High $
          DSL.end)
         (DSL.waitBit "UCSR0A" "UDRE0" DAG.High $
-         DSL.writeByte "UDR0" identifier $
+         DSL.writeByte "UDR0" DSL.inputValue $
          DSL.end)
-    where
-        identifier = "input_0"
 
 gpioOutput :: GPIO -> Output Bool
 gpioOutput gpio =
@@ -127,12 +125,10 @@ gpioOutput gpio =
         (DSL.writeBit (directionRegister gpio) (bitName gpio) DAG.High $
          DSL.end)
         (DSL.switch
-           identifier
+           DSL.inputValue
            (DSL.writeBit (portRegister gpio) (bitName gpio) DAG.High DSL.end)
            (DSL.writeBit (portRegister gpio) (bitName gpio) DAG.Low DSL.end) $
          DSL.end)
-    where
-        identifier = "input_0"
 
 gpioInput :: GPIO -> Stream Bool
 gpioInput gpio = DSL.createInput
@@ -149,5 +145,5 @@ timerDelta = DSL.createInput
      DSL.writeBit "TCCR1B" "CS10" DAG.High $
      DSL.end)
     (DSL.readWord "TCNT1" $
-     DSL.writeWord "TCNT1" "0" $
+     DSL.writeWord "TCNT1" (DSL.const "0") $
      DSL.end)

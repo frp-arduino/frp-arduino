@@ -34,12 +34,14 @@ data Body = Transform Expression
           | Driver LLI LLI
 
 data LLI = WriteBit String String Bit LLI
-         | WriteByte String String LLI
-         | WriteWord String String LLI
+         | WriteByte String LLI LLI
+         | WriteWord String LLI LLI
          | ReadBit String String
          | ReadWord String LLI
          | WaitBit String String Bit LLI
-         | Switch String LLI LLI LLI
+         | Switch LLI LLI LLI LLI
+         | Const String
+         | InputValue
          | End
 
 data Bit = High | Low

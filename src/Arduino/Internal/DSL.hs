@@ -180,11 +180,11 @@ createOutput name initLLI bodyLLI =
 writeBit :: String -> String -> DAG.Bit -> LLI a -> LLI a
 writeBit register bit value next = LLI $ DAG.WriteBit register bit value (unLLI next)
 
-writeByte :: String -> String -> LLI a -> LLI a
-writeByte register value next = LLI $ DAG.WriteByte register value (unLLI next)
+writeByte :: String -> LLI String -> LLI a -> LLI a
+writeByte register value next = LLI $ DAG.WriteByte register (unLLI value) (unLLI next)
 
-writeWord :: String -> String -> LLI a -> LLI a
-writeWord register value next = LLI $ DAG.WriteWord register value (unLLI next)
+writeWord :: String -> LLI String -> LLI a -> LLI a
+writeWord register value next = LLI $ DAG.WriteWord register (unLLI value) (unLLI next)
 
 readBit :: String -> String -> LLI Bool
 readBit register bit = LLI $ DAG.ReadBit register bit
@@ -195,8 +195,14 @@ readWord register next = LLI $ DAG.ReadWord register (unLLI next)
 waitBit :: String -> String -> DAG.Bit -> LLI a -> LLI a
 waitBit register bit value next = LLI $ DAG.WaitBit register bit value (unLLI next)
 
-switch :: String -> LLI () -> LLI () -> LLI a -> LLI a
-switch name t f next = LLI $ DAG.Switch name (unLLI t) (unLLI f) (unLLI next)
+switch :: LLI String -> LLI () -> LLI () -> LLI a -> LLI a
+switch name t f next = LLI $ DAG.Switch (unLLI name) (unLLI t) (unLLI f) (unLLI next)
+
+const :: String -> LLI String
+const = LLI . DAG.Const
+
+inputValue :: LLI String
+inputValue = LLI DAG.InputValue
 
 end :: LLI ()
 end = LLI $ DAG.End

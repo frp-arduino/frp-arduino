@@ -230,10 +230,12 @@ genLLI lli = case lli of
                 line (register ++ " &= ~(1 << " ++ bit ++ ");")
                 genLLI next
     (WriteByte register value next) -> do
-        line (register ++ " = " ++ value ++ ";")
+        [ResultVariable x Nothing] <- genLLI value
+        line (register ++ " = " ++ x ++ ";")
         genLLI next
     (WriteWord register value next) -> do
-        line (register ++ " = " ++ value ++ ";")
+        [ResultVariable x Nothing] <- genLLI value
+        line (register ++ " = " ++ x ++ ";")
         genLLI next
     (ReadBit register bit) -> do
         x <- var "bool"
@@ -251,12 +253,17 @@ genLLI lli = case lli of
                 line $ "}"
         genLLI next
     (Switch name t f next) -> do
-        block "if (input_0) {" $ do
+        [ResultVariable x Nothing] <- genLLI name
+        block ("if (" ++ x ++ ") {") $ do
             genLLI t
         block "} else {" $ do
             genLLI f
         line "}"
         genLLI next
+    (Const x) -> do
+        return [ResultVariable x Nothing]
+    InputValue -> do
+        return [ResultVariable "input_0" Nothing]
     End -> do
         return []
 
