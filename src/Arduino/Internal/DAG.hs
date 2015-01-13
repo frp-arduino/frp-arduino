@@ -21,8 +21,6 @@ import Control.Monad.State
 import Data.Maybe (fromJust)
 import qualified Data.Map as M
 
-import CCodeGen (Gen)
-
 type Streams = M.Map Identifier Stream
 
 data Stream = Stream
@@ -48,18 +46,23 @@ data Bit = High | Low
 
 data Expression = Input Int
                 | FoldState
+                | Many [Expression]
+                -- Stream transformations
                 | Fold Expression Expression
-                | Not Expression
+                | Filter Expression Expression
+                -- Expression transformations
+                | If Expression Expression Expression
+                -- Unary operations
+                | Not  Expression
                 | Even Expression
+                -- Binary operations
+                | Add     Expression Expression
+                | Sub     Expression Expression
+                | Greater Expression Expression
+                -- Constants
                 | CharConstant Char
                 | BoolConstant Bool
                 | NumberConstant Int
-                | If Expression Expression Expression
-                | Filter Expression Expression
-                | Add Expression Expression
-                | Sub Expression Expression
-                | Greater Expression Expression
-                | Many [Expression]
 
 type Identifier = String
 

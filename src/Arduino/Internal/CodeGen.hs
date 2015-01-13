@@ -99,20 +99,20 @@ streamCType streams streamName = case body stream of
 
 expressionCType :: M.Map Int String -> Expression -> String
 expressionCType inputMap expression = case expression of
-    (Input x)        -> fromJust $ M.lookup x inputMap
-    (Not _)          -> "bool"
-    (Even _)         -> "bool"
-    (CharConstant _) -> "char"
-    (BoolConstant _) -> "bool"
+    (Not _)            -> "bool"
+    (Even _)           -> "bool"
+    (Greater _ _)      -> "bool"
+    (BoolConstant _)   -> "bool"
     (NumberConstant _) -> "int"
-    (Add _ _) -> "int"
-    (Sub _ _) -> "int"
-    (Greater _ _) -> "bool"
-    (FoldState) -> "int"
-    (Fold _ x)       -> expressionCType inputMap x
-    (Filter _ x)     -> expressionCType inputMap x
-    (Many (x:_))     -> expressionCType inputMap x
-    (If _ _ x)       -> expressionCType inputMap x
+    (Add _ _)          -> "int"
+    (Sub _ _)          -> "int"
+    (FoldState)        -> "int"
+    (CharConstant _)   -> "char"
+    (Input x)          -> fromJust $ M.lookup x inputMap
+    (Fold _ x)         -> expressionCType inputMap x
+    (Filter _ x)       -> expressionCType inputMap x
+    (Many (x:_))       -> expressionCType inputMap x
+    (If _ _ x)         -> expressionCType inputMap x
 
 genStreamBody :: (Expression -> String) -> Body -> Gen [ResultVariable]
 genStreamBody expressionCType body = case body of
@@ -208,7 +208,9 @@ genExpression expressionCType expression = case expression of
 
 genInit :: Stream -> Gen ()
 genInit stream = case body stream of
-    (Driver initLLI _) -> genLLI initLLI >> return ()
+    (Driver initLLI _) -> do
+        genLLI initLLI
+        return ()
     _ -> do
         return ()
 
