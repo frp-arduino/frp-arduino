@@ -18,6 +18,7 @@
 module Arduino.Internal.DAG where
 
 import Control.Monad.State
+import Data.Monoid
 import Data.Maybe (fromJust)
 import qualified Data.Map as M
 
@@ -73,6 +74,9 @@ type Identifier = String
 
 emptyStreams :: Streams
 emptyStreams = M.empty
+
+liftStream :: Stream -> Streams
+liftStream = addStream emptyStreams
 
 addStream :: Streams -> Stream -> Streams
 addStream streams stream = M.insert (name stream) stream streams
