@@ -26,16 +26,20 @@ module Arduino.Language
     , (=:)
     -- ** Stream operations
     , (~>)
-    , clock
     , mapS
     , mapS2
     , filterS
+    , foldpS
     -- ** Expression operations
     , isEven
     , if_
     , not
+    , add
+    , sub
+    , greater
     , stringConstant
     , boolConstant
+    , numberConstant
     ) where
 
 import Arduino.Internal.DSL

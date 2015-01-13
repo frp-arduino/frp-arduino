@@ -3,25 +3,73 @@
 #include <avr/io.h>
 #include <stdbool.h>
 
-static void clock();
+static void input_timer();
 
-static void stream_1(unsigned int input_0);
+static void stream_1(int input_0);
 
-static void stream_2(bool input_0);
+static void stream_2(int input_0);
 
-static void clock() {
-  static unsigned int temp0 = 0U;
-  temp0++;
+static void stream_3(int input_0);
+
+static void stream_4(int input_0);
+
+static void stream_5(bool input_0);
+
+static void input_timer() {
+  int temp0;
+  temp0 = TCNT1;
+  TCNT1 = 0;
   stream_1(temp0);
 }
 
-static void stream_1(unsigned int input_0) {
-  bool temp1;
-  temp1 = (input_0) % 2 == 0;
-  stream_2(temp1);
+static void stream_1(int input_0) {
+  static int fold_state = 0;
+  int temp1;
+  bool temp2;
+  temp2 = fold_state > 10000;
+  int temp3;
+  temp3 = input_0 + fold_state;
+  int temp4;
+  temp4 = temp3 - 10000;
+  int temp5;
+  temp5 = input_0 + fold_state;
+  if (temp2) {
+    temp1 = temp4;
+  } else {
+    temp1 = temp5;
+  }
+  fold_state = temp1;
+  stream_2(fold_state);
 }
 
-static void stream_2(bool input_0) {
+static void stream_2(int input_0) {
+  bool temp6;
+  temp6 = input_0 > 10000;
+  bool temp7;
+  temp7 = false;
+  if (temp6) {
+    temp7 = true;
+  }
+  if (temp7) {
+    stream_3(input_0);
+  }
+}
+
+static void stream_3(int input_0) {
+  static int fold_state = 0;
+  int temp8;
+  temp8 = fold_state + 1;
+  fold_state = temp8;
+  stream_4(fold_state);
+}
+
+static void stream_4(int input_0) {
+  bool temp9;
+  temp9 = (input_0) % 2 == 0;
+  stream_5(temp9);
+}
+
+static void stream_5(bool input_0) {
   if (input_0) {
     PORTB |= (1 << PB5);
   } else {
@@ -30,13 +78,11 @@ static void stream_2(bool input_0) {
 }
 
 int main(void) {
-  TCCR1B = (1 << CS12) | (1 << CS10);
+  TCCR1B |= (1 << CS12);
+  TCCR1B |= (1 << CS10);
   DDRB |= (1 << PB5);
   while (1) {
-    if (TCNT1 >= 10000) {
-      TCNT1 = 0;
-      clock();
-    }
+    input_timer();
   }
   return 0;
 }

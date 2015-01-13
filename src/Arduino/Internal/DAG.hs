@@ -32,13 +32,14 @@ data Stream = Stream
     , outputs :: [Identifier]
     }
 
-data Body = Builtin String
-          | Transform Expression
+data Body = Transform Expression
           | Driver LLI LLI
 
 data LLI = WriteBit String String Bit LLI
          | WriteByte String String LLI
+         | WriteWord String String LLI
          | ReadBit String String
+         | ReadWord String LLI
          | WaitBit String String Bit LLI
          | Switch String LLI LLI LLI
          | End
@@ -46,12 +47,18 @@ data LLI = WriteBit String String Bit LLI
 data Bit = High | Low
 
 data Expression = Input Int
+                | FoldState
+                | Fold Expression Expression
                 | Not Expression
                 | Even Expression
                 | CharConstant Char
                 | BoolConstant Bool
+                | NumberConstant Int
                 | If Expression Expression Expression
                 | Filter Expression Expression
+                | Add Expression Expression
+                | Sub Expression Expression
+                | Greater Expression Expression
                 | Many [Expression]
 
 type Identifier = String

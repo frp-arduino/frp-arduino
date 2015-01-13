@@ -66,10 +66,6 @@ infixr 0 =:
     let outputStream = fn (Stream (return streamName))
     unStream $ outputStream
 
-clock :: Stream Int
-clock = Stream $ do
-    addBuiltinStream "clock"
-
 mapS :: (Expression a -> Expression b) -> Stream a -> Stream b
 mapS fn stream = Stream $ do
     streamName <- unStream stream
@@ -100,11 +96,32 @@ filterS fn stream = Stream $ do
     where
         expression = unExpression $ fn $ Expression $ DAG.Input 0
 
+foldpS :: (Expression a -> Expression b -> Expression b)
+       -> Expression b
+       -> Stream a
+       -> Stream b
+foldpS fn startValue stream = Stream $ do
+    streamName <- unStream stream
+    expressionStreamName <- addAnonymousStream (DAG.Transform (DAG.Fold expression (unExpression startValue)))
+    addDependency streamName expressionStreamName
+    where
+        expression = unExpression $ fn (Expression $ DAG.Input 0)
+                                       (Expression DAG.FoldState)
+
 if_ :: Expression Bool -> Expression a -> Expression a -> Expression a
 if_ condition trueExpression falseExpression =
     Expression (DAG.If (unExpression condition)
                        (unExpression trueExpression)
                        (unExpression falseExpression))
+
+add :: Expression Int -> Expression Int -> Expression Int
+add left right = Expression $ DAG.Add (unExpression left) (unExpression right)
+
+sub :: Expression Int -> Expression Int -> Expression Int
+sub left right = Expression $ DAG.Sub (unExpression left) (unExpression right)
+
+greater :: Expression Int -> Expression Int -> Expression Bool
+greater left right = Expression $ DAG.Greater (unExpression left) (unExpression right)
 
 not :: Expression Bool -> Expression Bool
 not = Expression . DAG.Not . unExpression
@@ -118,8 +135,8 @@ stringConstant = Expression . DAG.Many . map DAG.CharConstant
 boolConstant :: Bool -> Expression Bool
 boolConstant = Expression . DAG.BoolConstant
 
-addBuiltinStream :: DAG.Identifier -> Action DAG.Identifier
-addBuiltinStream name = addStream name (DAG.Builtin name)
+numberConstant :: Int -> Expression Int
+numberConstant = Expression . DAG.NumberConstant
 
 addAnonymousStream :: DAG.Body -> Action DAG.Identifier
 addAnonymousStream body = do
@@ -166,8 +183,14 @@ writeBit register bit value next = LLI $ DAG.WriteBit register bit value (unLLI 
 writeByte :: String -> String -> LLI a -> LLI a
 writeByte register value next = LLI $ DAG.WriteByte register value (unLLI next)
 
+writeWord :: String -> String -> LLI a -> LLI a
+writeWord register value next = LLI $ DAG.WriteWord register value (unLLI next)
+
 readBit :: String -> String -> LLI Bool
 readBit register bit = LLI $ DAG.ReadBit register bit
+
+readWord :: String -> LLI a -> LLI Int
+readWord register next = LLI $ DAG.ReadWord register (unLLI next)
 
 waitBit :: String -> String -> DAG.Bit -> LLI a -> LLI a
 waitBit register bit value next = LLI $ DAG.WaitBit register bit value (unLLI next)

@@ -91,7 +91,6 @@ genStreamInputParsing args = do
 streamCType :: Streams -> String -> String
 streamCType streams streamName = case body stream of
     (Driver _ bodyLLI)     -> lliCType bodyLLI
-    (Builtin "clock")      -> "unsigned int"
     (Transform expression) -> expressionCType inputMap expression
     where
         inputMap = M.fromList $ zip [0..] inputTypes
@@ -105,6 +104,12 @@ expressionCType inputMap expression = case expression of
     (Even _)         -> "bool"
     (CharConstant _) -> "char"
     (BoolConstant _) -> "bool"
+    (NumberConstant _) -> "int"
+    (Add _ _) -> "int"
+    (Sub _ _) -> "int"
+    (Greater _ _) -> "bool"
+    (FoldState) -> "int"
+    (Fold _ x)       -> expressionCType inputMap x
     (Filter _ x)     -> expressionCType inputMap x
     (Many (x:_))     -> expressionCType inputMap x
     (If _ _ x)       -> expressionCType inputMap x
@@ -114,11 +119,6 @@ genStreamBody expressionCType body = case body of
     (Driver _ bodyLLI)     -> genLLI bodyLLI
     (Transform expression) -> do
         genExpression expressionCType expression
-    (Builtin "clock") -> do
-        temp <- label
-        line $ "static unsigned int " ++ temp ++ " = 0U;"
-        line $ temp ++ "++;"
-        return [ResultVariable temp Nothing]
 
 genStreamOuputCalling :: [ResultVariable] -> Streams -> Stream -> Gen ()
 genStreamOuputCalling results streams stream = do
@@ -148,6 +148,18 @@ genExpression expressionCType expression = case expression of
     (Even expression) -> do
         [ResultVariable inner Nothing] <- genExpression expressionCType expression
         wrap ("(" ++ inner ++ ") % 2 == 0")
+    (Greater left right) -> do
+        [ResultVariable leftResult Nothing] <- genExpression expressionCType left
+        [ResultVariable rightResult Nothing] <- genExpression expressionCType right
+        wrap (leftResult ++ " > " ++ rightResult)
+    (Add left right) -> do
+        [ResultVariable leftResult Nothing] <- genExpression expressionCType left
+        [ResultVariable rightResult Nothing] <- genExpression expressionCType right
+        wrap (leftResult ++ " + " ++ rightResult)
+    (Sub left right) -> do
+        [ResultVariable leftResult Nothing] <- genExpression expressionCType left
+        [ResultVariable rightResult Nothing] <- genExpression expressionCType right
+        wrap (leftResult ++ " - " ++ rightResult)
     (Input value) -> do
         return [ResultVariable ("input_" ++ show value) Nothing]
     (CharConstant value) -> do
@@ -156,6 +168,10 @@ genExpression expressionCType expression = case expression of
         if value
             then (wrap "true")
             else (wrap "false")
+    (NumberConstant value) -> do
+        return [ResultVariable (show value) Nothing]
+    (FoldState) -> do
+        return [ResultVariable "fold_state" Nothing]
     (If conditionExpression trueExpression falseExpression) -> do
         temp <- var (expressionCType falseExpression)
         [ResultVariable conditionResult Nothing] <- genExpression expressionCType conditionExpression
@@ -176,6 +192,12 @@ genExpression expressionCType expression = case expression of
             line $ temp ++ " = true;"
         line $ "}"
         return [ResultVariable valueResult (Just temp)]
+    (Fold expression startValue) -> do
+        [ResultVariable startValueResult Nothing] <- genExpression expressionCType startValue
+        line $ "static " ++ expressionCType startValue ++ " fold_state = " ++ startValueResult ++ ";"
+        [ResultVariable expressionResult Nothing] <- genExpression expressionCType expression
+        line $ "fold_state = " ++ expressionResult ++ ";"
+        return [ResultVariable "fold_state" Nothing]
     (Many values) -> do
         mapM (\x -> genExpression expressionCType x >>= \[y] -> return y) values
     where
@@ -187,21 +209,13 @@ genExpression expressionCType expression = case expression of
 genInit :: Stream -> Gen ()
 genInit stream = case body stream of
     (Driver initLLI _) -> genLLI initLLI >> return ()
-    (Builtin "clock")  -> do
-        line $ "TCCR1B = (1 << CS12) | (1 << CS10);"
     _ -> do
         return ()
 
 genInputCall :: Stream -> Gen ()
-genInputCall stream = case body stream of
-    (Builtin "clock") -> do
-        block "if (TCNT1 >= 10000) {" $ do
-            line "TCNT1 = 0;"
-            line "clock();"
-        line "}"
-    _ -> do
-        when (length (inputs stream) == 0) $ do
-            line (name stream ++ "();")
+genInputCall stream =
+    when (length (inputs stream) == 0) $ do
+        line (name stream ++ "();")
 
 genLLI :: LLI -> Gen [ResultVariable]
 genLLI lli = case lli of
@@ -216,9 +230,17 @@ genLLI lli = case lli of
     (WriteByte register value next) -> do
         line (register ++ " = " ++ value ++ ";")
         genLLI next
+    (WriteWord register value next) -> do
+        line (register ++ " = " ++ value ++ ";")
+        genLLI next
     (ReadBit register bit) -> do
         x <- var "bool"
         line $ x ++ " = (" ++ register ++ " & (1 << " ++ bit ++ ")) == 0U;"
+        return [ResultVariable x Nothing]
+    (ReadWord register next) -> do
+        x <- var "int"
+        line $ x ++ " = " ++ register ++ ";"
+        genLLI next
         return [ResultVariable x Nothing]
     (WaitBit register bit value next) -> do
         case value of
@@ -240,4 +262,5 @@ lliCType :: LLI -> String
 lliCType (WriteBit _ _ _ next) = lliCType next
 lliCType (Switch _ _ _ next)   = lliCType next
 lliCType (ReadBit _ _)         = "bool"
+lliCType (ReadWord _ _)        = "int"
 lliCType End                   = "void"

@@ -86,6 +86,19 @@ pin10 = gpioOutput pin10GPIO
 pin12in :: Stream Bool
 pin12in = gpioInput pin12GPIO
 
+clock :: Stream Int
+clock = foldpS (\tick state -> if_ (greater state (numberConstant n))
+                                   (sub (add tick state)
+                                        (numberConstant n))
+                                   (add tick state))
+                      (numberConstant 0)
+                      timerDelta
+            ~> filterS (\value -> greater value (numberConstant n))
+            ~> foldpS (\tick state -> add state (numberConstant 1))
+                      (numberConstant 0)
+    where
+        n = 10000
+
 uart :: DSL.Output Char
 uart =
     let ubrr = floor ((16000000 / (16 * 9600)) - 1)
@@ -128,3 +141,13 @@ gpioInput gpio = DSL.createInput
      DSL.writeBit (portRegister gpio) (bitName gpio) DAG.High $
      DSL.end)
     (DSL.readBit (pinRegister gpio) (bitName gpio))
+
+timerDelta :: Stream Int
+timerDelta = DSL.createInput
+    "timer"
+    (DSL.writeBit "TCCR1B" "CS12" DAG.High $
+     DSL.writeBit "TCCR1B" "CS10" DAG.High $
+     DSL.end)
+    (DSL.readWord "TCNT1" $
+     DSL.writeWord "TCNT1" "0" $
+     DSL.end)
