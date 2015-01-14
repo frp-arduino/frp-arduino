@@ -2,6 +2,7 @@
 * [The language](#the-language)
   * [FRP](#frp)
     * [Transforming](#transforming)
+    * [Keeping state](#keeping-state)
   * [EDSL](#edsl)
   * [Compiles to C](#compiles-to-c)
 * [Examples](#examples)
@@ -74,6 +75,30 @@ converts even numbers to true and odd numbers to false:
 We now have a stream that alternates its boolean value at a time interval.
 
 Mapping is always a one-to-one conversion.
+
+#### Keeping state
+
+Streams can also be used to keep track of state. We achieve that with the fold
+([`foldpS`](#api-foldpS)) operation.
+
+A fold is like a map where we also have access to a state and the output is the
+new state.
+
+Let's say we have a stream of booleans representing if a button is pressed or
+not. Now we want a stream that keeps track of the number of button presses. We
+can do that by folding the following function (pseudo code) with an initial
+`clickCount` value of 0:
+
+    if buttonIsPressed
+        clickCount + 1
+    else
+        clickCount
+
+![Counting number of clicks.](doc/stream-fold.png)
+
+The very firs time `clickCount` is 0. Subsequent values are incremented by one
+if the boolean value is true, otherwise we just pass the current `clickCount`
+along.
 
 ### EDSL
 
@@ -292,13 +317,25 @@ compileProgram :: Action a -> IO ()
 mapS :: (Expression a -> Expression b) -> Stream a -> Stream b
 ```
 
+Similar to map in Haskell. "S" is for stream.
+
+<a name="api-foldpS"></a>**foldpS**
+
+```haskell
+foldpS :: (Expression a -> Expression b -> Expression b)
+```
+
+Similar to fold in Haskell. "S" is for stream.
+Inspired by [Elm's](http://elm-lang.org/)
+[foldp](http://package.elm-lang.org/packages/elm-lang/core/1.1.0/Signal#foldp).
+
+### Expression operators
+
 <a name="api-toggle"></a>**toggle**
 
 ```haskell
 toggle :: Stream Int -> Stream Bit
 ```
-
-### Expression operators
 
 <a name="api-isEven"></a>**isEven**
 
