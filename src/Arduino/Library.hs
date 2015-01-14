@@ -21,7 +21,7 @@ module Arduino.Library
       module Arduino.Library
     ) where
 
-import Arduino.Language
+import Arduino.DSL
 
 toggle :: Stream Int -> Stream Bit
 toggle = mapS (boolToBit . isEven)

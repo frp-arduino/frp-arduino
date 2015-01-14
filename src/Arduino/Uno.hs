@@ -16,17 +16,14 @@
 -- along with frp-arduino.  If not, see <http://www.gnu.org/licenses/>.
 
 module Arduino.Uno
-    ( module Arduino.Language
+    ( module Arduino.DSL
     , module Arduino.Library
     -- * Uno outputs and streams
     , module Arduino.Uno
     ) where
 
-import Arduino.Internal.DAG (Bit)
-import Arduino.Internal.DSL
-import Arduino.Language
+import Arduino.DSL
 import Arduino.Library
-import CCodeGen
 import Data.Bits (shiftR, (.&.))
 import Prelude hiding (const)
 
