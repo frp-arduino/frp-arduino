@@ -39,7 +39,7 @@ Lets explore them in more detail.
 
 ### FRP
 
-This sections introduces FRP and shows how it fits in the domain of programming
+This section introduces FRP and shows how it fits in the domain of programming
 an Arduino.
 
 The central building block in FRP is a **stream**. A stream contains values
