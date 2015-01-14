@@ -3,6 +3,7 @@
   * [FRP](#frp)
     * [Transforming](#transforming)
     * [Keeping state](#keeping-state)
+    * [Filtering](#filtering)
   * [EDSL](#edsl)
   * [Compiles to C](#compiles-to-c)
 * [Examples](#examples)
@@ -99,6 +100,15 @@ can do that by folding the following function (pseudo code) with an initial
 The very firs time `clickCount` is 0. Subsequent values are incremented by one
 if the boolean value is true, otherwise we just pass the current `clickCount`
 along.
+
+#### Filtering
+
+Sometimes we would like to discard values from a stream. We do that with the
+filter ([`filterS`](#api-filterS)) operation.
+
+We can for example keep all even numbers in a stream:
+
+![Filtering a stream.](doc/stream-filter.png)
 
 ### EDSL
 
@@ -328,6 +338,12 @@ foldpS :: (Expression a -> Expression b -> Expression b)
 Similar to fold in Haskell. "S" is for stream.
 Inspired by [Elm's](http://elm-lang.org/)
 [foldp](http://package.elm-lang.org/packages/elm-lang/core/1.1.0/Signal#foldp).
+
+<a name="api-filterS"></a>**filterS**
+
+```haskell
+filterS :: (Expression a -> Expression Bool) -> Stream a -> Stream a
+```
 
 ### Expression operators
 

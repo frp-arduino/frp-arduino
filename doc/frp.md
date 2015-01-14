@@ -59,3 +59,12 @@ can do that by folding the following function (pseudo code) with an initial
 The very firs time `clickCount` is 0. Subsequent values are incremented by one
 if the boolean value is true, otherwise we just pass the current `clickCount`
 along.
+
+## Filtering
+
+Sometimes we would like to discard values from a stream. We do that with the
+filter (`api:filterS`) operation.
+
+We can for example keep all even numbers in a stream:
+
+![Filtering a stream.](doc/stream-filter.png)
