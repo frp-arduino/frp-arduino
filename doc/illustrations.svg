@@ -14,7 +14,10 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.5 r10040"
-   sodipodi:docname="illustrations.svg">
+   sodipodi:docname="illustrations.svg"
+   inkscape:export-filename="/home/rick/projects/frp-arduino/doc/stream-arduino.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs4">
     <marker
@@ -85,6 +88,20 @@
          style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
          transform="scale(0.8,0.8)" />
     </marker>
+    <marker
+       inkscape:stockid="TriangleOutL"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutL-0"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3901-3"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="scale(0.8,0.8)" />
+    </marker>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -94,8 +111,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
-     inkscape:cx="386.72935"
-     inkscape:cy="840.86112"
+     inkscape:cx="354.1267"
+     inkscape:cy="882.62627"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -259,7 +276,7 @@
        inkscape:export-filename="/home/rick/projects/frp-arduino/doc/map-even-clock-stream.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90"
-       transform="translate(0,-2)">
+       transform="translate(4.2857143,170.85714)">
       <path
          style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#TriangleOutL)"
          d="m 174.75639,220.54281 369.71583,0"
@@ -462,7 +479,8 @@
        id="g4968"
        inkscape:export-filename="/home/rick/projects/frp-arduino/doc/map-even-clock-stream.png"
        inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90">
+       inkscape:export-ydpi="90"
+       transform="translate(4.2857143,172.85714)">
       <g
          transform="translate(0,76)"
          id="g4843">
@@ -704,7 +722,8 @@
        id="g5173"
        inkscape:export-filename="/home/rick/projects/frp-arduino/doc/edsl.png"
        inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90">
+       inkscape:export-ydpi="90"
+       transform="translate(4.2857143,172.85714)">
       <g
          transform="translate(39.285714,15)"
          id="g5034">
@@ -842,6 +861,191 @@
          id="path4845-3"
          d="m 379.52966,398.79348 37.04073,0"
          style="fill:none;stroke:#000000;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#TriangleOutL)" />
+    </g>
+    <g
+       id="g4029">
+      <rect
+         ry="5.7269936"
+         rx="1.812647"
+         y="166.6266"
+         x="451.17114"
+         height="80.812202"
+         width="74.751289"
+         id="rect3115"
+         style="fill:none;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+      <g
+         id="g3117"
+         transform="matrix(0.51782801,0,0,0.51782801,196.27778,-81.353302)"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90"
+         inkscape:export-filename="/home/rick/projects/frp-arduino/doc/input-stream.png">
+        <path
+           inkscape:connector-curvature="0"
+           id="path3119"
+           d="m 146.47212,597.91855 369.71583,0"
+           style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#TriangleOutL)" />
+        <path
+           transform="matrix(0.83333339,0,0,0.83333339,3.8722542,168.78435)"
+           d="m 241.42646,514.961 c 0,6.6947 -5.42713,12.12183 -12.12183,12.12183 -6.69471,0 -12.12183,-5.42713 -12.12183,-12.12183 0,-6.6947 5.42712,-12.12183 12.12183,-12.12183 6.6947,0 12.12183,5.42713 12.12183,12.12183 z"
+           sodipodi:ry="12.121831"
+           sodipodi:rx="12.121831"
+           sodipodi:cy="514.961"
+           sodipodi:cx="229.30463"
+           id="path3121"
+           style="fill:#94d0ff;fill-opacity:1;stroke:#005a9d;stroke-width:1.79999995;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+           sodipodi:type="arc" />
+        <path
+           sodipodi:type="arc"
+           style="fill:#94d0ff;fill-opacity:1;stroke:#005a9d;stroke-width:1.79999995;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+           id="path3123"
+           sodipodi:cx="229.30463"
+           sodipodi:cy="514.961"
+           sodipodi:rx="12.121831"
+           sodipodi:ry="12.121831"
+           d="m 241.42646,514.961 c 0,6.6947 -5.42713,12.12183 -12.12183,12.12183 -6.69471,0 -12.12183,-5.42713 -12.12183,-12.12183 0,-6.6947 5.42712,-12.12183 12.12183,-12.12183 6.6947,0 12.12183,5.42713 12.12183,12.12183 z"
+           transform="matrix(0.83333339,0,0,0.83333339,45.583144,168.78435)" />
+        <path
+           transform="matrix(0.83333339,0,0,0.83333339,143.82518,168.78435)"
+           d="m 241.42646,514.961 c 0,6.6947 -5.42713,12.12183 -12.12183,12.12183 -6.69471,0 -12.12183,-5.42713 -12.12183,-12.12183 0,-6.6947 5.42712,-12.12183 12.12183,-12.12183 6.6947,0 12.12183,5.42713 12.12183,12.12183 z"
+           sodipodi:ry="12.121831"
+           sodipodi:rx="12.121831"
+           sodipodi:cy="514.961"
+           sodipodi:cx="229.30463"
+           id="path3125"
+           style="fill:#94d0ff;fill-opacity:1;stroke:#005a9d;stroke-width:1.79999995;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+           sodipodi:type="arc" />
+        <path
+           sodipodi:type="arc"
+           style="fill:#94d0ff;fill-opacity:1;stroke:#005a9d;stroke-width:1.79999995;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+           id="path3127"
+           sodipodi:cx="229.30463"
+           sodipodi:cy="514.961"
+           sodipodi:rx="12.121831"
+           sodipodi:ry="12.121831"
+           d="m 241.42646,514.961 c 0,6.6947 -5.42713,12.12183 -12.12183,12.12183 -6.69471,0 -12.12183,-5.42713 -12.12183,-12.12183 0,-6.6947 5.42712,-12.12183 12.12183,-12.12183 6.6947,0 12.12183,5.42713 12.12183,12.12183 z"
+           transform="matrix(0.83333339,0,0,0.83333339,223.87225,168.78435)" />
+        <path
+           sodipodi:type="arc"
+           style="fill:#94d0ff;fill-opacity:1;stroke:#005a9d;stroke-width:1.79999995;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+           id="path3129"
+           sodipodi:cx="229.30463"
+           sodipodi:cy="514.961"
+           sodipodi:rx="12.121831"
+           sodipodi:ry="12.121831"
+           d="m 241.42646,514.961 c 0,6.6947 -5.42713,12.12183 -12.12183,12.12183 -6.69471,0 -12.12183,-5.42713 -12.12183,-12.12183 0,-6.6947 5.42712,-12.12183 12.12183,-12.12183 6.6947,0 12.12183,5.42713 12.12183,12.12183 z"
+           transform="matrix(0.83333339,0,0,0.83333339,-44.127746,168.78435)" />
+        <text
+           sodipodi:linespacing="125%"
+           id="text3131"
+           y="581.4176"
+           x="147.14403"
+           style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+           xml:space="preserve"><tspan
+             style="font-size:12px;text-align:center;text-anchor:middle"
+             y="581.4176"
+             x="147.14403"
+             id="tspan3133"
+             sodipodi:role="line">high</tspan></text>
+        <text
+           xml:space="preserve"
+           style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+           x="194.51707"
+           y="581.4176"
+           id="text3135"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan3137"
+             x="194.51707"
+             y="581.4176"
+             style="font-size:12px;text-align:center;text-anchor:middle">low</tspan></text>
+        <text
+           sodipodi:linespacing="125%"
+           id="text3139"
+           y="581.4176"
+           x="334.47"
+           style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+           xml:space="preserve"><tspan
+             style="font-size:12px;text-align:center;text-anchor:middle"
+             y="581.4176"
+             x="334.47"
+             id="tspan3141"
+             sodipodi:role="line">low</tspan></text>
+        <text
+           xml:space="preserve"
+           style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+           x="236.85492"
+           y="581.4176"
+           id="text3143"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan3145"
+             x="236.85492"
+             y="581.4176"
+             style="font-size:12px;text-align:center;text-anchor:middle">high</tspan></text>
+        <text
+           sodipodi:linespacing="125%"
+           id="text3147"
+           y="581.4176"
+           x="415.14401"
+           style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+           xml:space="preserve"><tspan
+             style="font-size:12px;text-align:center;text-anchor:middle"
+             y="581.4176"
+             x="415.14401"
+             id="tspan3149"
+             sodipodi:role="line">high</tspan></text>
+        <text
+           xml:space="preserve"
+           style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+           x="516.49506"
+           y="614.23907"
+           id="text3151"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan3153"
+             x="516.49506"
+             y="614.23907"
+             style="font-size:12px;text-align:center;text-anchor:middle">time</tspan></text>
+      </g>
+      <path
+         sodipodi:nodetypes="cssc"
+         inkscape:connector-curvature="0"
+         id="path3119-4"
+         d="m 470.6116,228.43745 c 0,0 6.61964,0.007 13.85393,0.0229 7.86697,0.0176 9.77555,-31.06862 -1.95036,-30.88614 -22.15983,0.34486 -61.29721,-0.27742 -61.29721,-0.27742"
+         style="fill:none;stroke:#000000;stroke-width:0.46732464px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#TriangleOutL)" />
+      <text
+         xml:space="preserve"
+         style="font-size:38.04051971px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         x="487.17761"
+         y="180.83325"
+         id="text3151-0"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan3153-6"
+           x="487.17761"
+           y="180.83325"
+           style="font-size:11.41215611px;text-align:center;text-anchor:middle">Arduino</tspan></text>
+      <g
+         transform="matrix(0.18333348,0,0,0.18333348,377.43234,151.78183)"
+         id="g4024">
+        <path
+           style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+           d="m 193.14286,192.00504 -6.42857,68.92856"
+           id="path4013"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cc" />
+        <path
+           sodipodi:nodetypes="cc"
+           inkscape:connector-curvature="0"
+           id="path4015"
+           d="m 206.71429,192.00504 6.42857,68.92856"
+           style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+        <path
+           style="fill:#ff0000;fill-opacity:1;stroke:#000000;stroke-width:1.99999988;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           d="m 200.15625,138.625 c -13.25483,0 -24,10.74517 -24,24 0,0.0106 -1e-5,0.0206 0,0.0312 l 0,31.0625 48,0 0,-31.0625 c 1e-5,-0.0106 0,-0.0206 0,-0.0312 0,-13.25483 -10.74517,-24 -24,-24 z"
+           id="path4017"
+           inkscape:connector-curvature="0" />
+      </g>
     </g>
   </g>
 </svg>

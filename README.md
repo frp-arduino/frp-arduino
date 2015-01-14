@@ -44,13 +44,19 @@ an Arduino.
 
 The central building block in FRP is a **stream**. A stream contains values
 that change over time. Consider an input pin on the Arduino. If we constantly
-read the value of the pin we will get different values (high or low) over time
-depending on if a button connected to that pin is pressed or not:
+read the value of the pin we will get different values (high or low) over time:
 
 ![Example input stream.](doc/input-stream.png)
 
 We could take this stream and assign it to an output pin. Whenever there is a
-new value on the input stream, that value will be sent to the output pin.
+new value on the input stream, that value will be sent to the output pin. In
+this example we have a led connected to the output pin:
+
+![Stream connected to Arduino.](doc/stream-arduino.png)
+
+So building an Arduino application using FRP involves capturing inputs as
+streams, doing some interesting calculations (we'll come to that), and
+assigning streams to outputs.
 
 #### Transforming
 
