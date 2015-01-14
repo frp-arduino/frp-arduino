@@ -60,18 +60,20 @@ assigning streams to outputs.
 
 #### Transforming
 
-The most common thing we to with streams is to transform the values in some
-way. This operation is called map ([`mapS`](#api-mapS)). There is a built in stream
-called [`clock`](#api-clock) that increments an integer at some time interval:
+The most common thing we do with streams is to transform the values in some
+way. This operation is called map ([`mapS`](#api-mapS)). Let's say we have a stream of
+numbers:
 
-![The clock stream.](doc/clock-stream.png)
+![A stream of numbers.](doc/number-stream.png)
 
-We can transform this stream to a stream of booleans by mapping the
-[`isEven`](#api-isEven) function on it:
+We can transform this stream to a stream of booleans by mapping a function that
+converts even numbers to true and odd numbers to false:
 
-![The clock stream mapped with the isEven function.](doc/map-even-clock-stream.png)
+![Mapping numbers to booleans.](doc/map-number-stream.png)
 
 We now have a stream that alternates its boolean value at a time interval.
+
+Mapping is always a one-to-one conversion.
 
 ### EDSL
 
