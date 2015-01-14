@@ -1,7 +1,9 @@
 language: haskell
 install:
+    - apt-get install aspell aspell-en
     - cabal install mtl
     - sudo apt-get install arduino-core
     - git clone https://github.com/sudar/Arduino-Makefile.git
 script:
     - ./test
+    - aspell --extra-dicts ./frp.en.pws list < README.md
