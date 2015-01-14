@@ -26,6 +26,7 @@ module Arduino.DSL
     , (=:)
     -- ** Types
     , DAG.Bit
+    , DAG.Byte
     -- ** Stream operations
     , (~>)
     , mapS
@@ -60,6 +61,7 @@ module Arduino.DSL
 import Arduino.Internal.CodeGen (streamsToC)
 import CCodeGen
 import Control.Monad.State
+import Data.Char (ord)
 import Prelude hiding (const)
 import qualified Arduino.Internal.DAG as DAG
 import qualified Data.Map as M
@@ -173,8 +175,8 @@ boolToBit = Expression . DAG.BoolToBit . unExpression
 isHigh :: Expression DAG.Bit -> Expression Bool
 isHigh = Expression . DAG.IsHigh . unExpression
 
-stringConstant :: String -> Expression Char
-stringConstant = Expression . DAG.Many . map DAG.CharConstant
+stringConstant :: String -> Expression DAG.Byte
+stringConstant = Expression . DAG.Many . map (DAG.ByteConstant . fromIntegral . ord)
 
 bitLow :: Expression DAG.Bit
 bitLow = Expression $ DAG.BitConstant DAG.Low

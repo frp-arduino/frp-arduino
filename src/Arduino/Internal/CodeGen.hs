@@ -109,7 +109,7 @@ expressionCType inputMap expression = case expression of
     (Add _ _)          -> "int"
     (Sub _ _)          -> "int"
     (FoldState)        -> "int"
-    (CharConstant _)   -> "char"
+    (ByteConstant _)   -> "uint8_t"
     (Input x)          -> fromJust $ M.lookup x inputMap
     (Fold _ x)         -> expressionCType inputMap x
     (Filter _ x)       -> expressionCType inputMap x
@@ -164,7 +164,7 @@ genExpression expressionCType expression = case expression of
         wrap (leftResult ++ " - " ++ rightResult)
     (Input value) -> do
         return [ResultVariable ("input_" ++ show value) Nothing]
-    (CharConstant value) -> do
+    (ByteConstant value) -> do
         return [ResultVariable (show value) Nothing]
     (BoolToBit value) -> do
         genExpression expressionCType value

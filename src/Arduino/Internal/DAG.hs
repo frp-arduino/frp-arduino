@@ -18,8 +18,9 @@
 module Arduino.Internal.DAG where
 
 import Control.Monad.State
-import Data.Monoid
 import Data.Maybe (fromJust)
+import Data.Monoid
+import Data.Word
 import qualified Data.Map as M
 
 type Streams = M.Map Identifier Stream
@@ -47,6 +48,8 @@ data LLI = WriteBit String String Bit LLI
 
 data Bit = High | Low
 
+type Byte = Word8
+
 data Expression = Input Int
                 | FoldState
                 | Many [Expression]
@@ -66,8 +69,8 @@ data Expression = Input Int
                 -- Conversion
                 | BoolToBit Expression
                 -- Constants
-                | CharConstant Char
                 | BitConstant Bit
+                | ByteConstant Byte
                 | NumberConstant Int
 
 type Identifier = String

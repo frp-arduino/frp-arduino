@@ -69,7 +69,7 @@ every limit = timerDelta ~> accumulate ~> keepOverflowing ~> count
                             0
         keepOverflowing = filterS (\value -> greater value limit)
 
-uart :: Output Char
+uart :: Output Byte
 uart =
     let ubrr = floor ((16000000 / (16 * 9600)) - 1)
         ubrrlValue = ubrr .&. 0xFF :: Int

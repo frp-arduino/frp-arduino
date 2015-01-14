@@ -7,7 +7,7 @@ static void input_timer();
 
 static void stream_1(int input_0);
 
-static void stream_10(char input_0);
+static void stream_10(uint8_t input_0);
 
 static void stream_2(int input_0);
 
@@ -53,7 +53,7 @@ static void stream_1(int input_0) {
   stream_2(fold_state);
 }
 
-static void stream_10(char input_0) {
+static void stream_10(uint8_t input_0) {
   while ((UCSR0A & (1 << UDRE0)) == 0) {
   }
   UDR0 = input_0;
@@ -136,13 +136,13 @@ static void stream_8(int input_0) {
 }
 
 static void stream_9(int input_0) {
-  stream_10('h');
-  stream_10('e');
-  stream_10('l');
-  stream_10('l');
-  stream_10('o');
-  stream_10('\r');
-  stream_10('\n');
+  stream_10(104);
+  stream_10(101);
+  stream_10(108);
+  stream_10(108);
+  stream_10(111);
+  stream_10(13);
+  stream_10(10);
 }
 
 int main(void) {
