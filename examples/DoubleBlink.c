@@ -3,6 +3,11 @@
 #include <avr/io.h>
 #include <stdbool.h>
 
+struct list {
+    uint8_t size;
+    void* values;
+};
+
 static void input_timer();
 
 static void stream_1(int arg, void* value);
@@ -37,9 +42,9 @@ static void stream_1(int arg, void* value) {
   bool temp1;
   temp1 = fold_state > 10000;
   int temp2;
-  temp2 = input_0 + fold_state;
+  temp2 = input_0 - 10000;
   int temp3;
-  temp3 = temp2 - 10000;
+  temp3 = temp2 + fold_state;
   int temp4;
   temp4 = input_0 + fold_state;
   int temp5;

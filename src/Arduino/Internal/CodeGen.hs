@@ -25,11 +25,13 @@ import Control.Monad
 import qualified Data.Map as M
 
 data ResultVariable = ResultVariable String CType (Maybe String)
+                    | FlatResult String CType
 
 data CType = CBit
            | CByte
            | CNumber
            | CVoid
+           | CList CType
            deriving (Eq, Show)
 
 streamsToC :: Streams -> String
@@ -41,6 +43,8 @@ genStreamsCFile streams = do
     header ""
     header "#include <avr/io.h>"
     header "#include <stdbool.h>"
+    header ""
+    genCTypes
     genStreamCFunctions (sortStreams streams) M.empty
     line ""
     block "int main(void) {" $ do
@@ -50,6 +54,13 @@ genStreamsCFile streams = do
         line "}"
         line "return 0;"
     line "}"
+
+genCTypes :: Gen ()
+genCTypes = do
+    header "struct list {"
+    header "    uint8_t size;"
+    header "    void* values;"
+    header "};"
 
 genStreamCFunctions :: [Stream] -> M.Map String CType -> Gen ()
 genStreamCFunctions streams streamTypeMap = case streams of
@@ -104,14 +115,20 @@ genStreamBody inputMap body = case body of
 genStreamOuputCalling :: [ResultVariable] -> Stream -> Gen ()
 genStreamOuputCalling results stream = do
     forM_ (outputs stream) $ \outputStreamName -> do
-        forM_ results $ \(ResultVariable name cType condition) -> do
-            case condition of
-                Nothing -> do
-                    generateCall outputStreamName name
-                Just x -> do
-                    block ("if (" ++ x ++ ") {") $ do
+        forM_ results $ \res -> case res of
+            (ResultVariable name cType condition) -> do
+                case condition of
+                    Nothing -> do
                         generateCall outputStreamName name
-                    line "}"
+                    Just x -> do
+                        block ("if (" ++ x ++ ") {") $ do
+                            generateCall outputStreamName name
+                        line "}"
+            (FlatResult name cType) -> do
+                i <- var "uint8_t"
+                block ("for (" ++ i ++ " = 0; " ++ i ++ " < " ++ name ++ ".size; " ++ i ++ "++) {") $ do
+                    generateCall outputStreamName ("((" ++ cTypeStr cType ++ "*)" ++ name ++ ".values)[" ++ i ++ "]")
+                line "}"
     where
         generateCall (n, outputStreamName) resultVariable = do
             line (outputStreamName ++ "(" ++ show n ++ ", (void*)(&" ++ resultVariable ++ "));")
@@ -148,6 +165,29 @@ genExpression inputMap expression = case expression of
         case value of
             High -> (wrap CBit "true")
             Low  -> (wrap CBit "false")
+    (Many values) -> do
+        x <- mapM (genExpression inputMap) values
+        return $ concat x
+    (ListConstant values) -> do
+        x <- mapM (genExpression inputMap) values
+        let exprs = concat x
+        temp <- var "struct list"
+        v <- label
+        line $ cTypeStr (extractOutputType exprs) ++ " " ++ v ++ "[" ++ show (length exprs) ++ "];"
+        forM (zip [0..] exprs) $ \(i, (ResultVariable x _ _)) -> do
+            line $ v ++ "[" ++ show i ++ "] = " ++ x ++ ";"
+        line $ temp ++ ".size = " ++ show (length exprs) ++ ";"
+        line $ temp ++ ".values = (void*)" ++ v ++ ";"
+        return [ResultVariable temp (CList (extractOutputType exprs)) Nothing]
+    (NumberToByteArray value) -> do
+        [ResultVariable r CNumber Nothing] <- genExpression inputMap value
+        charBuf <- label
+        line $ "uint8_t " ++ charBuf ++ "[20];"
+        line $ "snprintf(" ++ charBuf ++ ", 20, \"%d\", " ++ r ++ ");"
+        temp <- var "struct list"
+        line $ temp ++ ".size = strlen(" ++ charBuf ++ ");"
+        line $ temp ++ ".values = " ++ charBuf ++ ";"
+        return [ResultVariable temp (CList CByte) Nothing]
     (NumberConstant value) -> do
         return [ResultVariable (show value) CNumber Nothing]
     (FoldState) -> do
@@ -178,8 +218,9 @@ genExpression inputMap expression = case expression of
         [ResultVariable expressionResult cType Nothing] <- genExpression inputMap expression
         line $ "fold_state = " ++ expressionResult ++ ";"
         return [ResultVariable "fold_state" cType Nothing]
-    (Many values) -> do
-        mapM (\x -> genExpression inputMap x >>= \[y] -> return y) values
+    (Flatten expression) -> do
+        [ResultVariable x (CList a) Nothing] <- genExpression inputMap expression
+        return [FlatResult x a]
 
 wrap :: CType -> String -> Gen [ResultVariable]
 wrap cType expression = do
@@ -256,6 +297,7 @@ extractOutputType vars = case vars of
     []       -> CVoid
     where
         extract (ResultVariable _ cType _) = cType
+        extract (FlatResult _ cType ) = cType
 
 cTypeStr :: CType -> String
 cTypeStr cType = case cType of
@@ -263,3 +305,4 @@ cTypeStr cType = case cType of
     CByte   -> "uint8_t"
     CNumber -> "int"
     CVoid   -> "void"
+    CList a -> "struct list"

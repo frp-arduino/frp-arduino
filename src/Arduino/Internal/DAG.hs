@@ -56,8 +56,9 @@ data Expression = Input Int
                 | FoldState
                 | Many [Expression]
                 -- Stream transformations
-                | Fold Expression Expression
-                | Filter Expression Expression
+                | Fold    Expression Expression
+                | Filter  Expression Expression
+                | Flatten Expression
                 -- Expression transformations
                 | If Expression Expression Expression
                 -- Unary operations
@@ -69,11 +70,13 @@ data Expression = Input Int
                 | Sub     Expression Expression
                 | Greater Expression Expression
                 -- Conversion
-                | BoolToBit Expression
+                | BoolToBit         Expression
+                | NumberToByteArray Expression
                 -- Constants
                 | BitConstant Bit
                 | ByteConstant Byte
                 | NumberConstant Int
+                | ListConstant [Expression]
 
 type Identifier = String
 

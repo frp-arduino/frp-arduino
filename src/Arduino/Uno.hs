@@ -64,7 +64,7 @@ every :: Expression Int -> Stream Int
 every limit = timerDelta ~> accumulate ~> keepOverflowing ~> count
     where
         accumulate = foldpS (\delta total -> if_ (greater total limit)
-                                                 (delta + total - limit)
+                                                 (delta - limit + total)
                                                  (delta + total))
                             0
         keepOverflowing = filterS (\value -> greater value limit)

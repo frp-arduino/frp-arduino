@@ -33,6 +33,7 @@ module Arduino.DSL
     , mapS2
     , filterS
     , foldpS
+    , flattenS
     -- ** Expression operations
     , isEven
     , if_
@@ -41,7 +42,9 @@ module Arduino.DSL
     , boolToBit
     , isHigh
     , bitLow
-    , stringConstant
+    , formatString
+    , formatNumber
+    , (.+.)
     -- ** LLI
     , createOutput
     , createInput
@@ -154,6 +157,14 @@ foldpS fn startValue stream = Stream $ do
         expression = unExpression $ fn (Expression $ DAG.Input 0)
                                        (Expression DAG.FoldState)
 
+flattenS :: Stream [a] -> Stream a
+flattenS stream = Stream $ do
+    streamName <- unStream stream
+    expressionStreamName <- addAnonymousStream (DAG.Transform expression)
+    addDependency streamName expressionStreamName
+    where
+        expression = unExpression $ Expression $ DAG.Flatten $ DAG.Input 0
+
 if_ :: Expression Bool -> Expression a -> Expression a -> Expression a
 if_ condition trueExpression falseExpression =
     Expression (DAG.If (unExpression condition)
@@ -175,8 +186,16 @@ boolToBit = Expression . DAG.BoolToBit . unExpression
 isHigh :: Expression DAG.Bit -> Expression Bool
 isHigh = Expression . DAG.IsHigh . unExpression
 
-stringConstant :: String -> Expression DAG.Byte
-stringConstant = Expression . DAG.Many . map (DAG.ByteConstant . fromIntegral . ord)
+formatString :: String -> Expression [DAG.Byte]
+formatString = Expression . DAG.ListConstant . map (DAG.ByteConstant . fromIntegral . ord)
+
+formatNumber :: Expression Int -> Expression [DAG.Byte]
+formatNumber = Expression . DAG.NumberToByteArray . unExpression
+
+(.+.) :: Expression [a] -> Expression [a] -> Expression [a]
+(.+.) left right = Expression $ DAG.Many [ unExpression left
+                                         , unExpression right
+                                         ]
 
 bitLow :: Expression DAG.Bit
 bitLow = Expression $ DAG.BitConstant DAG.Low

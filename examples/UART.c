@@ -3,6 +3,11 @@
 #include <avr/io.h>
 #include <stdbool.h>
 
+struct list {
+    uint8_t size;
+    void* values;
+};
+
 static void input_timer();
 
 static void stream_1(int arg, void* value);
@@ -18,10 +23,6 @@ static void stream_3(int arg, void* value);
 static void stream_8(int arg, void* value);
 
 static void stream_4(int arg, void* value);
-
-static void stream_9(int arg, void* value);
-
-static void stream_10(int arg, void* value);
 
 static void stream_5(int arg, void* value);
 
@@ -44,9 +45,9 @@ static void stream_1(int arg, void* value) {
   bool temp1;
   temp1 = fold_state > 10000;
   int temp2;
-  temp2 = input_0 + fold_state;
+  temp2 = input_0 - 10000;
   int temp3;
-  temp3 = temp2 - 10000;
+  temp3 = temp2 + fold_state;
   int temp4;
   temp4 = input_0 + fold_state;
   int temp5;
@@ -66,23 +67,49 @@ static void stream_6(int arg, void* value) {
       input_0 = *((int*)value);
       break;
   }
-  static int fold_state = 0;
-  bool temp6;
-  temp6 = fold_state > 10000;
-  int temp7;
-  temp7 = input_0 + fold_state;
-  int temp8;
-  temp8 = temp7 - 10000;
-  int temp9;
-  temp9 = input_0 + fold_state;
-  int temp10;
-  if (temp6) {
-    temp10 = temp8;
-  } else {
-    temp10 = temp9;
-  }
-  fold_state = temp10;
-  stream_7(0, (void*)(&fold_state));
+  uint8_t temp6;
+  temp6 = 100;
+  uint8_t temp7;
+  temp7 = 101;
+  uint8_t temp8;
+  temp8 = 108;
+  uint8_t temp9;
+  temp9 = 116;
+  uint8_t temp10;
+  temp10 = 97;
+  uint8_t temp11;
+  temp11 = 58;
+  uint8_t temp12;
+  temp12 = 32;
+  struct list temp13;
+  uint8_t temp14[7];
+  temp14[0] = temp6;
+  temp14[1] = temp7;
+  temp14[2] = temp8;
+  temp14[3] = temp9;
+  temp14[4] = temp10;
+  temp14[5] = temp11;
+  temp14[6] = temp12;
+  temp13.size = 7;
+  temp13.values = (void*)temp14;
+  uint8_t temp15[20];
+  snprintf(temp15, 20, "%d", input_0);
+  struct list temp16;
+  temp16.size = strlen(temp15);
+  temp16.values = temp15;
+  uint8_t temp17;
+  temp17 = 13;
+  uint8_t temp18;
+  temp18 = 10;
+  struct list temp19;
+  uint8_t temp20[2];
+  temp20[0] = temp17;
+  temp20[1] = temp18;
+  temp19.size = 2;
+  temp19.values = (void*)temp20;
+  stream_7(0, (void*)(&temp13));
+  stream_7(0, (void*)(&temp16));
+  stream_7(0, (void*)(&temp19));
 }
 
 static void stream_2(int arg, void* value) {
@@ -92,34 +119,28 @@ static void stream_2(int arg, void* value) {
       input_0 = *((int*)value);
       break;
   }
-  bool temp11;
-  temp11 = input_0 > 10000;
-  bool temp12;
-  temp12 = false;
-  if (temp11) {
-    temp12 = true;
+  bool temp21;
+  temp21 = input_0 > 10000;
+  bool temp22;
+  temp22 = false;
+  if (temp21) {
+    temp22 = true;
   }
-  if (temp12) {
+  if (temp22) {
     stream_3(0, (void*)(&input_0));
   }
 }
 
 static void stream_7(int arg, void* value) {
-  static int input_0;
+  static struct list input_0;
   switch (arg) {
     case 0:
-      input_0 = *((int*)value);
+      input_0 = *((struct list*)value);
       break;
   }
-  bool temp13;
-  temp13 = input_0 > 10000;
-  bool temp14;
-  temp14 = false;
-  if (temp13) {
-    temp14 = true;
-  }
-  if (temp14) {
-    stream_8(0, (void*)(&input_0));
+  uint8_t temp23;
+  for (temp23 = 0; temp23 < input_0.size; temp23++) {
+    stream_8(0, (void*)(&((uint8_t*)input_0.values)[temp23]));
   }
 }
 
@@ -131,69 +152,13 @@ static void stream_3(int arg, void* value) {
       break;
   }
   static int fold_state = 0;
-  int temp15;
-  temp15 = fold_state + 1;
-  fold_state = temp15;
+  int temp24;
+  temp24 = fold_state + 1;
+  fold_state = temp24;
   stream_4(0, (void*)(&fold_state));
 }
 
 static void stream_8(int arg, void* value) {
-  static int input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((int*)value);
-      break;
-  }
-  static int fold_state = 0;
-  int temp16;
-  temp16 = fold_state + 1;
-  fold_state = temp16;
-  stream_9(0, (void*)(&fold_state));
-}
-
-static void stream_4(int arg, void* value) {
-  static int input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((int*)value);
-      break;
-  }
-  bool temp17;
-  temp17 = (input_0) % 2 == 0;
-  stream_5(0, (void*)(&temp17));
-}
-
-static void stream_9(int arg, void* value) {
-  static int input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((int*)value);
-      break;
-  }
-  uint8_t temp18;
-  temp18 = 104;
-  uint8_t temp19;
-  temp19 = 101;
-  uint8_t temp20;
-  temp20 = 108;
-  uint8_t temp21;
-  temp21 = 108;
-  uint8_t temp22;
-  temp22 = 111;
-  uint8_t temp23;
-  temp23 = 13;
-  uint8_t temp24;
-  temp24 = 10;
-  stream_10(0, (void*)(&temp18));
-  stream_10(0, (void*)(&temp19));
-  stream_10(0, (void*)(&temp20));
-  stream_10(0, (void*)(&temp21));
-  stream_10(0, (void*)(&temp22));
-  stream_10(0, (void*)(&temp23));
-  stream_10(0, (void*)(&temp24));
-}
-
-static void stream_10(int arg, void* value) {
   static uint8_t input_0;
   switch (arg) {
     case 0:
@@ -203,6 +168,18 @@ static void stream_10(int arg, void* value) {
   while ((UCSR0A & (1 << UDRE0)) == 0) {
   }
   UDR0 = input_0;
+}
+
+static void stream_4(int arg, void* value) {
+  static int input_0;
+  switch (arg) {
+    case 0:
+      input_0 = *((int*)value);
+      break;
+  }
+  bool temp25;
+  temp25 = (input_0) % 2 == 0;
+  stream_5(0, (void*)(&temp25));
 }
 
 static void stream_5(int arg, void* value) {
@@ -222,13 +199,13 @@ static void stream_5(int arg, void* value) {
 int main(void) {
   TCCR1B |= (1 << CS12);
   TCCR1B |= (1 << CS10);
+  DDRB |= (1 << PB5);
   UBRR0H = 0;
   UBRR0L = 103;
   UCSR0C |= (1 << UCSZ01);
   UCSR0C |= (1 << UCSZ00);
   UCSR0B |= (1 << RXEN0);
   UCSR0B |= (1 << TXEN0);
-  DDRB |= (1 << PB5);
   while (1) {
     input_timer();
   }
