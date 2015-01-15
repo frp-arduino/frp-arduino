@@ -26,3 +26,7 @@ readme
 leds
 avrdude
 frp
+foldpS
+clickCount
+buttonIsPressed
+filterS

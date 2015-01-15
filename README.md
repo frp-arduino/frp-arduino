@@ -97,7 +97,7 @@ can do that by folding the following function (pseudo code) with an initial
 
 ![Counting number of clicks.](doc/stream-fold.png)
 
-The very firs time `clickCount` is 0. Subsequent values are incremented by one
+The very first time `clickCount` is 0. Subsequent values are incremented by one
 if the boolean value is true, otherwise we just pass the current `clickCount`
 along.
 
