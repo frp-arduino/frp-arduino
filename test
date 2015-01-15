@@ -11,6 +11,11 @@ fail() {
     exit 1
 }
 
+pass() {
+    echo "OK"
+    rm $TEST_REPORT
+}
+
 mydiff() {
     echo "kompare $1 $2"
     diff $1 $2
@@ -20,8 +25,14 @@ test() {
     echo -n "Testing $1 ... "
     (./make $1 > $TEST_REPORT 2>&1) || fail
     (mydiff examples/$1.c build-output/$1/main.c > $TEST_REPORT 2>&1) || fail
-    echo "OK"
-    rm $TEST_REPORT
+    pass
+}
+
+spell_check() {
+    echo -n "Spell checking $1 ... "
+    (aspell --extra-dicts ./.frp.en.pws list < README.md > $TEST_REPORT) || fail
+    (diff $TEST_REPORT /dev/null > /dev/null) || fail
+    pass
 }
 
 test Blink
@@ -29,3 +40,4 @@ test DoubleBlink
 test UART
 test Input
 test Combine
+spell_check
