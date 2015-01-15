@@ -39,7 +39,7 @@ Let's look at the type for the `api:=:` operator:
 (=:) :: Output a -> Stream a -> Action ()
 ```
 
-It takes an output of a specific type and connects it to a sream of values of
+It takes an output of a specific type and connects it to a stream of values of
 the same type.
 
 The type of `api:pin13` reveals that it accepts booleans:
