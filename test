@@ -17,7 +17,10 @@ pass() {
 }
 
 mydiff() {
+    echo "To see graphical diff:"
     echo "kompare $1 $2"
+    echo "To accept diff:"
+    echo "cp $2 $1"
     diff $1 $2
 }
 
