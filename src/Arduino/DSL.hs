@@ -15,14 +15,54 @@
 -- You should have received a copy of the GNU General Public License
 -- along with frp-arduino.  If not, see <http://www.gnu.org/licenses/>.
 
-module Arduino.Internal.DSL where
-
-import Control.Monad.State
-import qualified Data.Map as M
+module Arduino.DSL
+    (
+    -- * Core language
+      Stream
+    , Expression
+    , Output
+    , compileProgram
+    , def
+    , (=:)
+    -- ** Types
+    , DAG.Bit
+    -- ** Stream operations
+    , (~>)
+    , mapS
+    , mapS2
+    , filterS
+    , foldpS
+    -- ** Expression operations
+    , isEven
+    , if_
+    , flipBit
+    , greater
+    , boolToBit
+    , isHigh
+    , bitLow
+    , stringConstant
+    -- ** LLI
+    , createOutput
+    , createInput
+    , setBit
+    , clearBit
+    , writeByte
+    , writeWord
+    , readBit
+    , readWord
+    , waitBitSet
+    , switch
+    , const
+    , inputValue
+    , end
+    ) where
 
 import Arduino.Internal.CodeGen (streamsToC)
 import CCodeGen
+import Control.Monad.State
+import Prelude hiding (const)
 import qualified Arduino.Internal.DAG as DAG
+import qualified Data.Map as M
 
 data DAGState = DAGState
     { idCounter :: Int
