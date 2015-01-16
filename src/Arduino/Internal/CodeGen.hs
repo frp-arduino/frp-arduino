@@ -175,7 +175,7 @@ genExpression inputMap expression = case expression of
         let exprs = concat x
         temp <- var "struct list"
         v <- label
-        line $ cTypeStr (resultType exprs) ++ " " ++ v ++ "[" ++ show (length exprs) ++ "];"
+        header $ cTypeStr (resultType exprs) ++ " " ++ v ++ "[" ++ show (length exprs) ++ "];"
         forM (zip [0..] exprs) $ \(i, (Variable x _)) -> do
             line $ v ++ "[" ++ show i ++ "] = " ++ x ++ ";"
         line $ temp ++ ".size = " ++ show (length exprs) ++ ";"
@@ -184,7 +184,7 @@ genExpression inputMap expression = case expression of
     (NumberToByteArray operand) -> do
         [Variable r CNumber] <- genExpression inputMap operand
         charBuf <- label
-        line $ cTypeStr CByte ++ " " ++ charBuf ++ "[20];"
+        header $ cTypeStr CByte ++ " " ++ charBuf ++ "[20];"
         line $ "snprintf(" ++ charBuf ++ ", 20, \"%d\", " ++ r ++ ");"
         temp <- var "struct list"
         line $ temp ++ ".size = strlen(" ++ charBuf ++ ");"

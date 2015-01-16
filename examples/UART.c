@@ -35,6 +35,11 @@ static void input_timer() {
 }
 
 static void stream_1(int arg, void* value) {
+  bool temp1;
+  int temp2;
+  int temp3;
+  int temp4;
+  int temp5;
   static int input_0;
   switch (arg) {
     case 0:
@@ -42,15 +47,10 @@ static void stream_1(int arg, void* value) {
       break;
   }
   static int fold_state = 0;
-  bool temp1;
   temp1 = fold_state > 10000;
-  int temp2;
   temp2 = input_0 - 10000;
-  int temp3;
   temp3 = temp2 + fold_state;
-  int temp4;
   temp4 = input_0 + fold_state;
-  int temp5;
   if (temp1) {
     temp5 = temp3;
   } else {
@@ -61,28 +61,34 @@ static void stream_1(int arg, void* value) {
 }
 
 static void stream_6(int arg, void* value) {
+  uint8_t temp6;
+  uint8_t temp7;
+  uint8_t temp8;
+  uint8_t temp9;
+  uint8_t temp10;
+  uint8_t temp11;
+  uint8_t temp12;
+  struct list temp13;
+  uint8_t temp14[7];
+  uint8_t temp15[20];
+  struct list temp16;
+  uint8_t temp17;
+  uint8_t temp18;
+  struct list temp19;
+  uint8_t temp20[2];
   static int input_0;
   switch (arg) {
     case 0:
       input_0 = *((int*)value);
       break;
   }
-  uint8_t temp6;
   temp6 = 100;
-  uint8_t temp7;
   temp7 = 101;
-  uint8_t temp8;
   temp8 = 108;
-  uint8_t temp9;
   temp9 = 116;
-  uint8_t temp10;
   temp10 = 97;
-  uint8_t temp11;
   temp11 = 58;
-  uint8_t temp12;
   temp12 = 32;
-  struct list temp13;
-  uint8_t temp14[7];
   temp14[0] = temp6;
   temp14[1] = temp7;
   temp14[2] = temp8;
@@ -92,17 +98,11 @@ static void stream_6(int arg, void* value) {
   temp14[6] = temp12;
   temp13.size = 7;
   temp13.values = (void*)temp14;
-  uint8_t temp15[20];
   snprintf(temp15, 20, "%d", input_0);
-  struct list temp16;
   temp16.size = strlen(temp15);
   temp16.values = temp15;
-  uint8_t temp17;
   temp17 = 13;
-  uint8_t temp18;
   temp18 = 10;
-  struct list temp19;
-  uint8_t temp20[2];
   temp20[0] = temp17;
   temp20[1] = temp18;
   temp19.size = 2;
@@ -113,15 +113,15 @@ static void stream_6(int arg, void* value) {
 }
 
 static void stream_2(int arg, void* value) {
+  bool temp21;
+  bool temp22;
   static int input_0;
   switch (arg) {
     case 0:
       input_0 = *((int*)value);
       break;
   }
-  bool temp21;
   temp21 = input_0 > 10000;
-  bool temp22;
   temp22 = false;
   if (temp21) {
     temp22 = true;
@@ -132,19 +132,20 @@ static void stream_2(int arg, void* value) {
 }
 
 static void stream_7(int arg, void* value) {
+  uint8_t temp23;
   static struct list input_0;
   switch (arg) {
     case 0:
       input_0 = *((struct list*)value);
       break;
   }
-  uint8_t temp23;
   for (temp23 = 0; temp23 < input_0.size; temp23++) {
     stream_8(0, (void*)(&((uint8_t*)input_0.values)[temp23]));
   }
 }
 
 static void stream_3(int arg, void* value) {
+  int temp24;
   static int input_0;
   switch (arg) {
     case 0:
@@ -152,7 +153,6 @@ static void stream_3(int arg, void* value) {
       break;
   }
   static int fold_state = 0;
-  int temp24;
   temp24 = fold_state + 1;
   fold_state = temp24;
   stream_4(0, (void*)(&fold_state));
@@ -171,13 +171,13 @@ static void stream_8(int arg, void* value) {
 }
 
 static void stream_4(int arg, void* value) {
+  bool temp25;
   static int input_0;
   switch (arg) {
     case 0:
       input_0 = *((int*)value);
       break;
   }
-  bool temp25;
   temp25 = (input_0) % 2 == 0;
   stream_5(0, (void*)(&temp25));
 }

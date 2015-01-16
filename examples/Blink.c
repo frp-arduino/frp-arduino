@@ -28,6 +28,11 @@ static void input_timer() {
 }
 
 static void stream_1(int arg, void* value) {
+  bool temp1;
+  int temp2;
+  int temp3;
+  int temp4;
+  int temp5;
   static int input_0;
   switch (arg) {
     case 0:
@@ -35,15 +40,10 @@ static void stream_1(int arg, void* value) {
       break;
   }
   static int fold_state = 0;
-  bool temp1;
   temp1 = fold_state > 10000;
-  int temp2;
   temp2 = input_0 - 10000;
-  int temp3;
   temp3 = temp2 + fold_state;
-  int temp4;
   temp4 = input_0 + fold_state;
-  int temp5;
   if (temp1) {
     temp5 = temp3;
   } else {
@@ -54,15 +54,15 @@ static void stream_1(int arg, void* value) {
 }
 
 static void stream_2(int arg, void* value) {
+  bool temp6;
+  bool temp7;
   static int input_0;
   switch (arg) {
     case 0:
       input_0 = *((int*)value);
       break;
   }
-  bool temp6;
   temp6 = input_0 > 10000;
-  bool temp7;
   temp7 = false;
   if (temp6) {
     temp7 = true;
@@ -73,6 +73,7 @@ static void stream_2(int arg, void* value) {
 }
 
 static void stream_3(int arg, void* value) {
+  int temp8;
   static int input_0;
   switch (arg) {
     case 0:
@@ -80,20 +81,19 @@ static void stream_3(int arg, void* value) {
       break;
   }
   static int fold_state = 0;
-  int temp8;
   temp8 = fold_state + 1;
   fold_state = temp8;
   stream_4(0, (void*)(&fold_state));
 }
 
 static void stream_4(int arg, void* value) {
+  bool temp9;
   static int input_0;
   switch (arg) {
     case 0:
       input_0 = *((int*)value);
       break;
   }
-  bool temp9;
   temp9 = (input_0) % 2 == 0;
   stream_5(0, (void*)(&temp9));
 }
