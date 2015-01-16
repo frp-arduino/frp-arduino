@@ -30,5 +30,11 @@ AVRDUDE_ARD_BAUDRATE = 115200
 include $ARDUINO_MAKEFILE_PATH
 
 EOF
-    make $TARGET
+    if [ "$TARGET" == "dot" ];
+    then
+        dot -Tpng -odag.png dag.dot
+        xdg-open dag.png
+    else
+        make $TARGET
+    fi
 fi

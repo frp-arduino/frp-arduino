@@ -19,4 +19,9 @@ main = compileProgram $ do
 
     pin13 =: clock ~> toggle
 
-    uart =: clock ~> mapS (\_ -> stringConstant "hello\r\n")
+    uart =: timerDelta ~> mapS formatDelta ~> flattenS
+
+formatDelta :: Expression Word -> Expression [Byte]
+formatDelta delta = formatString "delta: " .+.
+                    formatNumber delta .+.
+                    formatString "\r\n"

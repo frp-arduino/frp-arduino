@@ -3,102 +3,83 @@
 #include <avr/io.h>
 #include <stdbool.h>
 
+struct list {
+    uint8_t size;
+    void* values;
+};
+
 static void input_pin12();
 
 static void input_timer();
 
-static void stream_1(int input_0);
+static void stream_1(uint8_t arg, void* value);
 
-static void stream_10(bool input_0);
+static void stream_5(uint8_t arg, void* value);
 
-static void stream_2(int input_0);
+static void stream_2(uint8_t arg, void* value);
 
-static void stream_3(int input_0);
+static void stream_3(uint8_t arg, void* value);
 
-static void stream_4(int input_0);
+static void stream_4(uint8_t arg, void* value);
 
-static void stream_5(bool input_0);
+static void stream_6(uint8_t arg, void* value);
 
-static void stream_6(int arg, void* value);
+static void stream_8(uint8_t arg, void* value);
 
-static void stream_7(bool input_0);
+static void stream_7(uint8_t arg, void* value);
 
-static void stream_8(bool input_0);
+static void stream_9(uint8_t arg, void* value);
 
-static void stream_9(int arg, void* value);
+static void stream_10(uint8_t arg, void* value);
 
 static void input_pin12() {
   bool temp0;
   temp0 = (PINB & (1 << PB4)) == 0U;
-  stream_5(temp0);
+  stream_5(0, (void*)(&temp0));
   stream_6(0, (void*)(&temp0));
   stream_9(0, (void*)(&temp0));
 }
 
 static void input_timer() {
-  int temp1;
+  uint16_t temp1;
   temp1 = TCNT1;
   TCNT1 = 0;
-  stream_1(temp1);
+  stream_1(0, (void*)(&temp1));
 }
 
-static void stream_1(int input_0) {
-  static int fold_state = 0;
-  int temp2;
-  bool temp3;
-  temp3 = fold_state > 10000;
-  int temp4;
-  temp4 = input_0 + fold_state;
-  int temp5;
-  temp5 = temp4 - 10000;
-  int temp6;
-  temp6 = input_0 + fold_state;
-  if (temp3) {
-    temp2 = temp5;
+static void stream_1(uint8_t arg, void* value) {
+  bool temp2;
+  uint16_t temp3;
+  uint16_t temp4;
+  uint16_t temp5;
+  uint16_t temp6;
+  static uint16_t input_0;
+  switch (arg) {
+    case 0:
+      input_0 = *((uint16_t*)value);
+      break;
+  }
+  static uint16_t fold_state = 0;
+  temp2 = fold_state > 10000;
+  temp3 = fold_state - 10000;
+  temp4 = temp3 + input_0;
+  temp5 = fold_state + input_0;
+  if (temp2) {
+    temp6 = temp4;
   } else {
-    temp2 = temp6;
+    temp6 = temp5;
   }
-  fold_state = temp2;
-  stream_2(fold_state);
+  fold_state = temp6;
+  stream_2(0, (void*)(&fold_state));
 }
 
-static void stream_10(bool input_0) {
-  if (input_0) {
-    PORTB |= (1 << PB2);
-  } else {
-    PORTB &= ~(1 << PB2);
+static void stream_5(uint8_t arg, void* value) {
+  static bool input_0;
+  switch (arg) {
+    case 0:
+      input_0 = *((bool*)value);
+      break;
   }
-}
-
-static void stream_2(int input_0) {
-  bool temp7;
-  temp7 = input_0 > 10000;
-  bool temp8;
-  temp8 = false;
-  if (temp7) {
-    temp8 = true;
-  }
-  if (temp8) {
-    stream_3(input_0);
-  }
-}
-
-static void stream_3(int input_0) {
-  static int fold_state = 0;
-  int temp9;
-  temp9 = fold_state + 1;
-  fold_state = temp9;
-  stream_4(fold_state);
-}
-
-static void stream_4(int input_0) {
-  bool temp10;
-  temp10 = (input_0) % 2 == 0;
-  stream_6(1, (void*)(&temp10));
-  stream_8(temp10);
-}
-
-static void stream_5(bool input_0) {
   if (input_0) {
     PORTB |= (1 << PB5);
   } else {
@@ -106,7 +87,55 @@ static void stream_5(bool input_0) {
   }
 }
 
-static void stream_6(int arg, void* value) {
+static void stream_2(uint8_t arg, void* value) {
+  bool temp7;
+  bool temp8;
+  static uint16_t input_0;
+  switch (arg) {
+    case 0:
+      input_0 = *((uint16_t*)value);
+      break;
+  }
+  temp7 = input_0 > 10000;
+  temp8 = false;
+  if (temp7) {
+    temp8 = true;
+  }
+  if (temp8) {
+    stream_3(0, (void*)(&input_0));
+  }
+}
+
+static void stream_3(uint8_t arg, void* value) {
+  uint16_t temp9;
+  static uint16_t input_0;
+  switch (arg) {
+    case 0:
+      input_0 = *((uint16_t*)value);
+      break;
+  }
+  static uint16_t fold_state = 0;
+  temp9 = fold_state + 1;
+  fold_state = temp9;
+  stream_4(0, (void*)(&fold_state));
+}
+
+static void stream_4(uint8_t arg, void* value) {
+  bool temp10;
+  static uint16_t input_0;
+  switch (arg) {
+    case 0:
+      input_0 = *((uint16_t*)value);
+      break;
+  }
+  temp10 = (input_0) % 2 == 0;
+  stream_6(1, (void*)(&temp10));
+  stream_8(0, (void*)(&temp10));
+}
+
+static void stream_6(uint8_t arg, void* value) {
+  bool temp11;
+  bool temp12;
   static bool input_0;
   static bool input_1;
   switch (arg) {
@@ -117,18 +146,34 @@ static void stream_6(int arg, void* value) {
       input_1 = *((bool*)value);
       break;
   }
-  bool temp11;
-  bool temp12;
-  temp12 = false;
+  temp11 = false;
   if (input_0) {
-    temp11 = input_1;
+    temp12 = input_1;
   } else {
-    temp11 = temp12;
+    temp12 = temp11;
   }
-  stream_7(temp11);
+  stream_7(0, (void*)(&temp12));
 }
 
-static void stream_7(bool input_0) {
+static void stream_8(uint8_t arg, void* value) {
+  bool temp13;
+  static bool input_0;
+  switch (arg) {
+    case 0:
+      input_0 = *((bool*)value);
+      break;
+  }
+  temp13 = !(input_0);
+  stream_9(1, (void*)(&temp13));
+}
+
+static void stream_7(uint8_t arg, void* value) {
+  static bool input_0;
+  switch (arg) {
+    case 0:
+      input_0 = *((bool*)value);
+      break;
+  }
   if (input_0) {
     PORTB |= (1 << PB3);
   } else {
@@ -136,13 +181,9 @@ static void stream_7(bool input_0) {
   }
 }
 
-static void stream_8(bool input_0) {
-  bool temp13;
-  temp13 = !(input_0);
-  stream_9(1, (void*)(&temp13));
-}
-
-static void stream_9(int arg, void* value) {
+static void stream_9(uint8_t arg, void* value) {
+  bool temp14;
+  bool temp15;
   static bool input_0;
   static bool input_1;
   switch (arg) {
@@ -153,15 +194,27 @@ static void stream_9(int arg, void* value) {
       input_1 = *((bool*)value);
       break;
   }
-  bool temp14;
-  bool temp15;
-  temp15 = false;
+  temp14 = false;
   if (input_0) {
-    temp14 = input_1;
+    temp15 = input_1;
   } else {
-    temp14 = temp15;
+    temp15 = temp14;
   }
-  stream_10(temp14);
+  stream_10(0, (void*)(&temp15));
+}
+
+static void stream_10(uint8_t arg, void* value) {
+  static bool input_0;
+  switch (arg) {
+    case 0:
+      input_0 = *((bool*)value);
+      break;
+  }
+  if (input_0) {
+    PORTB |= (1 << PB2);
+  } else {
+    PORTB &= ~(1 << PB2);
+  }
 }
 
 int main(void) {

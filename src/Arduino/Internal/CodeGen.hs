@@ -15,17 +15,31 @@
 -- You should have received a copy of the GNU General Public License
 -- along with frp-arduino.  If not, see <http://www.gnu.org/licenses/>.
 
-module Arduino.Internal.CodeGen where
-
-import Control.Monad.State
-import Data.List (intercalate, elemIndex)
-import Data.Maybe (fromJust)
-import qualified Data.Map as M
+module Arduino.Internal.CodeGen
+    ( streamsToC
+    ) where
 
 import Arduino.Internal.DAG
 import CCodeGen
+import Control.Monad
+import qualified Data.Map as M
 
-data ResultVariable = ResultVariable String (Maybe String)
+data ResultVariable = Variable String CType
+                    | FilterVariable String CType String
+                    | ToFlatVariable String CType
+
+data CType = CBit
+           | CByte
+           | CWord
+           | CVoid
+           | CList CType
+           deriving (Eq, Show)
+
+listSizeCType :: CType
+listSizeCType = CByte
+
+argIndexCType :: CType
+argIndexCType = CByte
 
 streamsToC :: Streams -> String
 streamsToC = runGen . genStreamsCFile
@@ -36,49 +50,61 @@ genStreamsCFile streams = do
     header ""
     header "#include <avr/io.h>"
     header "#include <stdbool.h>"
-    mapM (genStreamCFunction streams) (streamsInTree streams)
+    header ""
+    genCTypes
+    genStreamCFunctions (sortStreams streams) M.empty
     line ""
     block "int main(void) {" $ do
         mapM genInit (streamsInTree streams)
         block "while (1) {" $ do
-            mapM genInputCall (streamsInTree streams)
+            mapM genInputCall (filter (null . inputs) (streamsInTree streams))
         line "}"
         line "return 0;"
     line "}"
 
-genStreamCFunction :: Streams -> Stream -> Gen ()
-genStreamCFunction streams stream = do
-    let args = streamArguments streams (name stream)
+genCTypes :: Gen ()
+genCTypes = do
+    header $ "struct list {"
+    header $ "    " ++ cTypeStr listSizeCType ++ " size;"
+    header $ "    void* values;"
+    header $ "};"
+
+genStreamCFunctions :: [Stream] -> M.Map String CType -> Gen ()
+genStreamCFunctions streams streamTypeMap = case streams of
+    []                   -> return ()
+    (stream:restStreams) -> do
+        cType <- genStreamCFunction streamTypeMap stream
+        let updateStreamTypeMap = M.insert (name stream) cType streamTypeMap
+        genStreamCFunctions restStreams updateStreamTypeMap
+
+genStreamCFunction :: M.Map String CType -> Stream -> Gen CType
+genStreamCFunction streamTypes stream = do
+    let inputTypes = map (streamTypes M.!) (inputs stream)
+    let inputMap = M.fromList $ zip [0..] inputTypes
+    let args = streamArguments streamTypes stream
     let declaration = ("static void " ++ name stream ++
-                       "(" ++ streamToArgumentList streams stream ++ ")")
+                       "(" ++ streamToArgumentList streamTypes stream ++ ")")
     cFunction declaration $ do
-        let t = streamCType streams (name stream)
         genStreamInputParsing args
-        let inputTypes = map (streamCType streams) (inputs stream)
-        let inputMap = M.fromList $ zip [0..] inputTypes
-        outputNames <- genStreamBody (expressionCType inputMap) (body stream)
-        genStreamOuputCalling outputNames streams stream
+        outputNames <- genStreamBody inputMap (body stream)
+        genStreamOuputCalling outputNames stream
+        return $ resultType outputNames
 
-streamToArgumentList :: Streams -> Stream -> String
-streamToArgumentList streams stream
-    | length args <= 1 =
-        intercalate ", " $ map (\(name, cType, _) -> (cType ++ " " ++ name)) args
-    | otherwise =
-        "int arg, void* value"
-    where
-        args = streamArguments streams (name stream)
+streamArguments :: M.Map String CType -> Stream -> [(String, String, Int)]
+streamArguments streamTypes =
+    map (\(input, cType) -> ("input_" ++ show input, cTypeStr cType, input)) .
+    zip [0..] .
+    map (streamTypes M.!) .
+    inputs
 
-streamArguments :: Streams -> String -> [(String, String, Int)]
-streamArguments streams streamName =
-    map (\(input, cType) -> ("input_" ++ show input, cType, input)) $
-    zip [0..] $
-    map (streamCType streams) $
-    inputs $
-    streamFromId streams streamName
+streamToArgumentList :: M.Map String CType -> Stream -> String
+streamToArgumentList streamTypes stream
+    | length (inputs stream) < 1 = ""
+    | otherwise                  = cTypeStr argIndexCType ++ " arg, void* value"
 
 genStreamInputParsing :: [(String, String, Int)] -> Gen ()
 genStreamInputParsing args = do
-    when ((length args) > 1) $ do
+    when ((length args) > 0) $ do
         forM_ args $ \(name, cType, _) -> do
             line $ "static " ++ cType ++ " " ++ name ++ ";"
         block "switch (arg) {" $ do
@@ -88,129 +114,127 @@ genStreamInputParsing args = do
                     line $ "break;"
         line $ "}"
 
-streamCType :: Streams -> String -> String
-streamCType streams streamName = case body stream of
-    (Driver _ bodyLLI)     -> lliCType bodyLLI
-    (Transform expression) -> expressionCType inputMap expression
-    where
-        inputMap = M.fromList $ zip [0..] inputTypes
-        inputTypes = map (streamCType streams) (inputs stream)
-        stream = streamFromId streams streamName
-
-expressionCType :: M.Map Int String -> Expression -> String
-expressionCType inputMap expression = case expression of
-    (IsHigh _)         -> "bool"
-    (BoolToBit _)      -> "bool"
-    (Not _)            -> "bool"
-    (Even _)           -> "bool"
-    (Greater _ _)      -> "bool"
-    (BitConstant _)    -> "bool"
-    (NumberConstant _) -> "int"
-    (Add _ _)          -> "int"
-    (Sub _ _)          -> "int"
-    (FoldState)        -> "int"
-    (CharConstant _)   -> "char"
-    (Input x)          -> fromJust $ M.lookup x inputMap
-    (Fold _ x)         -> expressionCType inputMap x
-    (Filter _ x)       -> expressionCType inputMap x
-    (Many (x:_))       -> expressionCType inputMap x
-    (If _ _ x)         -> expressionCType inputMap x
-
-genStreamBody :: (Expression -> String) -> Body -> Gen [ResultVariable]
-genStreamBody expressionCType body = case body of
+genStreamBody :: M.Map Int CType -> Body -> Gen [ResultVariable]
+genStreamBody inputMap body = case body of
     (Driver _ bodyLLI)     -> genLLI bodyLLI
-    (Transform expression) -> do
-        genExpression expressionCType expression
+    (Transform expression) -> genExpression inputMap expression
 
-genStreamOuputCalling :: [ResultVariable] -> Streams -> Stream -> Gen ()
-genStreamOuputCalling results streams stream = do
+genStreamOuputCalling :: [ResultVariable] -> Stream -> Gen ()
+genStreamOuputCalling results stream = do
     forM_ (outputs stream) $ \outputStreamName -> do
-        forM_ results $ \(ResultVariable resultVariable condition) -> do
-            case condition of
-                Nothing -> do
-                    generateCall outputStreamName resultVariable
-                Just x -> do
-                    block ("if (" ++ x ++ ") {") $ do
-                        generateCall outputStreamName resultVariable
-                    line "}"
+        forM_ results $ \res -> case res of
+            (Variable name cType) -> do
+                generateCall outputStreamName name
+            (FilterVariable name cType condition) -> do
+                block ("if (" ++ condition ++ ") {") $ do
+                    generateCall outputStreamName name
+                line "}"
+            (ToFlatVariable name cType) -> do
+                i <- var (cTypeStr listSizeCType)
+                block ("for (" ++ i ++ " = 0; " ++ i ++ " < " ++ name ++ ".size; " ++ i ++ "++) {") $ do
+                    generateCall outputStreamName ("((" ++ cTypeStr cType ++ "*)" ++ name ++ ".values)[" ++ i ++ "]")
+                line "}"
     where
-        generateCall outputStreamName resultVariable =
-            if (length (inputs (streamFromId streams outputStreamName))) > 1
-                then do
-                    let n = fromJust $ elemIndex (name stream) (inputs (streamFromId streams outputStreamName))
-                    line (outputStreamName ++ "(" ++ show n ++ ", (void*)(&" ++ resultVariable ++ "));")
-                else do
-                    line (outputStreamName ++ "(" ++ resultVariable ++ ");")
+        generateCall (n, outputStreamName) resultVariable = do
+            line (outputStreamName ++ "(" ++ show n ++ ", (void*)(&" ++ resultVariable ++ "));")
 
-genExpression :: (Expression -> String) -> Expression -> Gen [ResultVariable]
-genExpression expressionCType expression = case expression of
-    (Not expression) -> do
-        [ResultVariable inner Nothing] <- genExpression expressionCType expression
-        wrap ("!(" ++ inner ++ ")")
-    (Even expression) -> do
-        [ResultVariable inner Nothing] <- genExpression expressionCType expression
-        wrap ("(" ++ inner ++ ") % 2 == 0")
+genExpression :: M.Map Int CType -> Expression -> Gen [ResultVariable]
+genExpression inputMap expression = case expression of
+    (Not operand) -> do
+        [Variable result CBit] <- genExpression inputMap operand
+        wrap ("!(" ++ result ++ ")") CBit
+    (Even operand) -> do
+        [Variable result CWord] <- genExpression inputMap operand
+        wrap ("(" ++ result ++ ") % 2 == 0") CBit
     (Greater left right) -> do
-        [ResultVariable leftResult Nothing] <- genExpression expressionCType left
-        [ResultVariable rightResult Nothing] <- genExpression expressionCType right
-        wrap (leftResult ++ " > " ++ rightResult)
+        [Variable leftResult  CWord] <- genExpression inputMap left
+        [Variable rightResult CWord] <- genExpression inputMap right
+        wrap (leftResult ++ " > " ++ rightResult) CBit
     (Add left right) -> do
-        [ResultVariable leftResult Nothing] <- genExpression expressionCType left
-        [ResultVariable rightResult Nothing] <- genExpression expressionCType right
-        wrap (leftResult ++ " + " ++ rightResult)
+        [Variable leftResult  CWord] <- genExpression inputMap left
+        [Variable rightResult CWord] <- genExpression inputMap right
+        wrap (leftResult ++ " + " ++ rightResult) CWord
     (Sub left right) -> do
-        [ResultVariable leftResult Nothing] <- genExpression expressionCType left
-        [ResultVariable rightResult Nothing] <- genExpression expressionCType right
-        wrap (leftResult ++ " - " ++ rightResult)
+        [Variable leftResult  CWord] <- genExpression inputMap left
+        [Variable rightResult CWord] <- genExpression inputMap right
+        wrap (leftResult ++ " - " ++ rightResult) CWord
     (Input value) -> do
-        return [ResultVariable ("input_" ++ show value) Nothing]
-    (CharConstant value) -> do
-        return [ResultVariable (show value) Nothing]
-    (BoolToBit value) -> do
-        genExpression expressionCType value
-    (IsHigh value) -> do
-        genExpression expressionCType value
+        variable ("input_" ++ show value) (inputMap M.! value)
+    (ByteConstant value) -> do
+        wrap (show value) CByte
+    (BoolToBit operand) -> do
+        genExpression inputMap operand
+    (IsHigh operand) -> do
+        genExpression inputMap operand
     (BitConstant value) -> do
         case value of
-            High -> (wrap "true")
-            Low  -> (wrap "false")
-    (NumberConstant value) -> do
-        return [ResultVariable (show value) Nothing]
+            High -> (wrap "true" CBit)
+            Low  -> (wrap "false" CBit)
+    (Many values) -> do
+        x <- mapM (genExpression inputMap) values
+        return $ concat x
+    (ListConstant values) -> do
+        x <- mapM (genExpression inputMap) values
+        let exprs = concat x
+        temp <- var "struct list"
+        v <- label
+        header $ cTypeStr (resultType exprs) ++ " " ++ v ++ "[" ++ show (length exprs) ++ "];"
+        forM (zip [0..] exprs) $ \(i, (Variable x _)) -> do
+            line $ v ++ "[" ++ show i ++ "] = " ++ x ++ ";"
+        line $ temp ++ ".size = " ++ show (length exprs) ++ ";"
+        line $ temp ++ ".values = (void*)" ++ v ++ ";"
+        variable temp (CList $ resultType exprs)
+    (NumberToByteArray operand) -> do
+        [Variable r CWord] <- genExpression inputMap operand
+        charBuf <- label
+        header $ cTypeStr CByte ++ " " ++ charBuf ++ "[20];"
+        line $ "snprintf(" ++ charBuf ++ ", 20, \"%d\", " ++ r ++ ");"
+        temp <- var "struct list"
+        line $ temp ++ ".size = strlen(" ++ charBuf ++ ");"
+        line $ temp ++ ".values = " ++ charBuf ++ ";"
+        variable temp (CList CByte)
+    (WordConstant value) -> do
+        variable (show value) CWord
     (FoldState) -> do
-        return [ResultVariable "fold_state" Nothing]
+        variable "fold_state" CWord
     (If conditionExpression trueExpression falseExpression) -> do
-        temp <- var (expressionCType falseExpression)
-        [ResultVariable conditionResult Nothing] <- genExpression expressionCType conditionExpression
-        [ResultVariable trueResult Nothing] <- genExpression expressionCType trueExpression
-        [ResultVariable falseResult Nothing] <- genExpression expressionCType falseExpression
+        [Variable conditionResult CBit] <- genExpression inputMap conditionExpression
+        [Variable trueResult cType] <- genExpression inputMap trueExpression
+        [Variable falseResult cType] <- genExpression inputMap falseExpression
+        temp <- var (cTypeStr cType)
         block ("if (" ++ conditionResult ++ ") {") $ do
             line $ temp ++ " = " ++ trueResult ++ ";"
         block "} else {" $ do
             line $ temp ++ " = " ++ falseResult ++ ";"
         line $ "}"
-        return [ResultVariable temp Nothing]
-    (Filter condition value) -> do
-        [ResultVariable conditionResult Nothing] <- genExpression expressionCType condition
-        [ResultVariable valueResult Nothing] <- genExpression expressionCType value
+        variable temp cType
+    (Fold expression startValue) -> do
+        [Variable startValueResult cType] <- genExpression inputMap startValue
+        line $ "static " ++ cTypeStr cType ++ " fold_state = " ++ startValueResult ++ ";"
+        [Variable expressionResult cTypeNothing] <- genExpression inputMap expression
+        line $ "fold_state = " ++ expressionResult ++ ";"
+        variable "fold_state" cTypeNothing
+    (Filter conditionExpression valueExpression) -> do
+        [Variable conditionResult CBit] <- genExpression inputMap conditionExpression
+        [Variable valueResult cType] <- genExpression inputMap valueExpression
         temp <- var "bool"
         line $ temp ++ " = false;"
         block ("if (" ++ conditionResult ++ ") {") $ do
             line $ temp ++ " = true;"
         line $ "}"
-        return [ResultVariable valueResult (Just temp)]
-    (Fold expression startValue) -> do
-        [ResultVariable startValueResult Nothing] <- genExpression expressionCType startValue
-        line $ "static " ++ expressionCType startValue ++ " fold_state = " ++ startValueResult ++ ";"
-        [ResultVariable expressionResult Nothing] <- genExpression expressionCType expression
-        line $ "fold_state = " ++ expressionResult ++ ";"
-        return [ResultVariable "fold_state" Nothing]
-    (Many values) -> do
-        mapM (\x -> genExpression expressionCType x >>= \[y] -> return y) values
-    where
-        wrap e = do
-            name <- var (expressionCType expression)
-            line $ name ++ " = " ++ e ++ ";"
-            return [ResultVariable name Nothing]
+        return [FilterVariable valueResult cType temp]
+    (Flatten expression) -> do
+        [Variable x (CList a)] <- genExpression inputMap expression
+        return [ToFlatVariable x a]
+
+wrap :: String -> CType -> Gen [ResultVariable]
+wrap expression cType = do
+    name <- var (cTypeStr cType)
+    line $ name ++ " = " ++ expression ++ ";"
+    variable name cType
+
+variable :: String -> CType -> Gen [ResultVariable]
+variable name cType = return [Variable name cType]
 
 genInit :: Stream -> Gen ()
 genInit stream = case body stream of
@@ -221,9 +245,8 @@ genInit stream = case body stream of
         return ()
 
 genInputCall :: Stream -> Gen ()
-genInputCall stream =
-    when (length (inputs stream) == 0) $ do
-        line (name stream ++ "();")
+genInputCall stream = do
+    line (name stream ++ "();")
 
 genLLI :: LLI -> Gen [ResultVariable]
 genLLI lli = case lli of
@@ -236,22 +259,22 @@ genLLI lli = case lli of
                 line (register ++ " &= ~(1 << " ++ bit ++ ");")
                 genLLI next
     (WriteByte register value next) -> do
-        [ResultVariable x Nothing] <- genLLI value
+        [Variable x cType] <- genLLI value
         line (register ++ " = " ++ x ++ ";")
         genLLI next
     (WriteWord register value next) -> do
-        [ResultVariable x Nothing] <- genLLI value
+        [Variable x cType] <- genLLI value
         line (register ++ " = " ++ x ++ ";")
         genLLI next
     (ReadBit register bit) -> do
         x <- var "bool"
         line $ x ++ " = (" ++ register ++ " & (1 << " ++ bit ++ ")) == 0U;"
-        return [ResultVariable x Nothing]
+        return [Variable x CBit]
     (ReadWord register next) -> do
-        x <- var "int"
+        x <- var (cTypeStr CWord)
         line $ x ++ " = " ++ register ++ ";"
         genLLI next
-        return [ResultVariable x Nothing]
+        return [Variable x CWord]
     (WaitBit register bit value next) -> do
         case value of
             High -> do
@@ -259,7 +282,7 @@ genLLI lli = case lli of
                 line $ "}"
         genLLI next
     (Switch name t f next) -> do
-        [ResultVariable x Nothing] <- genLLI name
+        [Variable x cType] <- genLLI name
         block ("if (" ++ x ++ ") {") $ do
             genLLI t
         block "} else {" $ do
@@ -267,15 +290,28 @@ genLLI lli = case lli of
         line "}"
         genLLI next
     (Const x) -> do
-        return [ResultVariable x Nothing]
+        return [Variable x CBit]
     InputValue -> do
-        return [ResultVariable "input_0" Nothing]
+        return [Variable "input_0" CBit]
     End -> do
         return []
 
-lliCType :: LLI -> String
-lliCType (WriteBit _ _ _ next) = lliCType next
-lliCType (Switch _ _ _ next)   = lliCType next
-lliCType (ReadBit _ _)         = "bool"
-lliCType (ReadWord _ _)        = "int"
-lliCType End                   = "void"
+resultType :: [ResultVariable] -> CType
+resultType vars = case vars of
+    (x:y:rest) -> if extract x == extract y
+                      then resultType (y:rest)
+                      else error "different c types"
+    [var]      -> extract var
+    []         -> CVoid
+    where
+        extract (Variable _ cType) = cType
+        extract (FilterVariable _ cType _) = cType
+        extract (ToFlatVariable _ cType) = cType
+
+cTypeStr :: CType -> String
+cTypeStr cType = case cType of
+    CBit    -> "bool"
+    CByte   -> "uint8_t"
+    CWord   -> "uint16_t"
+    CVoid   -> "void"
+    CList a -> "struct list"

@@ -26,12 +26,15 @@ module Arduino.DSL
     , (=:)
     -- ** Types
     , DAG.Bit
+    , DAG.Byte
+    , DAG.Word
     -- ** Stream operations
     , (~>)
     , mapS
     , mapS2
     , filterS
     , foldpS
+    , flattenS
     -- ** Expression operations
     , isEven
     , if_
@@ -40,7 +43,9 @@ module Arduino.DSL
     , boolToBit
     , isHigh
     , bitLow
-    , stringConstant
+    , formatString
+    , formatNumber
+    , (.+.)
     -- ** LLI
     , createOutput
     , createInput
@@ -58,8 +63,10 @@ module Arduino.DSL
     ) where
 
 import Arduino.Internal.CodeGen (streamsToC)
+import Arduino.Internal.DotGen (streamsToDot)
 import CCodeGen
 import Control.Monad.State
+import Data.Char (ord)
 import Prelude hiding (const)
 import qualified Arduino.Internal.DAG as DAG
 import qualified Data.Map as M
@@ -82,13 +89,13 @@ newtype LLI a = LLI { unLLI :: DAG.LLI }
 instance Num (Expression a) where
     (+) left right = Expression $ DAG.Add (unExpression left) (unExpression right)
     (-) left right = Expression $ DAG.Sub (unExpression left) (unExpression right)
-    fromInteger value = Expression $ DAG.NumberConstant $ fromIntegral value
+    fromInteger value = Expression $ DAG.WordConstant $ fromIntegral value
 
 compileProgram :: Action a -> IO ()
 compileProgram action = do
     let dagState = execState action (DAGState 1 DAG.emptyStreams)
-    let cCode = streamsToC (dag dagState)
-    writeFile "main.c" cCode
+    writeFile "main.c" $ streamsToC (dag dagState)
+    writeFile "dag.dot" $ streamsToDot (dag dagState)
 
 def :: Stream a -> Action (Stream a)
 def stream = do
@@ -152,19 +159,27 @@ foldpS fn startValue stream = Stream $ do
         expression = unExpression $ fn (Expression $ DAG.Input 0)
                                        (Expression DAG.FoldState)
 
+flattenS :: Stream [a] -> Stream a
+flattenS stream = Stream $ do
+    streamName <- unStream stream
+    expressionStreamName <- addAnonymousStream (DAG.Transform expression)
+    addDependency streamName expressionStreamName
+    where
+        expression = unExpression $ Expression $ DAG.Flatten $ DAG.Input 0
+
 if_ :: Expression Bool -> Expression a -> Expression a -> Expression a
 if_ condition trueExpression falseExpression =
     Expression (DAG.If (unExpression condition)
                        (unExpression trueExpression)
                        (unExpression falseExpression))
 
-greater :: Expression Int -> Expression Int -> Expression Bool
+greater :: Expression DAG.Word -> Expression DAG.Word -> Expression Bool
 greater left right = Expression $ DAG.Greater (unExpression left) (unExpression right)
 
 flipBit :: Expression DAG.Bit -> Expression DAG.Bit
 flipBit = Expression . DAG.Not . unExpression
 
-isEven :: Expression Int -> Expression Bool
+isEven :: Expression DAG.Word -> Expression Bool
 isEven = Expression . DAG.Even . unExpression
 
 boolToBit :: Expression Bool -> Expression DAG.Bit
@@ -173,8 +188,16 @@ boolToBit = Expression . DAG.BoolToBit . unExpression
 isHigh :: Expression DAG.Bit -> Expression Bool
 isHigh = Expression . DAG.IsHigh . unExpression
 
-stringConstant :: String -> Expression Char
-stringConstant = Expression . DAG.Many . map DAG.CharConstant
+formatString :: String -> Expression [DAG.Byte]
+formatString = Expression . DAG.ListConstant . map (DAG.ByteConstant . fromIntegral . ord)
+
+formatNumber :: Expression DAG.Word -> Expression [DAG.Byte]
+formatNumber = Expression . DAG.NumberToByteArray . unExpression
+
+(.+.) :: Expression [a] -> Expression [a] -> Expression [a]
+(.+.) left right = Expression $ DAG.Many [ unExpression left
+                                         , unExpression right
+                                         ]
 
 bitLow :: Expression DAG.Bit
 bitLow = Expression $ DAG.BitConstant DAG.Low
@@ -236,7 +259,7 @@ writeWord register value next = LLI $ DAG.WriteWord register (unLLI value) (unLL
 readBit :: String -> String -> LLI DAG.Bit
 readBit register bit = LLI $ DAG.ReadBit register bit
 
-readWord :: String -> LLI a -> LLI Int
+readWord :: String -> LLI a -> LLI DAG.Word
 readWord register next = LLI $ DAG.ReadWord register (unLLI next)
 
 waitBitSet :: String -> String -> LLI a -> LLI a

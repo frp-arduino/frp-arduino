@@ -18,9 +18,12 @@
 module Arduino.Internal.DAG where
 
 import Control.Monad.State
-import Data.Monoid
+import Data.List (partition)
 import Data.Maybe (fromJust)
+import Data.Monoid
 import qualified Data.Map as M
+import qualified Data.Set as S
+import qualified Data.Word as W
 
 type Streams = M.Map Identifier Stream
 
@@ -28,11 +31,12 @@ data Stream = Stream
     { name    :: Identifier
     , inputs  :: [Identifier]
     , body    :: Body
-    , outputs :: [Identifier]
+    , outputs :: [(Int, Identifier)]
     }
 
 data Body = Transform Expression
           | Driver LLI LLI
+          deriving (Show)
 
 data LLI = WriteBit String String Bit LLI
          | WriteByte String LLI LLI
@@ -44,15 +48,23 @@ data LLI = WriteBit String String Bit LLI
          | Const String
          | InputValue
          | End
+         deriving (Show)
 
-data Bit = High | Low
+data Bit = High
+         | Low
+         deriving (Show)
+
+type Byte = W.Word8
+
+type Word = W.Word16
 
 data Expression = Input Int
                 | FoldState
                 | Many [Expression]
                 -- Stream transformations
-                | Fold Expression Expression
-                | Filter Expression Expression
+                | Fold    Expression Expression
+                | Filter  Expression Expression
+                | Flatten Expression
                 -- Expression transformations
                 | If Expression Expression Expression
                 -- Unary operations
@@ -64,11 +76,14 @@ data Expression = Input Int
                 | Sub     Expression Expression
                 | Greater Expression Expression
                 -- Conversion
-                | BoolToBit Expression
+                | BoolToBit         Expression
+                | NumberToByteArray Expression
                 -- Constants
-                | CharConstant Char
                 | BitConstant Bit
-                | NumberConstant Int
+                | ByteConstant Byte
+                | WordConstant Word
+                | ListConstant [Expression]
+                deriving (Show)
 
 type Identifier = String
 
@@ -85,15 +100,35 @@ addStream :: Streams -> Stream -> Streams
 addStream streams stream = M.insert (name stream) stream streams
 
 addDependency :: Identifier -> Identifier -> Streams -> Streams
-addDependency source destination =
-    (M.adjust (\x -> x { outputs = outputs x ++ [destination] }) source) .
-    (M.adjust (\x -> x { inputs  = inputs  x ++ [source]      }) destination)
+addDependency source destination streams =
+    let n = case M.lookup destination streams of
+                Just stream -> length (inputs stream)
+                Nothing     -> 0
+    in
+    (M.adjust (\x -> x { outputs = outputs x ++ [(n, destination)] }) source) $
+    (M.adjust (\x -> x { inputs  = inputs  x ++ [source]      }) destination) $
+    streams
 
 hasStream :: Streams -> Identifier -> Bool
 hasStream streams name = M.member name streams
 
 streamsInTree :: Streams -> [Stream]
 streamsInTree = M.elems
+
+sortStreams :: Streams -> [Stream]
+sortStreams streams = pick (streamsInTree streams) []
+    where
+        pick :: [Stream] -> [Stream] -> [Stream]
+        pick []   taken = taken
+        pick left taken = let (newTaken, newLeft) = split left taken
+                          in pick newLeft (taken ++ newTaken)
+
+        split :: [Stream] -> [Stream] -> ([Stream], [Stream])
+        split left taken = partition (canTake taken) left
+
+        canTake :: [Stream] -> Stream -> Bool
+        canTake streams stream = S.isSubsetOf (S.fromList $ inputs stream)
+                                              (S.fromList $ map name streams)
 
 streamFromId :: Streams -> Identifier -> Stream
 streamFromId tree id = fromJust $ M.lookup id tree

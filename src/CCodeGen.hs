@@ -18,24 +18,31 @@
 module CCodeGen where
 
 import Control.Monad.State
+import Data.Maybe (fromJust)
 
 data GenState = GenState
     { labelCounter :: Int
-    , indentLevel  :: Int
-    , headerLines  :: [String]
-    , bodyLines    :: [String]
+    , getBlock     :: Block
+    }
+
+data Block = Block
+    { headerLines :: [String]
+    , bodyLines   :: [String]
     }
 
 type Gen a = State GenState a
 
+indentLevel :: Int
+indentLevel = 2
+
 runGen :: Gen a -> String
-runGen gen = unlines $ reverse (headerLines genState) ++
-                       reverse (bodyLines genState)
-    where
-        genState = execState gen emptyGenState
+runGen gen = unlines $ blockToLines $ getBlock $ execState gen emptyGenState
+
+blockToLines :: Block -> [String]
+blockToLines block = reverse (headerLines block) ++ reverse (bodyLines block)
 
 emptyGenState :: GenState
-emptyGenState = GenState 0 0 [] []
+emptyGenState = GenState 0 (Block [] [])
 
 label :: Gen String
 label = do
@@ -46,32 +53,38 @@ label = do
 var :: String -> Gen String
 var cType = do
     l <- label
-    line $ cType ++ " " ++ l ++ ";"
+    header $ cType ++ " " ++ l ++ ";"
     return l
 
 block :: String -> Gen a -> Gen a
-block x gen = do
-    line x
-    indent gen
-    where
-        indent :: Gen a -> Gen a
-        indent gen = do
-            modify $ \genState -> genState { indentLevel = indentLevel genState + 1 }
-            x <- gen
-            modify $ \genState -> genState { indentLevel = indentLevel genState - 1 }
-            return x
+block initText gen = do
+    line initText
+    beforeBlock <- newBlock
+    result <- gen
+    afterBlock <- restoreBlock beforeBlock
+    mapM_ indentedLine (blockToLines afterBlock)
+    return result
+
+newBlock :: Gen Block
+newBlock = do
+    genState <- get
+    modify $ \genState -> genState { getBlock = Block [] [] }
+    return (getBlock genState)
+
+restoreBlock :: Block -> Gen Block
+restoreBlock block = do
+    genState <- get
+    modify $ \genState -> genState { getBlock = block }
+    return (getBlock genState)
 
 header :: String -> Gen ()
-header line = do
-    modify (prependLine line)
-    where
-        prependLine line genState = genState { headerLines = line : headerLines genState }
+header text = modifyBlock (prependHeaderLine text)
+
+indentedLine :: String -> Gen ()
+indentedLine text = line $ (replicate indentLevel ' ') ++ text
 
 line :: String -> Gen ()
-line line = do
-    modify (prependLine line)
-    where
-        prependLine line genState = genState { bodyLines = ((concat (replicate (indentLevel genState) "  ")) ++ line) : bodyLines genState }
+line text = modifyBlock (prependBodyLine text)
 
 cFunction :: String -> Gen a -> Gen a
 cFunction declaration gen = do
@@ -81,3 +94,13 @@ cFunction declaration gen = do
     x <- block (declaration ++ " {") gen
     line $ "}"
     return x
+
+modifyBlock :: (Block -> Block) -> Gen ()
+modifyBlock fn = modify $ \genState ->
+    genState { getBlock = fn (getBlock genState) }
+
+prependHeaderLine :: String -> Block -> Block
+prependHeaderLine text block = block { headerLines = text : headerLines block }
+
+prependBodyLine :: String -> Block -> Block
+prependBodyLine text block = block { bodyLines = text : bodyLines block }
