@@ -62,6 +62,7 @@ module Arduino.DSL
     ) where
 
 import Arduino.Internal.CodeGen (streamsToC)
+import Arduino.Internal.DotGen (streamsToDot)
 import CCodeGen
 import Control.Monad.State
 import Data.Char (ord)
@@ -92,8 +93,8 @@ instance Num (Expression a) where
 compileProgram :: Action a -> IO ()
 compileProgram action = do
     let dagState = execState action (DAGState 1 DAG.emptyStreams)
-    let cCode = streamsToC (dag dagState)
-    writeFile "main.c" cCode
+    writeFile "main.c" $ streamsToC (dag dagState)
+    writeFile "dag.dot" $ streamsToDot (dag dagState)
 
 def :: Stream a -> Action (Stream a)
 def stream = do

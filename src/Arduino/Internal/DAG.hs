@@ -36,6 +36,7 @@ data Stream = Stream
 
 data Body = Transform Expression
           | Driver LLI LLI
+          deriving (Show)
 
 data LLI = WriteBit String String Bit LLI
          | WriteByte String LLI LLI
@@ -47,8 +48,11 @@ data LLI = WriteBit String String Bit LLI
          | Const String
          | InputValue
          | End
+         deriving (Show)
 
-data Bit = High | Low
+data Bit = High
+         | Low
+         deriving (Show)
 
 type Byte = Word8
 
@@ -77,6 +81,7 @@ data Expression = Input Int
                 | ByteConstant Byte
                 | NumberConstant Int
                 | ListConstant [Expression]
+                deriving (Show)
 
 type Identifier = String
 
