@@ -30,13 +30,16 @@ data ResultVariable = Variable String CType
 
 data CType = CBit
            | CByte
-           | CNumber
+           | CWord
            | CVoid
            | CList CType
            deriving (Eq, Show)
 
 listSizeCType :: CType
 listSizeCType = CByte
+
+argIndexCType :: CType
+argIndexCType = CByte
 
 streamsToC :: Streams -> String
 streamsToC = runGen . genStreamsCFile
@@ -97,7 +100,7 @@ streamArguments streamTypes =
 streamToArgumentList :: M.Map String CType -> Stream -> String
 streamToArgumentList streamTypes stream
     | length (inputs stream) < 1 = ""
-    | otherwise                  = "int arg, void* value"
+    | otherwise                  = cTypeStr argIndexCType ++ " arg, void* value"
 
 genStreamInputParsing :: [(String, String, Int)] -> Gen ()
 genStreamInputParsing args = do
@@ -141,20 +144,20 @@ genExpression inputMap expression = case expression of
         [Variable result CBit] <- genExpression inputMap operand
         wrap ("!(" ++ result ++ ")") CBit
     (Even operand) -> do
-        [Variable result CNumber] <- genExpression inputMap operand
+        [Variable result CWord] <- genExpression inputMap operand
         wrap ("(" ++ result ++ ") % 2 == 0") CBit
     (Greater left right) -> do
-        [Variable leftResult  CNumber] <- genExpression inputMap left
-        [Variable rightResult CNumber] <- genExpression inputMap right
+        [Variable leftResult  CWord] <- genExpression inputMap left
+        [Variable rightResult CWord] <- genExpression inputMap right
         wrap (leftResult ++ " > " ++ rightResult) CBit
     (Add left right) -> do
-        [Variable leftResult  CNumber] <- genExpression inputMap left
-        [Variable rightResult CNumber] <- genExpression inputMap right
-        wrap (leftResult ++ " + " ++ rightResult) CNumber
+        [Variable leftResult  CWord] <- genExpression inputMap left
+        [Variable rightResult CWord] <- genExpression inputMap right
+        wrap (leftResult ++ " + " ++ rightResult) CWord
     (Sub left right) -> do
-        [Variable leftResult  CNumber] <- genExpression inputMap left
-        [Variable rightResult CNumber] <- genExpression inputMap right
-        wrap (leftResult ++ " - " ++ rightResult) CNumber
+        [Variable leftResult  CWord] <- genExpression inputMap left
+        [Variable rightResult CWord] <- genExpression inputMap right
+        wrap (leftResult ++ " - " ++ rightResult) CWord
     (Input value) -> do
         variable ("input_" ++ show value) (inputMap M.! value)
     (ByteConstant value) -> do
@@ -182,7 +185,7 @@ genExpression inputMap expression = case expression of
         line $ temp ++ ".values = (void*)" ++ v ++ ";"
         variable temp (CList $ resultType exprs)
     (NumberToByteArray operand) -> do
-        [Variable r CNumber] <- genExpression inputMap operand
+        [Variable r CWord] <- genExpression inputMap operand
         charBuf <- label
         header $ cTypeStr CByte ++ " " ++ charBuf ++ "[20];"
         line $ "snprintf(" ++ charBuf ++ ", 20, \"%d\", " ++ r ++ ");"
@@ -190,10 +193,10 @@ genExpression inputMap expression = case expression of
         line $ temp ++ ".size = strlen(" ++ charBuf ++ ");"
         line $ temp ++ ".values = " ++ charBuf ++ ";"
         variable temp (CList CByte)
-    (NumberConstant value) -> do
-        variable (show value) CNumber
+    (WordConstant value) -> do
+        variable (show value) CWord
     (FoldState) -> do
-        variable "fold_state" CNumber
+        variable "fold_state" CWord
     (If conditionExpression trueExpression falseExpression) -> do
         [Variable conditionResult CBit] <- genExpression inputMap conditionExpression
         [Variable trueResult cType] <- genExpression inputMap trueExpression
@@ -268,10 +271,10 @@ genLLI lli = case lli of
         line $ x ++ " = (" ++ register ++ " & (1 << " ++ bit ++ ")) == 0U;"
         return [Variable x CBit]
     (ReadWord register next) -> do
-        x <- var "int"
+        x <- var (cTypeStr CWord)
         line $ x ++ " = " ++ register ++ ";"
         genLLI next
-        return [Variable x CNumber]
+        return [Variable x CWord]
     (WaitBit register bit value next) -> do
         case value of
             High -> do
@@ -309,6 +312,6 @@ cTypeStr :: CType -> String
 cTypeStr cType = case cType of
     CBit    -> "bool"
     CByte   -> "uint8_t"
-    CNumber -> "int"
+    CWord   -> "uint16_t"
     CVoid   -> "void"
     CList a -> "struct list"

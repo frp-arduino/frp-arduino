@@ -27,6 +27,7 @@ module Arduino.DSL
     -- ** Types
     , DAG.Bit
     , DAG.Byte
+    , DAG.Word
     -- ** Stream operations
     , (~>)
     , mapS
@@ -88,7 +89,7 @@ newtype LLI a = LLI { unLLI :: DAG.LLI }
 instance Num (Expression a) where
     (+) left right = Expression $ DAG.Add (unExpression left) (unExpression right)
     (-) left right = Expression $ DAG.Sub (unExpression left) (unExpression right)
-    fromInteger value = Expression $ DAG.NumberConstant $ fromIntegral value
+    fromInteger value = Expression $ DAG.WordConstant $ fromIntegral value
 
 compileProgram :: Action a -> IO ()
 compileProgram action = do
@@ -172,13 +173,13 @@ if_ condition trueExpression falseExpression =
                        (unExpression trueExpression)
                        (unExpression falseExpression))
 
-greater :: Expression Int -> Expression Int -> Expression Bool
+greater :: Expression DAG.Word -> Expression DAG.Word -> Expression Bool
 greater left right = Expression $ DAG.Greater (unExpression left) (unExpression right)
 
 flipBit :: Expression DAG.Bit -> Expression DAG.Bit
 flipBit = Expression . DAG.Not . unExpression
 
-isEven :: Expression Int -> Expression Bool
+isEven :: Expression DAG.Word -> Expression Bool
 isEven = Expression . DAG.Even . unExpression
 
 boolToBit :: Expression Bool -> Expression DAG.Bit
@@ -190,7 +191,7 @@ isHigh = Expression . DAG.IsHigh . unExpression
 formatString :: String -> Expression [DAG.Byte]
 formatString = Expression . DAG.ListConstant . map (DAG.ByteConstant . fromIntegral . ord)
 
-formatNumber :: Expression Int -> Expression [DAG.Byte]
+formatNumber :: Expression DAG.Word -> Expression [DAG.Byte]
 formatNumber = Expression . DAG.NumberToByteArray . unExpression
 
 (.+.) :: Expression [a] -> Expression [a] -> Expression [a]
@@ -258,7 +259,7 @@ writeWord register value next = LLI $ DAG.WriteWord register (unLLI value) (unLL
 readBit :: String -> String -> LLI DAG.Bit
 readBit register bit = LLI $ DAG.ReadBit register bit
 
-readWord :: String -> LLI a -> LLI Int
+readWord :: String -> LLI a -> LLI DAG.Word
 readWord register next = LLI $ DAG.ReadWord register (unLLI next)
 
 waitBitSet :: String -> String -> LLI a -> LLI a

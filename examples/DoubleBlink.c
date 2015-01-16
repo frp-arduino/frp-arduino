@@ -10,44 +10,44 @@ struct list {
 
 static void input_timer();
 
-static void stream_1(int arg, void* value);
+static void stream_1(uint8_t arg, void* value);
 
-static void stream_2(int arg, void* value);
+static void stream_2(uint8_t arg, void* value);
 
-static void stream_3(int arg, void* value);
+static void stream_3(uint8_t arg, void* value);
 
-static void stream_4(int arg, void* value);
+static void stream_4(uint8_t arg, void* value);
 
-static void stream_5(int arg, void* value);
+static void stream_5(uint8_t arg, void* value);
 
-static void stream_6(int arg, void* value);
+static void stream_6(uint8_t arg, void* value);
 
-static void stream_7(int arg, void* value);
+static void stream_7(uint8_t arg, void* value);
 
 static void input_timer() {
-  int temp0;
+  uint16_t temp0;
   temp0 = TCNT1;
   TCNT1 = 0;
   stream_1(0, (void*)(&temp0));
 }
 
-static void stream_1(int arg, void* value) {
+static void stream_1(uint8_t arg, void* value) {
   bool temp1;
-  int temp2;
-  int temp3;
-  int temp4;
-  int temp5;
-  static int input_0;
+  uint16_t temp2;
+  uint16_t temp3;
+  uint16_t temp4;
+  uint16_t temp5;
+  static uint16_t input_0;
   switch (arg) {
     case 0:
-      input_0 = *((int*)value);
+      input_0 = *((uint16_t*)value);
       break;
   }
-  static int fold_state = 0;
+  static uint16_t fold_state = 0;
   temp1 = fold_state > 10000;
-  temp2 = input_0 - 10000;
-  temp3 = temp2 + fold_state;
-  temp4 = input_0 + fold_state;
+  temp2 = fold_state - 10000;
+  temp3 = temp2 + input_0;
+  temp4 = fold_state + input_0;
   if (temp1) {
     temp5 = temp3;
   } else {
@@ -57,13 +57,13 @@ static void stream_1(int arg, void* value) {
   stream_2(0, (void*)(&fold_state));
 }
 
-static void stream_2(int arg, void* value) {
+static void stream_2(uint8_t arg, void* value) {
   bool temp6;
   bool temp7;
-  static int input_0;
+  static uint16_t input_0;
   switch (arg) {
     case 0:
-      input_0 = *((int*)value);
+      input_0 = *((uint16_t*)value);
       break;
   }
   temp6 = input_0 > 10000;
@@ -76,26 +76,26 @@ static void stream_2(int arg, void* value) {
   }
 }
 
-static void stream_3(int arg, void* value) {
-  int temp8;
-  static int input_0;
+static void stream_3(uint8_t arg, void* value) {
+  uint16_t temp8;
+  static uint16_t input_0;
   switch (arg) {
     case 0:
-      input_0 = *((int*)value);
+      input_0 = *((uint16_t*)value);
       break;
   }
-  static int fold_state = 0;
+  static uint16_t fold_state = 0;
   temp8 = fold_state + 1;
   fold_state = temp8;
   stream_4(0, (void*)(&fold_state));
 }
 
-static void stream_4(int arg, void* value) {
+static void stream_4(uint8_t arg, void* value) {
   bool temp9;
-  static int input_0;
+  static uint16_t input_0;
   switch (arg) {
     case 0:
-      input_0 = *((int*)value);
+      input_0 = *((uint16_t*)value);
       break;
   }
   temp9 = (input_0) % 2 == 0;
@@ -103,7 +103,7 @@ static void stream_4(int arg, void* value) {
   stream_6(0, (void*)(&temp9));
 }
 
-static void stream_5(int arg, void* value) {
+static void stream_5(uint8_t arg, void* value) {
   static bool input_0;
   switch (arg) {
     case 0:
@@ -117,7 +117,7 @@ static void stream_5(int arg, void* value) {
   }
 }
 
-static void stream_6(int arg, void* value) {
+static void stream_6(uint8_t arg, void* value) {
   bool temp10;
   static bool input_0;
   switch (arg) {
@@ -129,7 +129,7 @@ static void stream_6(int arg, void* value) {
   stream_7(0, (void*)(&temp10));
 }
 
-static void stream_7(int arg, void* value) {
+static void stream_7(uint8_t arg, void* value) {
   static bool input_0;
   switch (arg) {
     case 0:

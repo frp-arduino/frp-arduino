@@ -23,13 +23,13 @@ module Arduino.Library
 
 import Arduino.DSL
 
-toggle :: Stream Int -> Stream Bit
+toggle :: Stream Word -> Stream Bit
 toggle = mapS (boolToBit . isEven)
 
 invert :: Stream Bit -> Stream Bit
 invert = mapS flipBit
 
-count :: Stream a -> Stream Int
+count :: Stream a -> Stream Word
 count = foldpS (\_ state -> state + 1) 0
 
 keepWhen :: Stream Bit

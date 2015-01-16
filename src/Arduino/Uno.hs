@@ -57,15 +57,15 @@ pin10 = gpioOutput pin10GPIO
 pin12in :: Stream Bit
 pin12in = gpioInput pin12GPIO
 
-clock :: Stream Int
+clock :: Stream Word
 clock = every 10000
 
-every :: Expression Int -> Stream Int
+every :: Expression Word -> Stream Word
 every limit = timerDelta ~> accumulate ~> keepOverflowing ~> count
     where
         accumulate = foldpS (\delta total -> if_ (greater total limit)
-                                                 (delta - limit + total)
-                                                 (delta + total))
+                                                 (total - limit + delta)
+                                                 (total + delta))
                             0
         keepOverflowing = filterS (\value -> greater value limit)
 
@@ -108,7 +108,7 @@ gpioInput gpio = createInput
      end)
     (readBit (pinRegister gpio) (bitName gpio))
 
-timerDelta :: Stream Int
+timerDelta :: Stream Word
 timerDelta = createInput
     "timer"
     (setBit "TCCR1B" "CS12" $

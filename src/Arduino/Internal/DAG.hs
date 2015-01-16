@@ -21,9 +21,9 @@ import Control.Monad.State
 import Data.List (partition)
 import Data.Maybe (fromJust)
 import Data.Monoid
-import Data.Word
 import qualified Data.Map as M
 import qualified Data.Set as S
+import qualified Data.Word as W
 
 type Streams = M.Map Identifier Stream
 
@@ -54,7 +54,9 @@ data Bit = High
          | Low
          deriving (Show)
 
-type Byte = Word8
+type Byte = W.Word8
+
+type Word = W.Word16
 
 data Expression = Input Int
                 | FoldState
@@ -79,7 +81,7 @@ data Expression = Input Int
                 -- Constants
                 | BitConstant Bit
                 | ByteConstant Byte
-                | NumberConstant Int
+                | WordConstant Word
                 | ListConstant [Expression]
                 deriving (Show)
 

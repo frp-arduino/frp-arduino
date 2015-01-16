@@ -21,7 +21,7 @@ main = compileProgram $ do
 
     uart =: timerDelta ~> mapS formatDelta ~> flattenS
 
-formatDelta :: Expression Int -> Expression [Byte]
+formatDelta :: Expression Word -> Expression [Byte]
 formatDelta delta = formatString "delta: " .+.
                     formatNumber delta .+.
                     formatString "\r\n"
