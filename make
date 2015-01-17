@@ -11,7 +11,14 @@ then
     rm -rf $OUTPUT_DIR
 else
     mkdir -p $OUTPUT_DIR
-    ghc --make -isrc -outputdir $OUTPUT_DIR -o $OUTPUT_DIR/$EXAMPLE examples/$EXAMPLE.hs
+    ghc \
+        --make \
+        -Werror \
+        -fwarn-unused-imports \
+        -isrc \
+        -outputdir $OUTPUT_DIR \
+        -o $OUTPUT_DIR/$EXAMPLE \
+        examples/$EXAMPLE.hs
     cd $OUTPUT_DIR
     ./$EXAMPLE
     if ! [ -n "$ARDUINO_MAKEFILE_PATH" ]; then

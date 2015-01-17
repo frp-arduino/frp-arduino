@@ -18,7 +18,6 @@
 module CCodeGen where
 
 import Control.Monad.State
-import Data.Maybe (fromJust)
 
 data GenState = GenState
     { labelCounter :: Int

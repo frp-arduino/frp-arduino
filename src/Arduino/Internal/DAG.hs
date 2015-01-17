@@ -17,7 +17,6 @@
 
 module Arduino.Internal.DAG where
 
-import Control.Monad.State
 import Data.List (partition)
 import Data.Maybe (fromJust)
 import Data.Monoid

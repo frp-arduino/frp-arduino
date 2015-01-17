@@ -64,12 +64,10 @@ module Arduino.DSL
 
 import Arduino.Internal.CodeGen (streamsToC)
 import Arduino.Internal.DotGen (streamsToDot)
-import CCodeGen
 import Control.Monad.State
 import Data.Char (ord)
 import Prelude hiding (const)
 import qualified Arduino.Internal.DAG as DAG
-import qualified Data.Map as M
 
 data DAGState = DAGState
     { idCounter :: Int
@@ -89,6 +87,9 @@ newtype LLI a = LLI { unLLI :: DAG.LLI }
 instance Num (Expression a) where
     (+) left right = Expression $ DAG.Add (unExpression left) (unExpression right)
     (-) left right = Expression $ DAG.Sub (unExpression left) (unExpression right)
+    (*) = error "* not yet implemented"
+    abs = error "abs not yet implemented"
+    signum = error "signum not yet implemented"
     fromInteger value = Expression $ DAG.WordConstant $ fromIntegral value
 
 compileProgram :: Action a -> IO ()
