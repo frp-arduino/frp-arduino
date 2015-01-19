@@ -62,7 +62,7 @@ data Expression = Input Int
                 | Many [Expression]
                 -- Stream transformations
                 | Fold    Expression Expression
-                | Filter  Expression Expression
+                | Filter  Expression
                 | Flatten Expression
                 -- Expression transformations
                 | If Expression Expression Expression
