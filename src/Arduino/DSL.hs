@@ -154,11 +154,13 @@ foldpS :: (Expression a -> Expression b -> Expression b)
        -> Stream b
 foldpS fn startValue stream = Stream $ do
     streamName <- unStream stream
-    expressionStreamName <- addAnonymousStream (DAG.Transform (DAG.Fold expression (unExpression startValue)))
+    expressionStreamName <- addAnonymousStream foldTransform
     addDependency streamName expressionStreamName
     where
+        foldTransform = DAG.Transform $ DAG.Fold expression startExpression
         expression = unExpression $ fn (Expression $ DAG.Input 0)
-                                       (Expression DAG.FoldState)
+                                       (Expression $ DAG.Input 1)
+        startExpression = unExpression startValue
 
 flattenS :: Stream [a] -> Stream a
 flattenS stream = Stream $ do

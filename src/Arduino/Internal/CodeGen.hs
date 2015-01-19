@@ -168,8 +168,8 @@ genExpression inputMap expression = case expression of
         genExpression inputMap operand
     (BitConstant value) -> do
         case value of
-            High -> (wrap "true" CBit)
-            Low  -> (wrap "false" CBit)
+            High -> variable "true" CBit
+            Low  -> variable "false" CBit
     (Many values) -> do
         x <- mapM (genExpression inputMap) values
         return $ concat x
@@ -195,8 +195,6 @@ genExpression inputMap expression = case expression of
         variable temp (CList CByte)
     (WordConstant value) -> do
         variable (show value) CWord
-    (FoldState) -> do
-        variable "fold_state" CWord
     (If conditionExpression trueExpression falseExpression) -> do
         [Variable conditionResult CBit] <- genExpression inputMap conditionExpression
         [Variable trueResult cType] <- genExpression inputMap trueExpression
@@ -210,10 +208,10 @@ genExpression inputMap expression = case expression of
         variable temp cType
     (Fold expression startValue) -> do
         [Variable startValueResult cType] <- genExpression inputMap startValue
-        line $ "static " ++ cTypeStr cType ++ " fold_state = " ++ startValueResult ++ ";"
-        [Variable expressionResult cTypeNothing] <- genExpression inputMap expression
-        line $ "fold_state = " ++ expressionResult ++ ";"
-        variable "fold_state" cTypeNothing
+        header $ "static " ++ cTypeStr cType ++ " input_1 = " ++ startValueResult ++ ";"
+        [Variable expressionResult cTypeNothing] <- genExpression (M.insert 1 cType inputMap) expression
+        line $ "input_1 = " ++ expressionResult ++ ";"
+        variable "input_1" cTypeNothing
     (Filter conditionExpression valueExpression) -> do
         [Variable conditionResult CBit] <- genExpression inputMap conditionExpression
         [Variable valueResult cType] <- genExpression inputMap valueExpression
