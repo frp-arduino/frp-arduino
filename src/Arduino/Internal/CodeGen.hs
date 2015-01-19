@@ -212,9 +212,9 @@ genExpression inputMap expression = case expression of
         [Variable expressionResult cTypeNothing] <- genExpression (M.insert 1 cType inputMap) expression
         line $ "input_1 = " ++ expressionResult ++ ";"
         variable "input_1" cTypeNothing
-    (Filter conditionExpression valueExpression) -> do
+    (Filter conditionExpression) -> do
         [Variable conditionResult CBit] <- genExpression inputMap conditionExpression
-        [Variable valueResult cType] <- genExpression inputMap valueExpression
+        [Variable valueResult cType] <- genExpression inputMap (Input 0)
         temp <- var "bool"
         line $ temp ++ " = false;"
         block ("if (" ++ conditionResult ++ ") {") $ do

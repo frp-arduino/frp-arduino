@@ -143,9 +143,10 @@ mapS2 fn left right = Stream $ do
 filterS :: (Expression a -> Expression Bool) -> Stream a -> Stream a
 filterS fn stream = Stream $ do
     streamName <- unStream stream
-    expressionStreamName <- addAnonymousStream (DAG.Transform (DAG.Filter expression (DAG.Input 0)))
+    expressionStreamName <- addAnonymousStream filterTransform
     addDependency streamName expressionStreamName
     where
+        filterTransform = DAG.Transform $ DAG.Filter expression
         expression = unExpression $ fn $ Expression $ DAG.Input 0
 
 foldpS :: (Expression a -> Expression b -> Expression b)
