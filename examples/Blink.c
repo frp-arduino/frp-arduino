@@ -29,73 +29,61 @@ static void input_timer() {
 
 static void stream_1(uint8_t arg, void* value) {
   static uint16_t input_1 = 0;
-  bool temp1;
-  uint16_t temp2;
-  uint16_t temp3;
-  uint16_t temp4;
-  uint16_t temp5;
+  uint16_t temp1;
   static uint16_t input_0;
   switch (arg) {
     case 0:
       input_0 = *((uint16_t*)value);
       break;
   }
-  temp1 = input_1 > 10000;
-  temp2 = input_1 - 10000;
-  temp3 = temp2 + input_0;
-  temp4 = input_1 + input_0;
-  if (temp1) {
-    temp5 = temp3;
+  if (input_1 > 10000) {
+    temp1 = input_1 - 10000 + input_0;
   } else {
-    temp5 = temp4;
+    temp1 = input_1 + input_0;
   }
-  input_1 = temp5;
+  input_1 = temp1;
   stream_2(0, (void*)(&input_1));
 }
 
 static void stream_2(uint8_t arg, void* value) {
-  bool temp6;
-  bool temp7;
+  bool temp2;
   static uint16_t input_0;
   switch (arg) {
     case 0:
       input_0 = *((uint16_t*)value);
       break;
   }
-  temp6 = input_0 > 10000;
-  temp7 = false;
-  if (temp6) {
-    temp7 = true;
+  temp2 = false;
+  if (input_0 > 10000) {
+    temp2 = true;
   }
-  if (temp7) {
+  if (temp2) {
     stream_3(0, (void*)(&input_0));
   }
 }
 
 static void stream_3(uint8_t arg, void* value) {
   static uint16_t input_1 = 0;
-  uint16_t temp8;
   static uint16_t input_0;
   switch (arg) {
     case 0:
       input_0 = *((uint16_t*)value);
       break;
   }
-  temp8 = input_1 + 1;
-  input_1 = temp8;
+  input_1 = input_1 + 1;
   stream_4(0, (void*)(&input_1));
 }
 
 static void stream_4(uint8_t arg, void* value) {
-  bool temp9;
+  bool temp3;
   static uint16_t input_0;
   switch (arg) {
     case 0:
       input_0 = *((uint16_t*)value);
       break;
   }
-  temp9 = (input_0) % 2 == 0;
-  stream_5(0, (void*)(&temp9));
+  temp3 = (input_0) % 2 == 0;
+  stream_5(0, (void*)(&temp3));
 }
 
 static void stream_5(uint8_t arg, void* value) {
