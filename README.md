@@ -16,6 +16,7 @@
   * [Expression operators](#expression-operators)
   * [Uno outputs and streams](#uno-outputs-and-streams)
 * [Contributing](#contributing)
+* [Resources](#resources)
 * [License](#license)
 * [This document](#this-document)
 
@@ -397,6 +398,10 @@ Comments on the process:
 In our case, this means that `./test` should run without failure.
 
 [![Build Status](https://travis-ci.org/frp-arduino/frp-arduino.svg)](https://travis-ci.org/frp-arduino/frp-arduino)
+
+## Resources
+
+* http://augustss.blogspot.se/2007/06/representing-dsl-expressions-in-haskell.html
 
 ## License
 
