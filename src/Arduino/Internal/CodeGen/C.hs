@@ -15,12 +15,12 @@
 -- You should have received a copy of the GNU General Public License
 -- along with frp-arduino.  If not, see <http://www.gnu.org/licenses/>.
 
-module Arduino.Internal.CodeGen
+module Arduino.Internal.CodeGen.C
     ( streamsToC
     ) where
 
+import Arduino.Internal.CodeGen.BlockDoc
 import Arduino.Internal.DAG
-import CCodeGen
 import Control.Monad
 import qualified Data.Map as M
 
@@ -139,7 +139,7 @@ genStreamOutputCalling results stream = do
                     generateCall outputStreamName name
                 line "}"
             (ToFlatVariable name cType) -> do
-                i <- var (cTypeStr listSizeCType)
+                i <- genCVariable (cTypeStr listSizeCType)
                 block ("for (" ++ i ++ " = 0; " ++ i ++ " < " ++ name ++ ".size; " ++ i ++ "++) {") $ do
                     generateCall outputStreamName ("((" ++ cTypeStr cType ++ "*)" ++ name ++ ".values)[" ++ i ++ "]")
                 line "}"
@@ -185,7 +185,7 @@ genExpression inputMap expression = case expression of
     (ListConstant values) -> do
         x <- mapM (genExpression inputMap) values
         let exprs = concat x
-        temp <- var "struct list"
+        temp <- genCVariable "struct list"
         v <- label
         header $ cTypeStr (resultType exprs) ++ " " ++ v ++ "[" ++ show (length exprs) ++ "];"
         forM (zip [0..] exprs) $ \(i, (Value x _ _)) -> do
@@ -198,7 +198,7 @@ genExpression inputMap expression = case expression of
         charBuf <- label
         header $ cTypeStr CByte ++ " " ++ charBuf ++ "[20];"
         line $ "snprintf(" ++ charBuf ++ ", 20, \"%d\", " ++ r ++ ");"
-        temp <- var "struct list"
+        temp <- genCVariable "struct list"
         line $ temp ++ ".size = strlen(" ++ charBuf ++ ");"
         line $ temp ++ ".values = " ++ charBuf ++ ";"
         variable temp (CList CByte)
@@ -208,7 +208,7 @@ genExpression inputMap expression = case expression of
         [Value conditionResult CBit _] <- genExpression inputMap conditionExpression
         [Value trueResult cType _] <- genExpression inputMap trueExpression
         [Value falseResult cType _] <- genExpression inputMap falseExpression
-        temp <- var (cTypeStr cType)
+        temp <- genCVariable (cTypeStr cType)
         block ("if (" ++ conditionResult ++ ") {") $ do
             line $ temp ++ " = " ++ trueResult ++ ";"
         block "} else {" $ do
@@ -224,7 +224,7 @@ genExpression inputMap expression = case expression of
     (Filter conditionExpression) -> do
         [Value conditionResult CBit _] <- genExpression inputMap conditionExpression
         [Value valueResult cType _] <- genExpression inputMap (Input 0)
-        temp <- var "bool"
+        temp <- genCVariable "bool"
         line $ temp ++ " = false;"
         block ("if (" ++ conditionResult ++ ") {") $ do
             line $ temp ++ " = true;"
@@ -236,7 +236,7 @@ genExpression inputMap expression = case expression of
 
 wrap :: String -> CType -> Gen [ResultValue]
 wrap expression cType = do
-    name <- var (cTypeStr cType)
+    name <- genCVariable (cTypeStr cType)
     line $ name ++ " = " ++ expression ++ ";"
     variable name cType
 
@@ -277,11 +277,11 @@ genLLI lli = case lli of
         line (register ++ " = " ++ x ++ ";")
         genLLI next
     (ReadBit register bit) -> do
-        x <- var "bool"
+        x <- genCVariable "bool"
         line $ x ++ " = (" ++ register ++ " & (1 << " ++ bit ++ ")) == 0U;"
         variable x CBit
     (ReadWord register next) -> do
-        x <- var (cTypeStr CWord)
+        x <- genCVariable (cTypeStr CWord)
         line $ x ++ " = " ++ register ++ ";"
         genLLI next
         variable x CWord
@@ -325,3 +325,18 @@ cTypeStr cType = case cType of
     CWord   -> "uint16_t"
     CVoid   -> "void"
     CList a -> "struct list"
+
+genCVariable :: String -> Gen String
+genCVariable cType = do
+    l <- label
+    header $ cType ++ " " ++ l ++ ";"
+    return l
+
+cFunction :: String -> Gen a -> Gen a
+cFunction declaration gen = do
+    header $ ""
+    header $ declaration ++ ";"
+    line $ ""
+    x <- block (declaration ++ " {") gen
+    line $ "}"
+    return x

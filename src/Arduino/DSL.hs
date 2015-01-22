@@ -62,8 +62,8 @@ module Arduino.DSL
     , end
     ) where
 
-import Arduino.Internal.CodeGen (streamsToC)
-import Arduino.Internal.DotGen (streamsToDot)
+import Arduino.Internal.CodeGen.C (streamsToC)
+import Arduino.Internal.CodeGen.Dot(streamsToDot)
 import Control.Monad.State
 import Data.Char (ord)
 import Prelude hiding (const)

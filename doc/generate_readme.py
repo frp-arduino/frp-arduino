@@ -119,6 +119,7 @@ if __name__ == "__main__":
         ],
         "api.md",
         "contributing.md",
+        "resources.md",
         "license.md",
         "this-document.md",
     ])

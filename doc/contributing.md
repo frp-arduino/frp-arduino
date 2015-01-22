@@ -2,7 +2,11 @@
 
 The contributors are listed in [AUTHORS](AUTHORS) (add yourself).
 
-We use the [C4.1 (Collective Code Construction Contract)](http://rfc.zeromq.org/spec:22) process for contributions.
+We use the [C4.1 (Collective Code Construction Contract)](http://rfc.zeromq.org/spec:22)
+process for contributions.
+More discussions and explanations of the process can be found in the
+[The ZeroMQ Community](http://zguide.zeromq.org/page:all#Chapter-The-ZeroMQ-Community),
+in particular [here](http://zguide.zeromq.org/page:all#The-ZeroMQ-Process-C).
 
 Comments on the process:
 

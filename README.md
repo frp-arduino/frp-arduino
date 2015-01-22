@@ -16,6 +16,7 @@
   * [Expression operators](#expression-operators)
   * [Uno outputs and streams](#uno-outputs-and-streams)
 * [Contributing](#contributing)
+* [Resources](#resources)
 * [License](#license)
 * [This document](#this-document)
 
@@ -350,13 +351,13 @@ filterS :: (Expression a -> Expression Bool) -> Stream a -> Stream a
 <a name="api-toggle"></a>**toggle**
 
 ```haskell
-toggle :: Stream Int -> Stream Bit
+toggle :: Stream Word -> Stream Bit
 ```
 
 <a name="api-isEven"></a>**isEven**
 
 ```haskell
-isEven :: Expression Int -> Expression Bool
+isEven :: Expression DAG.Word -> Expression Bool
 ```
 
 ### Uno outputs and streams
@@ -376,14 +377,18 @@ pin13 :: Output Bit
 <a name="api-clock"></a>**clock**
 
 ```haskell
-clock :: Stream Int
+clock :: Stream Word
 ```
 
 ## Contributing
 
 The contributors are listed in [AUTHORS](AUTHORS) (add yourself).
 
-We use the [C4.1 (Collective Code Construction Contract)](http://rfc.zeromq.org/spec:22) process for contributions.
+We use the [C4.1 (Collective Code Construction Contract)](http://rfc.zeromq.org/spec:22)
+process for contributions.
+More discussions and explanations of the process can be found in the
+[The ZeroMQ Community](http://zguide.zeromq.org/page:all#Chapter-The-ZeroMQ-Community),
+in particular [here](http://zguide.zeromq.org/page:all#The-ZeroMQ-Process-C).
 
 Comments on the process:
 
@@ -393,6 +398,12 @@ Comments on the process:
 In our case, this means that `./test` should run without failure.
 
 [![Build Status](https://travis-ci.org/frp-arduino/frp-arduino.svg)](https://travis-ci.org/frp-arduino/frp-arduino)
+
+## Resources
+
+* [Domain-specific Languages and Code Synthesis Using Haskell](http://queue.acm.org/detail.cfm?id=2617811)
+* [Tech Mesh 2012 - Making EDSLs fly - Lennart Augustsson](https://www.youtube.com/watch?v=7gF7iFB4mFY)
+* [Representing DSL expressions in Haskell](http://augustss.blogspot.se/2007/06/representing-dsl-expressions-in-haskell.html)
 
 ## License
 

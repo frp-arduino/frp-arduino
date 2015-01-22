@@ -15,12 +15,12 @@
 -- You should have received a copy of the GNU General Public License
 -- along with frp-arduino.  If not, see <http://www.gnu.org/licenses/>.
 
-module Arduino.Internal.DotGen
+module Arduino.Internal.CodeGen.Dot
     ( streamsToDot
     ) where
 
+import Arduino.Internal.CodeGen.BlockDoc
 import Arduino.Internal.DAG
-import CCodeGen
 import Control.Monad
 
 streamsToDot :: Streams -> String
