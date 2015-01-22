@@ -15,7 +15,14 @@
 -- You should have received a copy of the GNU General Public License
 -- along with frp-arduino.  If not, see <http://www.gnu.org/licenses/>.
 
-module CCodeGen where
+module Arduino.Internal.CodeGen.BlockDoc
+    ( Gen()
+    , runGen
+    , header
+    , line
+    , block
+    , label
+    ) where
 
 import Control.Monad.State
 
@@ -49,12 +56,6 @@ label = do
     modify $ \genState -> genState { labelCounter = 1 + labelCounter genState }
     return $ "temp" ++ show (labelCounter genState)
 
-var :: String -> Gen String
-var cType = do
-    l <- label
-    header $ cType ++ " " ++ l ++ ";"
-    return l
-
 block :: String -> Gen a -> Gen a
 block initText gen = do
     line initText
@@ -84,15 +85,6 @@ indentedLine text = line $ (replicate indentLevel ' ') ++ text
 
 line :: String -> Gen ()
 line text = modifyBlock (prependBodyLine text)
-
-cFunction :: String -> Gen a -> Gen a
-cFunction declaration gen = do
-    header $ ""
-    header $ declaration ++ ";"
-    line $ ""
-    x <- block (declaration ++ " {") gen
-    line $ "}"
-    return x
 
 modifyBlock :: (Block -> Block) -> Gen ()
 modifyBlock fn = modify $ \genState ->
