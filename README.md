@@ -350,13 +350,13 @@ filterS :: (Expression a -> Expression Bool) -> Stream a -> Stream a
 <a name="api-toggle"></a>**toggle**
 
 ```haskell
-toggle :: Stream Int -> Stream Bit
+toggle :: Stream Word -> Stream Bit
 ```
 
 <a name="api-isEven"></a>**isEven**
 
 ```haskell
-isEven :: Expression Int -> Expression Bool
+isEven :: Expression DAG.Word -> Expression Bool
 ```
 
 ### Uno outputs and streams
@@ -376,14 +376,18 @@ pin13 :: Output Bit
 <a name="api-clock"></a>**clock**
 
 ```haskell
-clock :: Stream Int
+clock :: Stream Word
 ```
 
 ## Contributing
 
 The contributors are listed in [AUTHORS](AUTHORS) (add yourself).
 
-We use the [C4.1 (Collective Code Construction Contract)](http://rfc.zeromq.org/spec:22) process for contributions.
+We use the [C4.1 (Collective Code Construction Contract)](http://rfc.zeromq.org/spec:22)
+process for contributions.
+More discussions and explanations of the process can be found in the
+[The ZeroMQ Community](http://zguide.zeromq.org/page:all#Chapter-The-ZeroMQ-Community),
+in particular [here](http://zguide.zeromq.org/page:all#The-ZeroMQ-Process-C).
 
 Comments on the process:
 
