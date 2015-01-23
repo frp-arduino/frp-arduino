@@ -94,10 +94,7 @@ gpioOutput gpio =
         (name gpio)
         (setBit (directionRegister gpio) (bitName gpio) $
          end)
-        (switch
-           inputValue
-           (setBit (portRegister gpio) (bitName gpio) end)
-           (clearBit (portRegister gpio) (bitName gpio) end) $
+        (writeBit (portRegister gpio) (bitName gpio) inputValue $
          end)
 
 gpioInput :: GPIO -> Stream Bit

@@ -56,7 +56,7 @@ module Arduino.DSL
     , readBit
     , readWord
     , waitBitSet
-    , switch
+    , writeBit
     , const
     , inputValue
     , end
@@ -246,13 +246,10 @@ createOutput name initLLI bodyLLI =
     Output $ DAG.Driver (unLLI initLLI) (unLLI bodyLLI)
 
 setBit :: String -> String -> LLI a -> LLI a
-setBit register bit next = writeBit register bit DAG.High next
+setBit register bit next = writeBit register bit (constBit DAG.High) next
 
 clearBit :: String -> String -> LLI a -> LLI a
-clearBit register bit next = writeBit register bit DAG.Low next
-
-writeBit :: String -> String -> DAG.Bit -> LLI a -> LLI a
-writeBit register bit value next = LLI $ DAG.WriteBit register bit value (unLLI next)
+clearBit register bit next = writeBit register bit (constBit DAG.Low) next
 
 writeByte :: String -> LLI String -> LLI a -> LLI a
 writeByte register value next = LLI $ DAG.WriteByte register (unLLI value) (unLLI next)
@@ -272,11 +269,14 @@ waitBitSet register bit next = waitBit register bit DAG.High next
 waitBit :: String -> String -> DAG.Bit -> LLI a -> LLI a
 waitBit register bit value next = LLI $ DAG.WaitBit register bit value (unLLI next)
 
-switch :: LLI String -> LLI () -> LLI () -> LLI a -> LLI a
-switch name t f next = LLI $ DAG.Switch (unLLI name) (unLLI t) (unLLI f) (unLLI next)
+writeBit :: String -> String -> LLI a -> LLI b -> LLI b
+writeBit register bit var next = LLI $ DAG.WriteBit register bit (unLLI var) (unLLI next)
 
 const :: String -> LLI String
 const = LLI . DAG.Const
+
+constBit :: DAG.Bit -> LLI DAG.Bit
+constBit = LLI . DAG.ConstBit
 
 inputValue :: LLI String
 inputValue = LLI DAG.InputValue

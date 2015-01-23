@@ -37,14 +37,14 @@ data Body = Transform Expression
           | Driver LLI LLI
           deriving (Show)
 
-data LLI = WriteBit String String Bit LLI
+data LLI = WriteBit String String LLI LLI
          | WriteByte String LLI LLI
          | WriteWord String LLI LLI
          | ReadBit String String
          | ReadWord String LLI
          | WaitBit String String Bit LLI
-         | Switch LLI LLI LLI LLI
          | Const String
+         | ConstBit Bit
          | InputValue
          | End
          deriving (Show)
