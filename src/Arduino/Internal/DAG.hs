@@ -58,7 +58,6 @@ type Byte = W.Word8
 type Word = W.Word16
 
 data Expression = Input Int
-                | FoldState
                 | Many [Expression]
                 -- Stream transformations
                 | Fold    Expression Expression
