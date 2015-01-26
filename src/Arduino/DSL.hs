@@ -58,6 +58,7 @@ module Arduino.DSL
     , waitBitSet
     , writeBit
     , const
+    , byteConstant
     , inputValue
     , end
     ) where
@@ -251,7 +252,7 @@ setBit register bit next = writeBit register bit (constBit DAG.High) next
 clearBit :: String -> String -> LLI a -> LLI a
 clearBit register bit next = writeBit register bit (constBit DAG.Low) next
 
-writeByte :: String -> LLI String -> LLI a -> LLI a
+writeByte :: String -> LLI DAG.Byte -> LLI a -> LLI a
 writeByte register value next = LLI $ DAG.WriteByte register (unLLI value) (unLLI next)
 
 writeWord :: String -> LLI String -> LLI a -> LLI a
@@ -275,10 +276,13 @@ writeBit register bit var next = LLI $ DAG.WriteBit register bit (unLLI var) (un
 const :: String -> LLI String
 const = LLI . DAG.Const
 
+byteConstant :: DAG.Byte -> LLI DAG.Byte
+byteConstant = LLI . DAG.Const . show
+
 constBit :: DAG.Bit -> LLI DAG.Bit
 constBit = LLI . DAG.ConstBit
 
-inputValue :: LLI String
+inputValue :: LLI a
 inputValue = LLI DAG.InputValue
 
 end :: LLI ()

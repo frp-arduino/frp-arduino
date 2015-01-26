@@ -72,13 +72,13 @@ every limit = timerDelta ~> accumulate ~> keepOverflowing ~> count
 uart :: Output Byte
 uart =
     let ubrr = floor ((16000000 / (16 * 9600)) - 1)
-        ubrrlValue = ubrr .&. 0xFF :: Int
-        ubrrhValue = shiftR ubrr 8 .&. 0xFF :: Int
+        ubrrlValue = ubrr .&. 0xFF
+        ubrrhValue = shiftR ubrr 8 .&. 0xFF
     in
     createOutput
         "uart"
-        (writeByte "UBRR0H" (const $ show ubrrhValue) $
-         writeByte "UBRR0L" (const $ show ubrrlValue) $
+        (writeByte "UBRR0H" (byteConstant ubrrhValue) $
+         writeByte "UBRR0L" (byteConstant ubrrlValue) $
          setBit "UCSR0C" "UCSZ01" $
          setBit "UCSR0C" "UCSZ00" $
          setBit "UCSR0B" "RXEN0" $
