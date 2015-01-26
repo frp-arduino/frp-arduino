@@ -25,7 +25,6 @@ module Arduino.Uno
 import Arduino.DSL
 import Arduino.Library
 import Data.Bits (shiftR, (.&.))
-import Prelude hiding (const)
 
 -- For mappings, see http://arduino.cc/en/Hacking/PinMapping168
 
@@ -114,5 +113,5 @@ timerDelta = createInput
      setBit "TCCR1B" "CS10" $
      end)
     (readWord "TCNT1" $
-     writeWord "TCNT1" (const "0") $
+     writeWord "TCNT1" (wordConstant 0) $
      end)

@@ -57,8 +57,8 @@ module Arduino.DSL
     , readWord
     , waitBitSet
     , writeBit
-    , const
     , byteConstant
+    , wordConstant
     , end
     ) where
 
@@ -66,7 +66,6 @@ import Arduino.Internal.CodeGen.C (streamsToC)
 import Arduino.Internal.CodeGen.Dot(streamsToDot)
 import Control.Monad.State
 import Data.Char (ord)
-import Prelude hiding (const)
 import qualified Arduino.Internal.DAG as DAG
 
 data DAGState = DAGState
@@ -254,7 +253,7 @@ clearBit register bit next = writeBit register bit (constBit DAG.Low) next
 writeByte :: String -> LLI DAG.Byte -> LLI a -> LLI a
 writeByte register value next = LLI $ DAG.WriteByte register (unLLI value) (unLLI next)
 
-writeWord :: String -> LLI String -> LLI a -> LLI a
+writeWord :: String -> LLI DAG.Word -> LLI a -> LLI a
 writeWord register value next = LLI $ DAG.WriteWord register (unLLI value) (unLLI next)
 
 readBit :: String -> String -> LLI DAG.Bit
@@ -272,11 +271,11 @@ waitBit register bit value next = LLI $ DAG.WaitBit register bit value (unLLI ne
 writeBit :: String -> String -> LLI a -> LLI b -> LLI b
 writeBit register bit var next = LLI $ DAG.WriteBit register bit (unLLI var) (unLLI next)
 
-const :: String -> LLI String
-const = LLI . DAG.Const
-
 byteConstant :: DAG.Byte -> LLI DAG.Byte
 byteConstant = LLI . DAG.Const . show
+
+wordConstant :: DAG.Word -> LLI DAG.Word
+wordConstant = LLI . DAG.Const . show
 
 constBit :: DAG.Bit -> LLI DAG.Bit
 constBit = LLI . DAG.ConstBit
