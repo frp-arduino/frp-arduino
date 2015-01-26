@@ -84,8 +84,9 @@ uart =
          setBit "UCSR0B" "RXEN0" $
          setBit "UCSR0B" "TXEN0" $
          end)
-        (waitBitSet "UCSR0A" "UDRE0" $
-         writeByte "UDR0" inputValue $
+        (\byte ->
+         waitBitSet "UCSR0A" "UDRE0" $
+         writeByte "UDR0" byte $
          end)
 
 gpioOutput :: GPIO -> Output Bit
@@ -94,7 +95,8 @@ gpioOutput gpio =
         (name gpio)
         (setBit (directionRegister gpio) (bitName gpio) $
          end)
-        (writeBit (portRegister gpio) (bitName gpio) inputValue $
+        (\bit ->
+         writeBit (portRegister gpio) (bitName gpio) bit $
          end)
 
 gpioInput :: GPIO -> Stream Bit

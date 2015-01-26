@@ -59,7 +59,6 @@ module Arduino.DSL
     , writeBit
     , const
     , byteConstant
-    , inputValue
     , end
     ) where
 
@@ -242,9 +241,9 @@ createInput name initLLI bodyLLI =
     where
         body = DAG.Driver (unLLI initLLI) (unLLI bodyLLI)
 
-createOutput :: String -> LLI () -> LLI () -> Output a
+createOutput :: String -> LLI () -> (LLI a -> LLI ()) -> Output a
 createOutput name initLLI bodyLLI =
-    Output $ DAG.Driver (unLLI initLLI) (unLLI bodyLLI)
+    Output $ DAG.Driver (unLLI initLLI) (unLLI (bodyLLI (LLI DAG.InputValue)))
 
 setBit :: String -> String -> LLI a -> LLI a
 setBit register bit next = writeBit register bit (constBit DAG.High) next
@@ -281,9 +280,6 @@ byteConstant = LLI . DAG.Const . show
 
 constBit :: DAG.Bit -> LLI DAG.Bit
 constBit = LLI . DAG.ConstBit
-
-inputValue :: LLI a
-inputValue = LLI DAG.InputValue
 
 end :: LLI ()
 end = LLI $ DAG.End
