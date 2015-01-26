@@ -25,7 +25,6 @@ module Arduino.Uno
 import Arduino.DSL
 import Arduino.Library
 import Data.Bits (shiftR, (.&.))
-import Prelude hiding (const)
 
 -- For mappings, see http://arduino.cc/en/Hacking/PinMapping168
 
@@ -72,20 +71,21 @@ every limit = timerDelta ~> accumulate ~> keepOverflowing ~> count
 uart :: Output Byte
 uart =
     let ubrr = floor ((16000000 / (16 * 9600)) - 1)
-        ubrrlValue = ubrr .&. 0xFF :: Int
-        ubrrhValue = shiftR ubrr 8 .&. 0xFF :: Int
+        ubrrlValue = ubrr .&. 0xFF
+        ubrrhValue = shiftR ubrr 8 .&. 0xFF
     in
     createOutput
         "uart"
-        (writeByte "UBRR0H" (const $ show ubrrhValue) $
-         writeByte "UBRR0L" (const $ show ubrrlValue) $
+        (writeByte "UBRR0H" (byteConstant ubrrhValue) $
+         writeByte "UBRR0L" (byteConstant ubrrlValue) $
          setBit "UCSR0C" "UCSZ01" $
          setBit "UCSR0C" "UCSZ00" $
          setBit "UCSR0B" "RXEN0" $
          setBit "UCSR0B" "TXEN0" $
          end)
-        (waitBitSet "UCSR0A" "UDRE0" $
-         writeByte "UDR0" inputValue $
+        (\byte ->
+         waitBitSet "UCSR0A" "UDRE0" $
+         writeByte "UDR0" byte $
          end)
 
 gpioOutput :: GPIO -> Output Bit
@@ -94,10 +94,8 @@ gpioOutput gpio =
         (name gpio)
         (setBit (directionRegister gpio) (bitName gpio) $
          end)
-        (switch
-           inputValue
-           (setBit (portRegister gpio) (bitName gpio) end)
-           (clearBit (portRegister gpio) (bitName gpio) end) $
+        (\bit ->
+         writeBit (portRegister gpio) (bitName gpio) bit $
          end)
 
 gpioInput :: GPIO -> Stream Bit
@@ -115,5 +113,5 @@ timerDelta = createInput
      setBit "TCCR1B" "CS10" $
      end)
     (readWord "TCNT1" $
-     writeWord "TCNT1" (const "0") $
+     writeWord "TCNT1" (wordConstant 0) $
      end)

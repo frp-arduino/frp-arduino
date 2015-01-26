@@ -260,14 +260,20 @@ genInputCall stream = do
 
 genLLI :: LLI -> Gen [ResultValue]
 genLLI lli = case lli of
-    (WriteBit register bit value next) ->
+    (WriteBit register bit value next) -> do
         case value of
-            High -> do
+            ConstBit High -> do
                 line (register ++ " |= (1 << " ++ bit ++ ");")
-                genLLI next
-            Low -> do
+            ConstBit Low -> do
                 line (register ++ " &= ~(1 << " ++ bit ++ ");")
-                genLLI next
+            _ -> do
+                [Value x cType _] <- genLLI value
+                block ("if (" ++ x ++ ") {") $ do
+                    line (register ++ " |= (1 << " ++ bit ++ ");")
+                block "} else {" $ do
+                    line (register ++ " &= ~(1 << " ++ bit ++ ");")
+                line "}"
+        genLLI next
     (WriteByte register value next) -> do
         [Value x cType _] <- genLLI value
         line (register ++ " = " ++ x ++ ";")
@@ -291,16 +297,12 @@ genLLI lli = case lli of
                 line $ "while ((" ++ register ++ " & (1 << " ++ bit ++ ")) == 0) {"
                 line $ "}"
         genLLI next
-    (Switch name t f next) -> do
-        [Value x cType _] <- genLLI name
-        block ("if (" ++ x ++ ") {") $ do
-            genLLI t
-        block "} else {" $ do
-            genLLI f
-        line "}"
-        genLLI next
     (Const x) -> do
         literal x CBit
+    (ConstBit x) -> do
+        case x of
+            High -> literal "true"  CBit
+            Low  -> literal "false" CBit
     InputValue -> do
         variable "input_0" CBit
     End -> do

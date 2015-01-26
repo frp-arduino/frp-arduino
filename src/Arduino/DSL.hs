@@ -56,9 +56,9 @@ module Arduino.DSL
     , readBit
     , readWord
     , waitBitSet
-    , switch
-    , const
-    , inputValue
+    , writeBit
+    , byteConstant
+    , wordConstant
     , end
     ) where
 
@@ -66,7 +66,6 @@ import Arduino.Internal.CodeGen.C (streamsToC)
 import Arduino.Internal.CodeGen.Dot(streamsToDot)
 import Control.Monad.State
 import Data.Char (ord)
-import Prelude hiding (const)
 import qualified Arduino.Internal.DAG as DAG
 
 data DAGState = DAGState
@@ -241,23 +240,20 @@ createInput name initLLI bodyLLI =
     where
         body = DAG.Driver (unLLI initLLI) (unLLI bodyLLI)
 
-createOutput :: String -> LLI () -> LLI () -> Output a
+createOutput :: String -> LLI () -> (LLI a -> LLI ()) -> Output a
 createOutput name initLLI bodyLLI =
-    Output $ DAG.Driver (unLLI initLLI) (unLLI bodyLLI)
+    Output $ DAG.Driver (unLLI initLLI) (unLLI (bodyLLI (LLI DAG.InputValue)))
 
 setBit :: String -> String -> LLI a -> LLI a
-setBit register bit next = writeBit register bit DAG.High next
+setBit register bit next = writeBit register bit (constBit DAG.High) next
 
 clearBit :: String -> String -> LLI a -> LLI a
-clearBit register bit next = writeBit register bit DAG.Low next
+clearBit register bit next = writeBit register bit (constBit DAG.Low) next
 
-writeBit :: String -> String -> DAG.Bit -> LLI a -> LLI a
-writeBit register bit value next = LLI $ DAG.WriteBit register bit value (unLLI next)
-
-writeByte :: String -> LLI String -> LLI a -> LLI a
+writeByte :: String -> LLI DAG.Byte -> LLI a -> LLI a
 writeByte register value next = LLI $ DAG.WriteByte register (unLLI value) (unLLI next)
 
-writeWord :: String -> LLI String -> LLI a -> LLI a
+writeWord :: String -> LLI DAG.Word -> LLI a -> LLI a
 writeWord register value next = LLI $ DAG.WriteWord register (unLLI value) (unLLI next)
 
 readBit :: String -> String -> LLI DAG.Bit
@@ -272,14 +268,17 @@ waitBitSet register bit next = waitBit register bit DAG.High next
 waitBit :: String -> String -> DAG.Bit -> LLI a -> LLI a
 waitBit register bit value next = LLI $ DAG.WaitBit register bit value (unLLI next)
 
-switch :: LLI String -> LLI () -> LLI () -> LLI a -> LLI a
-switch name t f next = LLI $ DAG.Switch (unLLI name) (unLLI t) (unLLI f) (unLLI next)
+writeBit :: String -> String -> LLI a -> LLI b -> LLI b
+writeBit register bit var next = LLI $ DAG.WriteBit register bit (unLLI var) (unLLI next)
 
-const :: String -> LLI String
-const = LLI . DAG.Const
+byteConstant :: DAG.Byte -> LLI DAG.Byte
+byteConstant = LLI . DAG.Const . show
 
-inputValue :: LLI String
-inputValue = LLI DAG.InputValue
+wordConstant :: DAG.Word -> LLI DAG.Word
+wordConstant = LLI . DAG.Const . show
+
+constBit :: DAG.Bit -> LLI DAG.Bit
+constBit = LLI . DAG.ConstBit
 
 end :: LLI ()
 end = LLI $ DAG.End
