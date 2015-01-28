@@ -75,7 +75,7 @@ genCTypes = do
     header $ "    " ++ cTypeStr listSizeCType ++ " size;"
     header $ "    void* values;"
     header $ "};"
-    forM_ [2] $ \n -> do
+    forM_ [2, 6] $ \n -> do
         header $ ""
         header $ "struct tuple" ++ show n ++ " {"
         forM_ [0..n-1] $ \value -> do

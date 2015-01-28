@@ -36,10 +36,34 @@ data GPIO = GPIO
     , bitName           :: String
     }
 
+pin3GPIO = GPIO "pin3" "DDRD" "PORTD" "PIND" "PD3"
+pin4GPIO = GPIO "pin4" "DDRD" "PORTD" "PIND" "PD4"
+pin5GPIO = GPIO "pin5" "DDRD" "PORTD" "PIND" "PD5"
+pin6GPIO = GPIO "pin6" "DDRD" "PORTD" "PIND" "PD6"
+pin7GPIO = GPIO "pin7" "DDRD" "PORTD" "PIND" "PD7"
+pin8GPIO = GPIO "pin8" "DDRB" "PORTB" "PINB" "PB0"
 pin10GPIO = GPIO "pin10" "DDRB" "PORTB" "PINB" "PB2"
 pin11GPIO = GPIO "pin11" "DDRB" "PORTB" "PINB" "PB3"
 pin12GPIO = GPIO "pin12" "DDRB" "PORTB" "PINB" "PB4"
 pin13GPIO = GPIO "pin13" "DDRB" "PORTB" "PINB" "PB5"
+
+pin3 :: Output Bit
+pin3 = gpioOutput pin3GPIO
+
+pin4 :: Output Bit
+pin4 = gpioOutput pin4GPIO
+
+pin5 :: Output Bit
+pin5 = gpioOutput pin5GPIO
+
+pin6 :: Output Bit
+pin6 = gpioOutput pin6GPIO
+
+pin7 :: Output Bit
+pin7 = gpioOutput pin7GPIO
+
+pin8 :: Output Bit
+pin8 = gpioOutput pin8GPIO
 
 pin13 :: Output Bit
 pin13 = gpioOutput pin13GPIO

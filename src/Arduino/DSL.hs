@@ -25,6 +25,8 @@ module Arduino.DSL
     , def
     , (=:)
     , pack2Output
+    , pack6Output
+    , foo
     -- ** Types
     , DAG.Bit
     , DAG.Byte
@@ -51,7 +53,9 @@ module Arduino.DSL
     , formatNumber
     -- *** Tuples
     , pack2
+    , pack6
     , unpack2
+    , unpack6
     -- ** LLI
     , createOutput
     , createInput
@@ -113,11 +117,35 @@ def stream = do
 
 infixr 0 =:
 
-pack2Output :: Output a -> Output b -> Output (a, b)
-pack2Output aOutput bOutput = Output $ \stream -> do
-    x <- def stream
-    aOutput =: x ~> mapS (\x -> let (a, b) = unpack2 x in a)
-    bOutput =: x ~> mapS (\x -> let (a, b) = unpack2 x in b)
+foo :: Output a -> (Stream b -> Stream a) -> Output b
+foo output fn = Output $ \stream -> do
+    output =: fn stream
+
+pack2Output :: Output a1
+            -> Output a2
+            -> Output (a1, a2)
+pack2Output output1 output2 =
+    Output $ \stream -> do
+        x <- def stream
+        output1 =: x ~> mapS (\x -> let (a, _) = unpack2 x in a)
+        output2 =: x ~> mapS (\x -> let (_, a) = unpack2 x in a)
+
+pack6Output :: Output a1
+            -> Output a2
+            -> Output a3
+            -> Output a4
+            -> Output a5
+            -> Output a6
+            -> Output (a1, a2, a3, a4, a5, a6)
+pack6Output output1 output2 output3 output4 output5 output6 =
+    Output $ \stream -> do
+        x <- def stream
+        output1 =: x ~> mapS (\x -> let (a, _, _, _, _, _) = unpack6 x in a)
+        output2 =: x ~> mapS (\x -> let (_, a, _, _, _, _) = unpack6 x in a)
+        output3 =: x ~> mapS (\x -> let (_, _, a, _, _, _) = unpack6 x in a)
+        output4 =: x ~> mapS (\x -> let (_, _, _, a, _, _) = unpack6 x in a)
+        output5 =: x ~> mapS (\x -> let (_, _, _, _, a, _) = unpack6 x in a)
+        output6 =: x ~> mapS (\x -> let (_, _, _, _, _, a) = unpack6 x in a)
 
 (~>) :: Stream a -> (Stream a -> Stream b) -> Stream b
 (~>) stream fn = Stream $ do
@@ -222,16 +250,38 @@ formatString = Expression . DAG.ListConstant . map (DAG.ByteConstant . fromInteg
 formatNumber :: Expression DAG.Word -> Expression [DAG.Byte]
 formatNumber = Expression . DAG.NumberToByteArray . unExpression
 
-pack2 :: (Expression a, Expression b) -> Expression (a, b)
-pack2 (aExpression, bExpression) = Expression $ DAG.TupleConstant $
-    [ unExpression aExpression
-    , unExpression bExpression
+pack2 :: (Expression a1, Expression a2) -> Expression (a1, a2)
+pack2 (a1, a2) = Expression $ DAG.TupleConstant $
+    [ unExpression a1
+    , unExpression a2
     ]
 
-unpack2 :: Expression (a, b) -> (Expression a, Expression b)
+pack6 :: (Expression a1, Expression a2, Expression a3, Expression a4, Expression a5, Expression a6)
+      -> Expression (a1, a2, a3, a4, a5, a6)
+pack6 (a1, a2, a3, a4, a5, a6) = Expression $ DAG.TupleConstant $
+    [ unExpression a1
+    , unExpression a2
+    , unExpression a3
+    , unExpression a4
+    , unExpression a5
+    , unExpression a6
+    ]
+
+unpack2 :: Expression (a1, a2) -> (Expression a1, Expression a2)
 unpack2 expression =
     ( Expression $ DAG.TupleValue 0 (unExpression expression)
     , Expression $ DAG.TupleValue 1 (unExpression expression)
+    )
+
+unpack6 :: Expression (a1, a2, a3, a4, a5, a6)
+        -> (Expression a1, Expression a2, Expression a3, Expression a4, Expression a5, Expression a6)
+unpack6 expression =
+    ( Expression $ DAG.TupleValue 0 (unExpression expression)
+    , Expression $ DAG.TupleValue 1 (unExpression expression)
+    , Expression $ DAG.TupleValue 2 (unExpression expression)
+    , Expression $ DAG.TupleValue 3 (unExpression expression)
+    , Expression $ DAG.TupleValue 4 (unExpression expression)
+    , Expression $ DAG.TupleValue 5 (unExpression expression)
     )
 
 bitLow :: Expression DAG.Bit

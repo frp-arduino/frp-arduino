@@ -14,6 +14,15 @@ struct tuple2 {
     void* value1;
 };
 
+struct tuple6 {
+    void* value0;
+    void* value1;
+    void* value2;
+    void* value3;
+    void* value4;
+    void* value5;
+};
+
 static void input_pin12();
 
 static void input_timer();
