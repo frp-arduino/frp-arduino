@@ -43,14 +43,9 @@ static void input_timer() {
 }
 
 static void stream_1(uint8_t arg, void* value) {
+  uint16_t input_0 = *((uint16_t*)value);
   static uint16_t input_1 = 0;
   uint16_t temp1;
-  static uint16_t input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((uint16_t*)value);
-      break;
-  }
   if ((input_1 > 10000)) {
     temp1 = ((input_1 - 10000) + input_0);
   } else {
@@ -61,48 +56,28 @@ static void stream_1(uint8_t arg, void* value) {
 }
 
 static void stream_2(uint8_t arg, void* value) {
-  static uint16_t input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((uint16_t*)value);
-      break;
-  }
+  uint16_t input_0 = *((uint16_t*)value);
   if ((input_0 > 10000)) {
     stream_3(0, (void*)(&input_0));
   }
 }
 
 static void stream_3(uint8_t arg, void* value) {
+  uint16_t input_0 = *((uint16_t*)value);
   static uint16_t input_1 = 0;
-  static uint16_t input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((uint16_t*)value);
-      break;
-  }
   input_1 = (input_1 + 1);
   stream_4(0, (void*)(&input_1));
 }
 
 static void stream_4(uint8_t arg, void* value) {
+  uint16_t input_0 = *((uint16_t*)value);
   bool temp2;
-  static uint16_t input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((uint16_t*)value);
-      break;
-  }
   temp2 = (input_0) % 2 == 0;
   stream_5(0, (void*)(&temp2));
 }
 
 static void stream_5(uint8_t arg, void* value) {
-  static bool input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((bool*)value);
-      break;
-  }
+  bool input_0 = *((bool*)value);
   if (input_0) {
     PORTB |= (1 << PB5);
   } else {

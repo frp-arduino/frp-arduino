@@ -116,16 +116,21 @@ streamToArgumentList streamTypes stream
     | otherwise                  = cTypeStr argIndexCType ++ " arg, void* value"
 
 genStreamInputParsing :: [(String, String, Int)] -> Gen ()
-genStreamInputParsing args = do
-    when ((length args) > 0) $ do
+genStreamInputParsing args
+    | length args == 1 = do
+        let [(name, cType, _)] = args
+        header $ cType ++ " " ++ name ++ " = *((" ++ cType ++ "*)value);"
+    | length args > 1 = do
         forM_ args $ \(name, cType, _) -> do
-            line $ "static " ++ cType ++ " " ++ name ++ ";"
+            header $ "static " ++ cType ++ " " ++ name ++ ";"
         block "switch (arg) {" $ do
             forM_ args $ \(name, cType, n) -> do
                 block ("case " ++ show n ++ ":") $ do
                     line $ name ++ " = *((" ++ cType ++ "*)value);"
                     line $ "break;"
         line $ "}"
+    | otherwise = do
+        return ()
 
 genStreamBody :: M.Map Int CType -> Body -> Gen [ResultValue]
 genStreamBody inputMap body = case body of

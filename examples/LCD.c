@@ -73,14 +73,9 @@ static void input_timer() {
 }
 
 static void stream_1(uint8_t arg, void* value) {
+  uint16_t input_0 = *((uint16_t*)value);
   static uint16_t input_1 = 0;
   uint16_t temp1;
-  static uint16_t input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((uint16_t*)value);
-      break;
-  }
   if ((input_1 > 10000)) {
     temp1 = ((input_1 - 10000) + input_0);
   } else {
@@ -91,43 +86,29 @@ static void stream_1(uint8_t arg, void* value) {
 }
 
 static void stream_2(uint8_t arg, void* value) {
-  static uint16_t input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((uint16_t*)value);
-      break;
-  }
+  uint16_t input_0 = *((uint16_t*)value);
   if ((input_0 > 10000)) {
     stream_3(0, (void*)(&input_0));
   }
 }
 
 static void stream_3(uint8_t arg, void* value) {
+  uint16_t input_0 = *((uint16_t*)value);
   static uint16_t input_1 = 0;
-  static uint16_t input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((uint16_t*)value);
-      break;
-  }
   input_1 = (input_1 + 1);
   stream_4(0, (void*)(&input_1));
   stream_6(0, (void*)(&input_1));
 }
 
 static void stream_4(uint8_t arg, void* value) {
+  uint16_t input_0 = *((uint16_t*)value);
   bool temp2;
-  static uint16_t input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((uint16_t*)value);
-      break;
-  }
   temp2 = (input_0) % 2 == 0;
   stream_5(0, (void*)(&temp2));
 }
 
 static void stream_6(uint8_t arg, void* value) {
+  uint16_t input_0 = *((uint16_t*)value);
   bool temp3;
   bool temp4;
   bool temp5;
@@ -422,12 +403,6 @@ static void stream_6(uint8_t arg, void* value) {
   bool temp294;
   uint16_t temp295;
   struct tuple6 temp296;
-  static uint16_t input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((uint16_t*)value);
-      break;
-  }
   temp3 = false;
   temp4 = false;
   temp5 = false;
@@ -1187,52 +1162,27 @@ static void stream_6(uint8_t arg, void* value) {
 }
 
 static void stream_11(uint8_t arg, void* value) {
-  static struct tuple6 input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((struct tuple6*)value);
-      break;
-  }
+  struct tuple6 input_0 = *((struct tuple6*)value);
   stream_12(0, (void*)(&*((bool*)input_0.value2)));
 }
 
 static void stream_13(uint8_t arg, void* value) {
-  static struct tuple6 input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((struct tuple6*)value);
-      break;
-  }
+  struct tuple6 input_0 = *((struct tuple6*)value);
   stream_14(0, (void*)(&*((bool*)input_0.value3)));
 }
 
 static void stream_15(uint8_t arg, void* value) {
-  static struct tuple6 input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((struct tuple6*)value);
-      break;
-  }
+  struct tuple6 input_0 = *((struct tuple6*)value);
   stream_16(0, (void*)(&*((bool*)input_0.value4)));
 }
 
 static void stream_17(uint8_t arg, void* value) {
-  static struct tuple6 input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((struct tuple6*)value);
-      break;
-  }
+  struct tuple6 input_0 = *((struct tuple6*)value);
   stream_18(0, (void*)(&*((uint16_t*)input_0.value5)));
 }
 
 static void stream_5(uint8_t arg, void* value) {
-  static bool input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((bool*)value);
-      break;
-  }
+  bool input_0 = *((bool*)value);
   if (input_0) {
     PORTB |= (1 << PB5);
   } else {
@@ -1241,32 +1191,17 @@ static void stream_5(uint8_t arg, void* value) {
 }
 
 static void stream_7(uint8_t arg, void* value) {
-  static struct tuple6 input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((struct tuple6*)value);
-      break;
-  }
+  struct tuple6 input_0 = *((struct tuple6*)value);
   stream_8(0, (void*)(&*((bool*)input_0.value0)));
 }
 
 static void stream_9(uint8_t arg, void* value) {
-  static struct tuple6 input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((struct tuple6*)value);
-      break;
-  }
+  struct tuple6 input_0 = *((struct tuple6*)value);
   stream_10(0, (void*)(&*((bool*)input_0.value1)));
 }
 
 static void stream_10(uint8_t arg, void* value) {
-  static bool input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((bool*)value);
-      break;
-  }
+  bool input_0 = *((bool*)value);
   if (input_0) {
     PORTB |= (1 << PB0);
   } else {
@@ -1275,12 +1210,7 @@ static void stream_10(uint8_t arg, void* value) {
 }
 
 static void stream_12(uint8_t arg, void* value) {
-  static bool input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((bool*)value);
-      break;
-  }
+  bool input_0 = *((bool*)value);
   if (input_0) {
     PORTD |= (1 << PD7);
   } else {
@@ -1289,12 +1219,7 @@ static void stream_12(uint8_t arg, void* value) {
 }
 
 static void stream_14(uint8_t arg, void* value) {
-  static bool input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((bool*)value);
-      break;
-  }
+  bool input_0 = *((bool*)value);
   if (input_0) {
     PORTD |= (1 << PD6);
   } else {
@@ -1303,12 +1228,7 @@ static void stream_14(uint8_t arg, void* value) {
 }
 
 static void stream_16(uint8_t arg, void* value) {
-  static bool input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((bool*)value);
-      break;
-  }
+  bool input_0 = *((bool*)value);
   if (input_0) {
     PORTD |= (1 << PD5);
   } else {
@@ -1317,18 +1237,13 @@ static void stream_16(uint8_t arg, void* value) {
 }
 
 static void stream_18(uint8_t arg, void* value) {
+  uint16_t input_0 = *((uint16_t*)value);
   bool temp297;
   uint16_t temp298;
   struct tuple2 temp299;
   bool temp300;
   uint16_t temp301;
   struct tuple2 temp302;
-  static uint16_t input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((uint16_t*)value);
-      break;
-  }
   temp297 = true;
   temp298 = 1;
   temp299.value0 = (void*)&temp297;
@@ -1342,12 +1257,7 @@ static void stream_18(uint8_t arg, void* value) {
 }
 
 static void stream_8(uint8_t arg, void* value) {
-  static bool input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((bool*)value);
-      break;
-  }
+  bool input_0 = *((bool*)value);
   if (input_0) {
     PORTD |= (1 << PD3);
   } else {
@@ -1356,12 +1266,7 @@ static void stream_8(uint8_t arg, void* value) {
 }
 
 static void stream_19(uint8_t arg, void* value) {
-  static struct tuple2 input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((struct tuple2*)value);
-      break;
-  }
+  struct tuple2 input_0 = *((struct tuple2*)value);
   stream_20(0, (void*)(&*((bool*)input_0.value0)));
   // Delay assumes a 16MHz clock
   _delay_loop_2(*((uint16_t*)input_0.value1));
@@ -1371,12 +1276,7 @@ static void stream_19(uint8_t arg, void* value) {
 }
 
 static void stream_20(uint8_t arg, void* value) {
-  static bool input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((bool*)value);
-      break;
-  }
+  bool input_0 = *((bool*)value);
   if (input_0) {
     PORTD |= (1 << PD4);
   } else {

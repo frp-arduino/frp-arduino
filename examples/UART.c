@@ -50,14 +50,9 @@ static void input_timer() {
 }
 
 static void stream_1(uint8_t arg, void* value) {
+  uint16_t input_0 = *((uint16_t*)value);
   static uint16_t input_1 = 0;
   uint16_t temp1;
-  static uint16_t input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((uint16_t*)value);
-      break;
-  }
   if ((input_1 > 10000)) {
     temp1 = ((input_1 - 10000) + input_0);
   } else {
@@ -68,18 +63,13 @@ static void stream_1(uint8_t arg, void* value) {
 }
 
 static void stream_6(uint8_t arg, void* value) {
+  uint16_t input_0 = *((uint16_t*)value);
   struct list temp2;
   uint8_t temp3[7];
   uint8_t temp4[20];
   struct list temp5;
   struct list temp6;
   uint8_t temp7[2];
-  static uint16_t input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((uint16_t*)value);
-      break;
-  }
   temp3[0] = 100;
   temp3[1] = 101;
   temp3[2] = 108;
@@ -102,73 +92,43 @@ static void stream_6(uint8_t arg, void* value) {
 }
 
 static void stream_2(uint8_t arg, void* value) {
-  static uint16_t input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((uint16_t*)value);
-      break;
-  }
+  uint16_t input_0 = *((uint16_t*)value);
   if ((input_0 > 10000)) {
     stream_3(0, (void*)(&input_0));
   }
 }
 
 static void stream_7(uint8_t arg, void* value) {
+  struct list input_0 = *((struct list*)value);
   uint8_t temp8;
-  static struct list input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((struct list*)value);
-      break;
-  }
   for (temp8 = 0; temp8 < input_0.size; temp8++) {
     stream_8(0, (void*)(&((uint8_t*)input_0.values)[temp8]));
   }
 }
 
 static void stream_3(uint8_t arg, void* value) {
+  uint16_t input_0 = *((uint16_t*)value);
   static uint16_t input_1 = 0;
-  static uint16_t input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((uint16_t*)value);
-      break;
-  }
   input_1 = (input_1 + 1);
   stream_4(0, (void*)(&input_1));
 }
 
 static void stream_8(uint8_t arg, void* value) {
-  static uint8_t input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((uint8_t*)value);
-      break;
-  }
+  uint8_t input_0 = *((uint8_t*)value);
   while ((UCSR0A & (1 << UDRE0)) == 0) {
   }
   UDR0 = input_0;
 }
 
 static void stream_4(uint8_t arg, void* value) {
+  uint16_t input_0 = *((uint16_t*)value);
   bool temp9;
-  static uint16_t input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((uint16_t*)value);
-      break;
-  }
   temp9 = (input_0) % 2 == 0;
   stream_5(0, (void*)(&temp9));
 }
 
 static void stream_5(uint8_t arg, void* value) {
-  static bool input_0;
-  switch (arg) {
-    case 0:
-      input_0 = *((bool*)value);
-      break;
-  }
+  bool input_0 = *((bool*)value);
   if (input_0) {
     PORTB |= (1 << PB5);
   } else {
