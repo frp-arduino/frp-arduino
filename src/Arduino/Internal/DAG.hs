@@ -63,6 +63,7 @@ data Expression = Input Int
                 | Fold    Expression Expression
                 | Filter  Expression
                 | Flatten Expression
+                | DelayMicroseconds Expression Expression
                 -- Expression transformations
                 | If Expression Expression Expression
                 -- Unary operations
