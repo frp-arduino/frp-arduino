@@ -32,6 +32,7 @@ module Arduino.DSL
     -- ** Stream operations
     , (~>)
     , mapS
+    , mapSMany
     , mapS2
     , delay
     , filterS
@@ -48,7 +49,6 @@ module Arduino.DSL
     , bitHigh
     , formatString
     , formatNumber
-    , (.+.)
     -- *** Tuples
     , pack2
     , unpack2
@@ -128,10 +128,18 @@ pack2Output aOutput bOutput = Output $ \stream -> do
 mapS :: (Expression a -> Expression b) -> Stream a -> Stream b
 mapS fn stream = Stream $ do
     streamName <- unStream stream
-    expressionStreamName <- addAnonymousStream (DAG.Transform expression)
+    expressionStreamName <- addAnonymousStream (DAG.Map expression)
     addDependency streamName expressionStreamName
     where
         expression = unExpression $ fn $ Expression $ DAG.Input 0
+
+mapSMany :: (Expression a -> [Expression b]) -> Stream a -> Stream b
+mapSMany fn stream = Stream $ do
+    streamName <- unStream stream
+    expressionStreamName <- addAnonymousStream (DAG.MapMany expression)
+    addDependency streamName expressionStreamName
+    where
+        expression = map unExpression $ fn $ Expression $ DAG.Input 0
 
 mapS2 :: (Expression a -> Expression b -> Expression c)
       -> Stream a
@@ -140,7 +148,7 @@ mapS2 :: (Expression a -> Expression b -> Expression c)
 mapS2 fn left right = Stream $ do
     leftName <- unStream left
     rightName <- unStream right
-    expressionStreamName <- addAnonymousStream (DAG.Transform expression)
+    expressionStreamName <- addAnonymousStream (DAG.Map expression)
     addDependency leftName expressionStreamName
     addDependency rightName expressionStreamName
     where
@@ -150,7 +158,7 @@ mapS2 fn left right = Stream $ do
 delay :: Stream (a, DAG.Word) -> Stream a
 delay stream = Stream $ do
     streamName <- unStream stream
-    expressionStreamName <- addAnonymousStream (DAG.Transform expression)
+    expressionStreamName <- addAnonymousStream expression
     addDependency streamName expressionStreamName
     where
         expression = DAG.DelayMicroseconds (DAG.TupleValue 1 (DAG.Input 0))
@@ -162,7 +170,7 @@ filterS fn stream = Stream $ do
     expressionStreamName <- addAnonymousStream filterTransform
     addDependency streamName expressionStreamName
     where
-        filterTransform = DAG.Transform $ DAG.Filter expression
+        filterTransform = DAG.Filter expression
         expression = unExpression $ fn $ Expression $ DAG.Input 0
 
 foldpS :: (Expression a -> Expression b -> Expression b)
@@ -174,7 +182,7 @@ foldpS fn startValue stream = Stream $ do
     expressionStreamName <- addAnonymousStream foldTransform
     addDependency streamName expressionStreamName
     where
-        foldTransform = DAG.Transform $ DAG.Fold expression startExpression
+        foldTransform = DAG.Fold expression startExpression
         expression = unExpression $ fn (Expression $ DAG.Input 0)
                                        (Expression $ DAG.Input 1)
         startExpression = unExpression startValue
@@ -182,10 +190,10 @@ foldpS fn startValue stream = Stream $ do
 flattenS :: Stream [a] -> Stream a
 flattenS stream = Stream $ do
     streamName <- unStream stream
-    expressionStreamName <- addAnonymousStream (DAG.Transform expression)
+    expressionStreamName <- addAnonymousStream expression
     addDependency streamName expressionStreamName
     where
-        expression = unExpression $ Expression $ DAG.Flatten $ DAG.Input 0
+        expression = DAG.Flatten $ DAG.Input 0
 
 if_ :: Expression Bool -> Expression a -> Expression a -> Expression a
 if_ condition trueExpression falseExpression =
@@ -213,11 +221,6 @@ formatString = Expression . DAG.ListConstant . map (DAG.ByteConstant . fromInteg
 
 formatNumber :: Expression DAG.Word -> Expression [DAG.Byte]
 formatNumber = Expression . DAG.NumberToByteArray . unExpression
-
-(.+.) :: Expression [a] -> Expression [a] -> Expression [a]
-(.+.) left right = Expression $ DAG.Many [ unExpression left
-                                         , unExpression right
-                                         ]
 
 pack2 :: (Expression a, Expression b) -> Expression (a, b)
 pack2 (aExpression, bExpression) = Expression $ DAG.TupleConstant $

@@ -128,8 +128,34 @@ genStreamInputParsing args = do
 
 genStreamBody :: M.Map Int CType -> Body -> Gen [ResultValue]
 genStreamBody inputMap body = case body of
-    (Driver _ bodyLLI)     -> genLLI bodyLLI
-    (Transform expression) -> genExpression inputMap False expression
+    (Map expression) -> do
+        genExpression inputMap False expression
+    (MapMany values) -> do
+        fmap concat $ mapM (genExpression inputMap False) values
+    (Fold expression startValue) -> do
+        [Value startValueResult cType _ _] <- genExpression inputMap True startValue
+        header $ "static " ++ cTypeStr cType ++ " input_1 = " ++ startValueResult ++ ";"
+        [Value expressionResult cTypeNothing _ _] <- genExpression (M.insert 1 cType inputMap) False expression
+        genCopy "input_1" expressionResult cType
+        variable "input_1" cTypeNothing
+    (Filter conditionExpression) -> do
+        [Value conditionResult CBit _ _] <- genExpression inputMap False conditionExpression
+        [Value valueResult cType _ _] <- genExpression inputMap False (Input 0)
+        temp <- genCVariable "bool"
+        line $ temp ++ " = false;"
+        block ("if (" ++ conditionResult ++ ") {") $ do
+            line $ temp ++ " = true;"
+        line $ "}"
+        return [FilterVariable valueResult cType temp]
+    (DelayMicroseconds delay expression) -> do
+        [Value delayValue CWord _ Nothing] <- genExpression inputMap False delay
+        [Value expressionValue cType storage Nothing] <- genExpression inputMap False expression
+        return [Value expressionValue cType storage (Just delayValue)]
+    (Flatten expression) -> do
+        [Value x (CList a) _ _] <- genExpression inputMap False expression
+        return [ToFlatVariable x a]
+    (Driver _ bodyLLI) -> do
+        genLLI bodyLLI
 
 genStreamOutputCalling :: [ResultValue] -> Stream -> Gen ()
 genStreamOutputCalling results stream = do
@@ -198,9 +224,6 @@ genExpression inputMap static expression = case expression of
         case value of
             High -> literal "true" CBit
             Low  -> literal "false" CBit
-    (Many values) -> do
-        x <- mapM (genExpression inputMap static) values
-        return $ concat x
     (ListConstant values) -> do
         x <- mapM (genExpression inputMap static) values
         let exprs = concat x
@@ -271,28 +294,6 @@ genExpression inputMap static expression = case expression of
             line $ temp ++ " = " ++ falseResult ++ ";"
         line $ "}"
         variable temp cType
-    (Fold expression startValue) -> do
-        [Value startValueResult cType _ _] <- genExpression inputMap True startValue
-        header $ "static " ++ cTypeStr cType ++ " input_1 = " ++ startValueResult ++ ";"
-        [Value expressionResult cTypeNothing _ _] <- genExpression (M.insert 1 cType inputMap) static expression
-        genCopy "input_1" expressionResult cType
-        variable "input_1" cTypeNothing
-    (Filter conditionExpression) -> do
-        [Value conditionResult CBit _ _] <- genExpression inputMap static conditionExpression
-        [Value valueResult cType _ _] <- genExpression inputMap static (Input 0)
-        temp <- genCVariable "bool"
-        line $ temp ++ " = false;"
-        block ("if (" ++ conditionResult ++ ") {") $ do
-            line $ temp ++ " = true;"
-        line $ "}"
-        return [FilterVariable valueResult cType temp]
-    (Flatten expression) -> do
-        [Value x (CList a) _ _] <- genExpression inputMap static expression
-        return [ToFlatVariable x a]
-    (DelayMicroseconds delay expression) -> do
-        [Value delayValue CWord _ Nothing] <- genExpression inputMap static delay
-        [Value expressionValue cType storage Nothing] <- genExpression inputMap static expression
-        return [Value expressionValue cType storage (Just delayValue)]
 
 genCopy :: String -> String -> CType -> Gen ()
 genCopy destination source cType = case cType of
