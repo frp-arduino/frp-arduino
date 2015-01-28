@@ -8,6 +8,11 @@ struct list {
     void* values;
 };
 
+struct tuple2 {
+    void* value0;
+    void* value1;
+};
+
 static void input_pin12();
 
 static void input_timer();

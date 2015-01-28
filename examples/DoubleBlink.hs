@@ -17,8 +17,11 @@ import Arduino.Uno
 
 main = compileProgram $ do
 
-    toggled <- def $ clock ~> toggle
+    pack2Output pin12 pin13 =: every 5000 ~> flip2TupleStream
 
-    pin13 =: toggled
-
-    pin12 =: toggled ~> invert
+flip2TupleStream :: Stream a -> Stream (Bit, Bit)
+flip2TupleStream = foldpS (\_ -> flip2Tuple) (pack2 (bitLow, bitHigh))
+    where
+        flip2Tuple :: Expression (a, b) -> Expression (b, a)
+        flip2Tuple tuple = let (aValue, bValue) = unpack2 tuple
+                           in pack2 (bValue, aValue)

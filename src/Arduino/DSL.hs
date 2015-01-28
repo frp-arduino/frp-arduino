@@ -24,6 +24,7 @@ module Arduino.DSL
     , compileProgram
     , def
     , (=:)
+    , pack2Output
     -- ** Types
     , DAG.Bit
     , DAG.Byte
@@ -43,9 +44,13 @@ module Arduino.DSL
     , boolToBit
     , isHigh
     , bitLow
+    , bitHigh
     , formatString
     , formatNumber
     , (.+.)
+    -- *** Tuples
+    , pack2
+    , unpack2
     -- ** LLI
     , createOutput
     , createInput
@@ -79,7 +84,7 @@ newtype Stream a = Stream { unStream :: Action DAG.Identifier }
 
 newtype Expression a = Expression { unExpression :: DAG.Expression }
 
-newtype Output a = Output { unOutput :: DAG.Body }
+newtype Output a = Output { unOutput :: Stream a -> Action () }
 
 newtype LLI a = LLI { unLLI :: DAG.LLI }
 
@@ -103,13 +108,15 @@ def stream = do
     return $ Stream $ return name
 
 (=:) :: Output a -> Stream a -> Action ()
-(=:) output stream = do
-    streamName <- unStream stream
-    outputName <- addAnonymousStream (unOutput output)
-    addDependency streamName outputName
-    return ()
+(=:) = unOutput
 
 infixr 0 =:
+
+pack2Output :: Output a -> Output b -> Output (a, b)
+pack2Output aOutput bOutput = Output $ \stream -> do
+    x <- def stream
+    aOutput =: x ~> mapS (\x -> let (a, b) = unpack2 x in a)
+    bOutput =: x ~> mapS (\x -> let (a, b) = unpack2 x in b)
 
 (~>) :: Stream a -> (Stream a -> Stream b) -> Stream b
 (~>) stream fn = Stream $ do
@@ -202,8 +209,23 @@ formatNumber = Expression . DAG.NumberToByteArray . unExpression
                                          , unExpression right
                                          ]
 
+pack2 :: (Expression a, Expression b) -> Expression (a, b)
+pack2 (aExpression, bExpression) = Expression $ DAG.TupleConstant $
+    [ unExpression aExpression
+    , unExpression bExpression
+    ]
+
+unpack2 :: Expression (a, b) -> (Expression a, Expression b)
+unpack2 expression =
+    ( Expression $ DAG.TupleValue 0 (unExpression expression)
+    , Expression $ DAG.TupleValue 1 (unExpression expression)
+    )
+
 bitLow :: Expression DAG.Bit
 bitLow = Expression $ DAG.BitConstant DAG.Low
+
+bitHigh :: Expression DAG.Bit
+bitHigh = Expression $ DAG.BitConstant DAG.High
 
 addAnonymousStream :: DAG.Body -> Action DAG.Identifier
 addAnonymousStream body = do
@@ -241,8 +263,11 @@ createInput name initLLI bodyLLI =
         body = DAG.Driver (unLLI initLLI) (unLLI bodyLLI)
 
 createOutput :: String -> LLI () -> (LLI a -> LLI ()) -> Output a
-createOutput name initLLI bodyLLI =
-    Output $ DAG.Driver (unLLI initLLI) (unLLI (bodyLLI (LLI DAG.InputValue)))
+createOutput name initLLI bodyLLI = Output $ \stream -> do
+    streamName <- unStream stream
+    outputName <- addAnonymousStream $ DAG.Driver (unLLI initLLI) (unLLI (bodyLLI (LLI DAG.InputValue)))
+    addDependency streamName outputName
+    return ()
 
 setBit :: String -> String -> LLI a -> LLI a
 setBit register bit next = writeBit register bit (constBit DAG.High) next

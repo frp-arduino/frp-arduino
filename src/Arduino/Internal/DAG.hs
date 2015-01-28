@@ -76,11 +76,13 @@ data Expression = Input Int
                 -- Conversion
                 | BoolToBit         Expression
                 | NumberToByteArray Expression
+                | TupleValue Int Expression
                 -- Constants
                 | BitConstant Bit
                 | ByteConstant Byte
                 | WordConstant Word
                 | ListConstant [Expression]
+                | TupleConstant [Expression]
                 deriving (Show)
 
 type Identifier = String

@@ -8,6 +8,11 @@ struct list {
     void* values;
 };
 
+struct tuple2 {
+    void* value0;
+    void* value1;
+};
+
 static void input_timer();
 
 static void stream_1(uint8_t arg, void* value);

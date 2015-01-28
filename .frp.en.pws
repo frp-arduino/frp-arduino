@@ -34,3 +34,9 @@ ZeroMQ
 EDSLs
 DSL
 Lennart
+bitLow
+bitHigh
+tuple
+aValue
+bValue
+TupleStream
