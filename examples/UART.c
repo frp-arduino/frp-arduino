@@ -49,10 +49,10 @@ static void stream_1(uint8_t arg, void* value) {
       input_0 = *((uint16_t*)value);
       break;
   }
-  if (input_1 > 10000) {
-    temp1 = input_1 - 10000 + input_0;
+  if ((input_1 > 10000)) {
+    temp1 = ((input_1 - 10000) + input_0);
   } else {
-    temp1 = input_1 + input_0;
+    temp1 = (input_1 + input_0);
   }
   input_1 = temp1;
   stream_2(0, (void*)(&input_1));
@@ -93,32 +93,27 @@ static void stream_6(uint8_t arg, void* value) {
 }
 
 static void stream_2(uint8_t arg, void* value) {
-  bool temp8;
   static uint16_t input_0;
   switch (arg) {
     case 0:
       input_0 = *((uint16_t*)value);
       break;
   }
-  temp8 = false;
-  if (input_0 > 10000) {
-    temp8 = true;
-  }
-  if (temp8) {
+  if ((input_0 > 10000)) {
     stream_3(0, (void*)(&input_0));
   }
 }
 
 static void stream_7(uint8_t arg, void* value) {
-  uint8_t temp9;
+  uint8_t temp8;
   static struct list input_0;
   switch (arg) {
     case 0:
       input_0 = *((struct list*)value);
       break;
   }
-  for (temp9 = 0; temp9 < input_0.size; temp9++) {
-    stream_8(0, (void*)(&((uint8_t*)input_0.values)[temp9]));
+  for (temp8 = 0; temp8 < input_0.size; temp8++) {
+    stream_8(0, (void*)(&((uint8_t*)input_0.values)[temp8]));
   }
 }
 
@@ -130,7 +125,7 @@ static void stream_3(uint8_t arg, void* value) {
       input_0 = *((uint16_t*)value);
       break;
   }
-  input_1 = input_1 + 1;
+  input_1 = (input_1 + 1);
   stream_4(0, (void*)(&input_1));
 }
 
@@ -147,15 +142,15 @@ static void stream_8(uint8_t arg, void* value) {
 }
 
 static void stream_4(uint8_t arg, void* value) {
-  bool temp10;
+  bool temp9;
   static uint16_t input_0;
   switch (arg) {
     case 0:
       input_0 = *((uint16_t*)value);
       break;
   }
-  temp10 = (input_0) % 2 == 0;
-  stream_5(0, (void*)(&temp10));
+  temp9 = (input_0) % 2 == 0;
+  stream_5(0, (void*)(&temp9));
 }
 
 static void stream_5(uint8_t arg, void* value) {

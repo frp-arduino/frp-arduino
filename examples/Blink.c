@@ -42,28 +42,23 @@ static void stream_1(uint8_t arg, void* value) {
       input_0 = *((uint16_t*)value);
       break;
   }
-  if (input_1 > 10000) {
-    temp1 = input_1 - 10000 + input_0;
+  if ((input_1 > 10000)) {
+    temp1 = ((input_1 - 10000) + input_0);
   } else {
-    temp1 = input_1 + input_0;
+    temp1 = (input_1 + input_0);
   }
   input_1 = temp1;
   stream_2(0, (void*)(&input_1));
 }
 
 static void stream_2(uint8_t arg, void* value) {
-  bool temp2;
   static uint16_t input_0;
   switch (arg) {
     case 0:
       input_0 = *((uint16_t*)value);
       break;
   }
-  temp2 = false;
-  if (input_0 > 10000) {
-    temp2 = true;
-  }
-  if (temp2) {
+  if ((input_0 > 10000)) {
     stream_3(0, (void*)(&input_0));
   }
 }
@@ -76,20 +71,20 @@ static void stream_3(uint8_t arg, void* value) {
       input_0 = *((uint16_t*)value);
       break;
   }
-  input_1 = input_1 + 1;
+  input_1 = (input_1 + 1);
   stream_4(0, (void*)(&input_1));
 }
 
 static void stream_4(uint8_t arg, void* value) {
-  bool temp3;
+  bool temp2;
   static uint16_t input_0;
   switch (arg) {
     case 0:
       input_0 = *((uint16_t*)value);
       break;
   }
-  temp3 = (input_0) % 2 == 0;
-  stream_5(0, (void*)(&temp3));
+  temp2 = (input_0) % 2 == 0;
+  stream_5(0, (void*)(&temp2));
 }
 
 static void stream_5(uint8_t arg, void* value) {
