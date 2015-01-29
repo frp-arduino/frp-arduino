@@ -17,56 +17,84 @@
 
 module Arduino.DSL
     (
-    -- * Core language
-      Stream
-    , Expression
+    -- * Core
+      Action
+    , Stream
     , Output
+    , LLI
     , compileProgram
     , def
     , (=:)
-    , pack2Output
-    , pack6Output
     , foo
-    -- ** Types
+
+    -- * Expressions
+    , Expression
+
+    -- ** Bits
     , DAG.Bit
-    , DAG.Byte
-    , DAG.Word
-    -- ** Stream operations
-    , (~>)
-    , mapS
-    , mapSMany
-    , mapS2
-    , delay
-    , filterS
-    , foldpS
-    , flattenS
-    -- ** Expression operations
-    , isEven
-    , if_
-    , flipBit
-    , greater
-    , boolToBit
-    , isHigh
-    , bitLow
     , bitHigh
+    , bitLow
+    , flipBit
+    , isHigh
+    , boolToBit
+
+    -- ** Bytes
+    , DAG.Byte
+
+    -- ** Words
+    , DAG.Word
+    , isEven
+    , greater
+
+    -- ** Byte arrays
     , formatString
     , formatNumber
-    -- *** Tuples
+
+    -- ** Tuples
     , pack2
     , pack6
     , unpack2
     , unpack6
-    -- ** LLI
+    , pack2Output
+    , pack6Output
+
+    -- ** Conditionals
+    , if_
+
+    -- * Streams
+
+    -- ** Mapping
+    , mapS
+    , mapSMany
+    , mapS2
+
+    -- ** Filtering
+    , filterS
+
+    -- ** Folding
+    , foldpS
+
+    -- ** Flattering
+    , flattenS
+
+    -- ** Delaying
+    , delay
+
+    -- ** Syntactic sugar
+    , (~>)
+
+    -- * Low Level Instructions (LLI)
+    -- | The glue between streams and harware.
     , createOutput
     , createInput
     , setBit
     , clearBit
+    , writeBit
     , writeByte
     , writeWord
     , readBit
     , readWord
     , waitBitSet
-    , writeBit
     , byteConstant
     , wordConstant
     , end
@@ -161,6 +189,7 @@ mapS fn stream = Stream $ do
     where
         expression = unExpression $ fn $ Expression $ DAG.Input 0
 
+-- | Contrast with 'flattenS'.
 mapSMany :: (Expression a -> [Expression b]) -> Stream a -> Stream b
 mapSMany fn stream = Stream $ do
     streamName <- unStream stream
@@ -183,6 +212,7 @@ mapS2 fn left right = Stream $ do
         expression = unExpression $ fn (Expression $ DAG.Input 0)
                                        (Expression $ DAG.Input 1)
 
+-- | Needs a tuple created with 'pack2'.
 delay :: Stream (a, DAG.Word) -> Stream a
 delay stream = Stream $ do
     streamName <- unStream stream
@@ -215,6 +245,7 @@ foldpS fn startValue stream = Stream $ do
                                        (Expression $ DAG.Input 1)
         startExpression = unExpression startValue
 
+-- | Contrast with 'mapSMany'.
 flattenS :: Stream [a] -> Stream a
 flattenS stream = Stream $ do
     streamName <- unStream stream
