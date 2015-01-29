@@ -44,7 +44,7 @@ output rs d4 d5 d6 d7 enable =
                                                   , pack2 (bitLow, delay)
                                                   ])
                            ~> delay
-    in pack6Output rs d7 d6 d5 d4 pulse
+    in output6 rs d7 d6 d5 d4 pulse
 
 init :: [Expression Command]
 init =

@@ -18,15 +18,33 @@
 module Arduino.Uno
     ( module Arduino.DSL
     , module Arduino.Library
-    -- * Uno outputs and streams
-    , module Arduino.Uno
+    -- * GPIO
+    , GPIO()
+    , digitalOutput
+    , digitalRead
+    , pin3
+    , pin4
+    , pin5
+    , pin6
+    , pin7
+    , pin8
+    , pin10
+    , pin11
+    , pin12
+    , pin13
+    -- * UART
+    , uart
+    -- * Clock
+    -- | Uses TCNT1 on the Uno to make things happend at specific time
+    -- intervals.
+    , timerDelta
+    , every
+    , clock
     ) where
 
 import Arduino.DSL
 import Arduino.Library
 import Data.Bits (shiftR, (.&.))
-
--- For mappings, see http://arduino.cc/en/Hacking/PinMapping168
 
 data GPIO = GPIO
     { name              :: String
@@ -36,49 +54,37 @@ data GPIO = GPIO
     , bitName           :: String
     }
 
-pin3GPIO = GPIO "pin3" "DDRD" "PORTD" "PIND" "PD3"
-pin4GPIO = GPIO "pin4" "DDRD" "PORTD" "PIND" "PD4"
-pin5GPIO = GPIO "pin5" "DDRD" "PORTD" "PIND" "PD5"
-pin6GPIO = GPIO "pin6" "DDRD" "PORTD" "PIND" "PD6"
-pin7GPIO = GPIO "pin7" "DDRD" "PORTD" "PIND" "PD7"
-pin8GPIO = GPIO "pin8" "DDRB" "PORTB" "PINB" "PB0"
-pin10GPIO = GPIO "pin10" "DDRB" "PORTB" "PINB" "PB2"
-pin11GPIO = GPIO "pin11" "DDRB" "PORTB" "PINB" "PB3"
-pin12GPIO = GPIO "pin12" "DDRB" "PORTB" "PINB" "PB4"
-pin13GPIO = GPIO "pin13" "DDRB" "PORTB" "PINB" "PB5"
+-- For mappings, see http://arduino.cc/en/Hacking/PinMapping168
 
-pin3 :: Output Bit
-pin3 = gpioOutput pin3GPIO
+pin3 :: GPIO
+pin3 = GPIO "pin3" "DDRD" "PORTD" "PIND" "PD3"
 
-pin4 :: Output Bit
-pin4 = gpioOutput pin4GPIO
+pin4 :: GPIO
+pin4 = GPIO "pin4" "DDRD" "PORTD" "PIND" "PD4"
 
-pin5 :: Output Bit
-pin5 = gpioOutput pin5GPIO
+pin5 :: GPIO
+pin5 = GPIO "pin5" "DDRD" "PORTD" "PIND" "PD5"
 
-pin6 :: Output Bit
-pin6 = gpioOutput pin6GPIO
+pin6 :: GPIO
+pin6 = GPIO "pin6" "DDRD" "PORTD" "PIND" "PD6"
 
-pin7 :: Output Bit
-pin7 = gpioOutput pin7GPIO
+pin7 :: GPIO
+pin7 = GPIO "pin7" "DDRD" "PORTD" "PIND" "PD7"
 
-pin8 :: Output Bit
-pin8 = gpioOutput pin8GPIO
+pin8 :: GPIO
+pin8 = GPIO "pin8" "DDRB" "PORTB" "PINB" "PB0"
 
-pin13 :: Output Bit
-pin13 = gpioOutput pin13GPIO
+pin10 :: GPIO
+pin10 = GPIO "pin10" "DDRB" "PORTB" "PINB" "PB2"
 
-pin12 :: Output Bit
-pin12 = gpioOutput pin12GPIO
+pin11 :: GPIO
+pin11 = GPIO "pin11" "DDRB" "PORTB" "PINB" "PB3"
 
-pin11 :: Output Bit
-pin11 = gpioOutput pin11GPIO
+pin12 :: GPIO
+pin12 = GPIO "pin12" "DDRB" "PORTB" "PINB" "PB4"
 
-pin10 :: Output Bit
-pin10 = gpioOutput pin10GPIO
-
-pin12in :: Stream Bit
-pin12in = gpioInput pin12GPIO
+pin13 :: GPIO
+pin13 = GPIO "pin13" "DDRB" "PORTB" "PINB" "PB5"
 
 clock :: Stream Word
 clock = every 10000
@@ -112,8 +118,8 @@ uart =
          writeByte "UDR0" byte $
          end)
 
-gpioOutput :: GPIO -> Output Bit
-gpioOutput gpio =
+digitalOutput :: GPIO -> Output Bit
+digitalOutput gpio =
     createOutput
         (name gpio)
         (setBit (directionRegister gpio) (bitName gpio) $
@@ -122,8 +128,8 @@ gpioOutput gpio =
          writeBit (portRegister gpio) (bitName gpio) bit $
          end)
 
-gpioInput :: GPIO -> Stream Bit
-gpioInput gpio = createInput
+digitalRead :: GPIO -> Stream Bit
+digitalRead gpio = createInput
     (name gpio)
     (clearBit (directionRegister gpio) (bitName gpio) $
      setBit (portRegister gpio) (bitName gpio) $

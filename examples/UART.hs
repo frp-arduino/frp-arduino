@@ -17,7 +17,7 @@ import Arduino.Uno
 
 main = compileProgram $ do
 
-    pin13 =: clock ~> toggle
+    digitalOutput pin13 =: clock ~> toggle
 
     uart =: timerDelta ~> mapSMany formatDelta ~> flattenS
 

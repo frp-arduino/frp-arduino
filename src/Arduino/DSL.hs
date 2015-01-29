@@ -55,8 +55,8 @@ module Arduino.DSL
     , pack6
     , unpack2
     , unpack6
-    , pack2Output
-    , pack6Output
+    , output2
+    , output6
 
     -- ** Conditionals
     , if_
@@ -149,23 +149,23 @@ foo :: Output a -> (Stream b -> Stream a) -> Output b
 foo output fn = Output $ \stream -> do
     output =: fn stream
 
-pack2Output :: Output a1
-            -> Output a2
-            -> Output (a1, a2)
-pack2Output output1 output2 =
+output2 :: Output a1
+        -> Output a2
+        -> Output (a1, a2)
+output2 output1 output2 =
     Output $ \stream -> do
         x <- def stream
         output1 =: x ~> mapS (\x -> let (a, _) = unpack2 x in a)
         output2 =: x ~> mapS (\x -> let (_, a) = unpack2 x in a)
 
-pack6Output :: Output a1
-            -> Output a2
-            -> Output a3
-            -> Output a4
-            -> Output a5
-            -> Output a6
-            -> Output (a1, a2, a3, a4, a5, a6)
-pack6Output output1 output2 output3 output4 output5 output6 =
+output6 :: Output a1
+        -> Output a2
+        -> Output a3
+        -> Output a4
+        -> Output a5
+        -> Output a6
+        -> Output (a1, a2, a3, a4, a5, a6)
+output6 output1 output2 output3 output4 output5 output6 =
     Output $ \stream -> do
         x <- def stream
         output1 =: x ~> mapS (\x -> let (a, _, _, _, _, _) = unpack6 x in a)
@@ -181,7 +181,7 @@ pack6Output output1 output2 output3 output4 output5 output6 =
     let outputStream = fn (Stream (return streamName))
     unStream $ outputStream
 
--- | Similar to map in Haskell. "S" is for stream.
+-- | Similar to map in Haskell. \"S\" is for stream.
 mapS :: (Expression a -> Expression b) -> Stream a -> Stream b
 mapS fn stream = Stream $ do
     streamName <- unStream stream
@@ -232,9 +232,10 @@ filterS fn stream = Stream $ do
         filterTransform = DAG.Filter expression
         expression = unExpression $ fn $ Expression $ DAG.Input 0
 
--- | Similar to fold in Haskell. "S" is for stream.
--- Inspired by http://elm-lang.org/
--- http://package.elm-lang.org/packages/elm-lang/core/1.1.0/Signal#foldp
+-- | Similar to fold in Haskell. \"S\" is for stream.
+--
+-- Inspired by <http://elm-lang.org/ Elm's>
+-- <http://package.elm-lang.org/packages/elm-lang/core/1.1.0/Signal#foldp foldp>.
 foldpS :: (Expression a -> Expression b -> Expression b)
        -> Expression b
        -> Stream a

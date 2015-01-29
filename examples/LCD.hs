@@ -18,16 +18,16 @@ import qualified Arduino.Library.LCD as LCD
 
 main = compileProgram $ do
 
-    let rs     = pin3
-    let d4     = pin5
-    let d5     = pin6
-    let d6     = pin7
-    let d7     = pin8
-    let enable = pin4
+    let rs     = digitalOutput pin3
+    let d4     = digitalOutput pin5
+    let d5     = digitalOutput pin6
+    let d6     = digitalOutput pin7
+    let d7     = digitalOutput pin8
+    let enable = digitalOutput pin4
 
     tick <- def clock
 
-    pin13 =: tick ~> toggle
+    digitalOutput pin13 =: tick ~> toggle
 
     LCD.output rs d4 d5 d6 d7 enable =: tick ~> mapSMany (\_ ->
         LCD.init ++ LCD.text "FRP Arduino :)")

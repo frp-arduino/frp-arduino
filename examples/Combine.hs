@@ -17,10 +17,10 @@ import Arduino.Uno
 
 main = compileProgram $ do
 
-    let buttonPressStream = pin12in
-    let greenLed          = pin13
-    let redLed1           = pin11
-    let redLed2           = pin10
+    let buttonPressStream = digitalRead pin12
+    let greenLed          = digitalOutput pin13
+    let redLed1           = digitalOutput pin11
+    let redLed2           = digitalOutput pin10
 
     blinkStream <- def $ clock ~> toggle
 

@@ -17,7 +17,9 @@ import Arduino.Uno
 
 main = compileProgram $ do
 
-    pack2Output pin12 pin13 =: every 5000 ~> flip2TupleStream
+    let doubleOutput = output2 (digitalOutput pin12) (digitalOutput pin13)
+
+    doubleOutput =: every 5000 ~> flip2TupleStream
 
 flip2TupleStream :: Stream a -> Stream (Bit, Bit)
 flip2TupleStream = foldpS (\_ -> flip2Tuple) (pack2 (bitLow, bitHigh))
