@@ -8,13 +8,11 @@
   * [Compiles to C](#compiles-to-c)
 * [Examples](#examples)
   * [Running the examples](#running-the-examples)
-  * [Example: Blinking a led](#example-blinking-a-led)
-  * [Example: Blinking two leds](#example-blinking-two-leds)
+  * [Example: Blinking led](#example-blinking-led)
+  * [Example: Blinking pair of leds](#example-blinking-pair-of-leds)
+  * [Example: Writing bytes on UART](#example-writing-bytes-on-uart)
+  * [Example: Displaying text on LCD](#example-displaying-text-on-lcd)
 * [API](#api)
-  * [Actions](#actions)
-  * [Stream operations](#stream-operations)
-  * [Expression operators](#expression-operators)
-  * [Uno outputs and streams](#uno-outputs-and-streams)
 * [Contributing](#contributing)
 * [Resources](#resources)
 * [License](#license)
@@ -64,8 +62,8 @@ assigning streams to outputs.
 #### Transforming
 
 The most common thing we do with streams is to transform the values in some
-way. This operation is called map ([`mapS`](#api-mapS)). Let's say we have a stream of
-numbers:
+way. This operation is called map ([`mapS`](http://hackage.haskell.org/package/frp-arduino/docs/Arduino-DSL.html#v:mapS)). Let's say we have a
+stream of numbers:
 
 ![A stream of numbers.](doc/number-stream.png)
 
@@ -81,7 +79,7 @@ Mapping is always a one-to-one conversion.
 #### Keeping state
 
 Streams can also be used to keep track of state. We achieve that with the fold
-([`foldpS`](#api-foldpS)) operation.
+([`foldpS`](http://hackage.haskell.org/package/frp-arduino/docs/Arduino-DSL.html#v:foldpS)) operation.
 
 A fold is like a map where we also have access to a state and the output is the
 new state.
@@ -105,7 +103,7 @@ along.
 #### Filtering
 
 Sometimes we would like to discard values from a stream. We do that with the
-filter ([`filterS`](#api-filterS)) operation.
+filter ([`filterS`](http://hackage.haskell.org/package/frp-arduino/docs/Arduino-DSL.html#v:filterS)) operation.
 
 We can for example keep all even numbers in a stream:
 
@@ -177,7 +175,7 @@ The arduino-core package depends on the following packages:
 * avr-libc
 * avrdude
 
-### Example: Blinking a led
+### Example: Blinking led
 
 <p align="center">
   <a href="http://youtu.be/UdIXmmp-6tw">
@@ -190,12 +188,14 @@ import Arduino.Uno
 
 main = compileProgram $ do
 
-    pin13 =: clock ~> toggle
+    digitalOutput pin13 =: clock ~> toggle
 ```
 
 * Source code: [examples/Blink.hs](examples/Blink.hs)
 * Generated C code (no need to understand this): [examples/Blink.c](examples/Blink.c)
 * Compile and upload command: `./make Blink upload`
+
+This is the hello world of Arduino programs.
 
 Lets examine this example line by line:
 
@@ -210,23 +210,23 @@ main = compileProgram $ do
 ```
 
 The `main` function is the standard `main` function in Haskell. The
-[`compileProgram`](#api-compileProgram) function has the following type:
+[`compileProgram`](http://hackage.haskell.org/package/frp-arduino/docs/Arduino-DSL.html#v:compileProgram) function has the following type:
 
 ```haskell
 compileProgram :: Action a -> IO ()
 ```
 
 That means that we can define a set of actions in the do-block that we pass to
-[`compileProgram`](#api-compileProgram). It takes those actions, builds an internal representation
-of the program, and then generates C code and writes that to a file.
+`compileProgram`. It takes those actions, builds an internal representation of
+the program, and then generates C code and writes that to a file.
 
 So what action is defined by the last line in the example?
 
 ```haskell
-pin13 =: clock ~> toggle
+digitalOutput pin13 =: clock ~> toggle
 ```
 
-Let's look at the type for the [`=:`](#api--61-:) operator:
+Let's look at the type for the [`=:`](http://hackage.haskell.org/package/frp-arduino/docs/Arduino-DSL.html#v:-61-:) operator:
 
 ```haskell
 (=:) :: Output a -> Stream a -> Action ()
@@ -235,14 +235,17 @@ Let's look at the type for the [`=:`](#api--61-:) operator:
 It takes an output of a specific type and connects it to a stream of values of
 the same type.
 
-The type of [`pin13`](#api-pin13) reveals that it accepts booleans:
+The types of [`digitalOutput`](http://hackage.haskell.org/package/frp-arduino/docs/Arduino-Uno.html#v:digitalOutput) and [`pin13`](http://hackage.haskell.org/package/frp-arduino/docs/Arduino-Uno.html#v:pin13)
+reveal that we have an output for bits:
 
 ```haskell
-pin13 :: Output Bool
+digitalOutput :: GPIO -> Output Bit
+
+pin13 :: GPIO
 ```
 
 That means that the stream we define on the right hand side has to be a stream
-of booleans. The stream is created with the following expression:
+of bits. The stream is created with the following expression:
 
 ```haskell
 clock ~> toggle
@@ -251,30 +254,29 @@ clock ~> toggle
 Let's look at the types of the individual components:
 
 ```haskell
-clock :: Stream Int
+clock :: Stream Word
 
 (~>) :: Stream a -> (Stream a -> Stream b) -> Stream b
 
-toggle :: Stream Int -> Stream Bool
+toggle :: Stream Word -> Stream Bit
 ```
 
-[`clock`](#api-clock) is a built in stream that produces incrementing integers at a given
-time interval.
+[`clock`](http://hackage.haskell.org/package/frp-arduino/docs/Arduino-Uno.html#v:clock) is a built in stream that produces incrementing
+integers at a given time interval.
 
-[`toggle`](#api-toggle) is a function that converts a stream of integers to a stream of
-booleans by mapping the [`isEven`](#api-isEven) function: Even integers are converted to
-true and odd integers are converted to false.
+[`toggle`](http://hackage.haskell.org/package/frp-arduino/docs/Arduino-Library.html#v:toggle) is a function that converts a stream of words to a
+stream of bits by mapping the [`isEven`](http://hackage.haskell.org/package/frp-arduino/docs/Arduino-DSL.html#v:isEven) function: Even words are
+converted to 1 and odd words are converted to 0.
 
-[`~>`](#api--126--62-) is an operator that takes a stream on the left hand side and a function on
-the right hand side. The result is a stream that we get by applying the
-function to the stream on the left hand side.
+[`~>`](http://hackage.haskell.org/package/frp-arduino/docs/Arduino-DSL.html#v:-126--62-) is an operator that takes a stream on the left hand side
+and a function on the right hand side. The result is a stream that we get by
+applying the function to the stream on the left hand side.
 
-The resulting stream in the example is a stream of booleans that toggles
-between true and false values at a specific time interval. When we connect that
-stream to the pin where the led is connect, the led will blink at a specific
-time interval.
+The resulting stream in the example is a stream of bits that toggles between 1
+and 0 values at a specific time interval. When we connect that stream to the
+pin where the led is connect, the led will blink at a specific time interval.
 
-### Example: Blinking two leds
+### Example: Blinking pair of leds
 
 <p align="center">
   <a href="http://youtu.be/dWl3nfAJy08">
@@ -287,98 +289,83 @@ import Arduino.Uno
 
 main = compileProgram $ do
 
-    toggled <- def $ clock ~> toggle
+    let doubleOutput = output2 (digitalOutput pin12) (digitalOutput pin13)
 
-    pin13 =: toggled
+    doubleOutput =: every 5000 ~> flip2TupleStream
 
-    pin12 =: toggled ~> invert
+flip2TupleStream :: Stream a -> Stream (Bit, Bit)
+flip2TupleStream = foldpS (\_ -> flip2Tuple) (pack2 (bitLow, bitHigh))
+    where
+        flip2Tuple :: Expression (a, b) -> Expression (b, a)
+        flip2Tuple tuple = let (aValue, bValue) = unpack2 tuple
+                           in pack2 (bValue, aValue)
 ```
 
 * Source code: [examples/DoubleBlink.hs](examples/DoubleBlink.hs)
 * Generated C code (no need to understand this): [examples/DoubleBlink.c](examples/DoubleBlink.c)
 * Compile and upload command: `./make DoubleBlink upload`
 
+This example shows how to group two values together and output them to two
+different outputs.
+
+### Example: Writing bytes on UART
+
+```haskell
+import Arduino.Uno
+
+main = compileProgram $ do
+
+    digitalOutput pin13 =: clock ~> toggle
+
+    uart =: timerDelta ~> mapSMany formatDelta ~> flattenS
+
+formatDelta :: Expression Word -> [Expression [Byte]]
+formatDelta delta = [ formatString "delta: "
+                    , formatNumber delta
+                    , formatString "\r\n"
+                    ]
+```
+
+* Source code: [examples/UART.hs](examples/UART.hs)
+* Generated C code (no need to understand this): [examples/UART.c](examples/UART.c)
+* Compile and upload command: `./make UART upload`
+
+This example shows how to write bytes to the UART output.
+
+### Example: Displaying text on LCD
+
+```haskell
+import Arduino.Uno
+import qualified Arduino.Library.LCD as LCD
+
+main = compileProgram $ do
+
+    let rs     = digitalOutput pin3
+    let d4     = digitalOutput pin5
+    let d5     = digitalOutput pin6
+    let d6     = digitalOutput pin7
+    let d7     = digitalOutput pin8
+    let enable = digitalOutput pin4
+
+    tick <- def clock
+
+    digitalOutput pin13 =: tick ~> toggle
+
+    LCD.output rs d4 d5 d6 d7 enable =: tick ~> mapSMany (\_ ->
+        LCD.init ++ LCD.text "FRP Arduino :)")
+```
+
+* Source code: [examples/LCD.hs](examples/LCD.hs)
+* Generated C code (no need to understand this): [examples/LCD.c](examples/LCD.c)
+* Compile and upload command: `./make LCD upload`
+
+This example shows how to display text on an LCD display.
+
 ## API
 
-### Actions
+The API documentation for the latest version is hosted on Hackage:
 
-<a name="api-compileProgram"></a>**compileProgram**
-
-```haskell
-compileProgram :: Action a -> IO ()
-```
-
-<a name="api-(-61-:)"></a>**(=:)**
-
-```haskell
-(=:) :: Output a -> Stream a -> Action ()
-```
-
-### Stream operations
-
-<a name="api-(-126--62-)"></a>**(~>)**
-
-```haskell
-(~>) :: Stream a -> (Stream a -> Stream b) -> Stream b
-```
-
-<a name="api-mapS"></a>**mapS**
-
-```haskell
-mapS :: (Expression a -> Expression b) -> Stream a -> Stream b
-```
-
-Similar to map in Haskell. "S" is for stream.
-
-<a name="api-foldpS"></a>**foldpS**
-
-```haskell
-foldpS :: (Expression a -> Expression b -> Expression b)
-```
-
-Similar to fold in Haskell. "S" is for stream.
-Inspired by [Elm's](http://elm-lang.org/)
-[foldp](http://package.elm-lang.org/packages/elm-lang/core/1.1.0/Signal#foldp).
-
-<a name="api-filterS"></a>**filterS**
-
-```haskell
-filterS :: (Expression a -> Expression Bool) -> Stream a -> Stream a
-```
-
-### Expression operators
-
-<a name="api-toggle"></a>**toggle**
-
-```haskell
-toggle :: Stream Word -> Stream Bit
-```
-
-<a name="api-isEven"></a>**isEven**
-
-```haskell
-isEven :: Expression DAG.Word -> Expression Bool
-```
-
-### Uno outputs and streams
-
-<a name="api-pin12"></a>**pin12**
-
-```haskell
-pin12 :: Output Bit
-```
-
-<a name="api-pin13"></a>**pin13**
-
-```haskell
-pin13 :: Output Bit
-```
-
-<a name="api-clock"></a>**clock**
-
-```haskell
-clock :: Stream Word
-```
+http://hackage.haskell.org/package/frp-arduino
 
 ## Contributing
 

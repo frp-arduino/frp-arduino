@@ -33,9 +33,32 @@ data Stream = Stream
     , outputs :: [(Int, Identifier)]
     }
 
-data Body = Transform Expression
+data Body = Map Expression
+          | MapMany [Expression]
+          | Fold Expression Expression
+          | Filter Expression
+          | Flatten Expression
+          | DelayMicroseconds Expression Expression
           | Driver LLI LLI
           deriving (Show)
+
+data Expression = Input Int
+                | BitConstant Bit
+                | ByteConstant Byte
+                | WordConstant Word
+                | ListConstant [Expression]
+                | TupleConstant [Expression]
+                | BoolToBit Expression
+                | NumberToByteArray Expression
+                | TupleValue Int Expression
+                | Not Expression
+                | Even Expression
+                | IsHigh Expression
+                | Add Expression Expression
+                | Sub Expression Expression
+                | Greater Expression Expression
+                | If Expression Expression Expression
+                deriving (Show)
 
 data LLI = WriteBit String String LLI LLI
          | WriteByte String LLI LLI
@@ -56,32 +79,6 @@ data Bit = High
 type Byte = W.Word8
 
 type Word = W.Word16
-
-data Expression = Input Int
-                | Many [Expression]
-                -- Stream transformations
-                | Fold    Expression Expression
-                | Filter  Expression
-                | Flatten Expression
-                -- Expression transformations
-                | If Expression Expression Expression
-                -- Unary operations
-                | Not    Expression
-                | Even   Expression
-                | IsHigh Expression
-                -- Binary operations
-                | Add     Expression Expression
-                | Sub     Expression Expression
-                | Greater Expression Expression
-                -- Conversion
-                | BoolToBit         Expression
-                | NumberToByteArray Expression
-                -- Constants
-                | BitConstant Bit
-                | ByteConstant Byte
-                | WordConstant Word
-                | ListConstant [Expression]
-                deriving (Show)
 
 type Identifier = String
 

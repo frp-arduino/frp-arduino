@@ -14,18 +14,20 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import Arduino.Uno
+import qualified Arduino.Library.LCD as LCD
 
 main = compileProgram $ do
 
-    let buttonPressStream = digitalRead pin12
-    let greenLed          = digitalOutput pin13
-    let redLed1           = digitalOutput pin11
-    let redLed2           = digitalOutput pin10
+    let rs     = digitalOutput pin3
+    let d4     = digitalOutput pin5
+    let d5     = digitalOutput pin6
+    let d6     = digitalOutput pin7
+    let d7     = digitalOutput pin8
+    let enable = digitalOutput pin4
 
-    blinkStream <- def $ clock ~> toggle
+    tick <- def clock
 
-    greenLed =: buttonPressStream
+    digitalOutput pin13 =: tick ~> toggle
 
-    redLed1 =: keepWhen buttonPressStream bitLow blinkStream
-
-    redLed2 =: keepWhen buttonPressStream bitLow (invert blinkStream)
+    LCD.output rs d4 d5 d6 d7 enable =: tick ~> mapSMany (\_ ->
+        LCD.init ++ LCD.text "FRP Arduino :)")

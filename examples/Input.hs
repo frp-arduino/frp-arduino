@@ -17,6 +17,6 @@ import Arduino.Uno
 
 main = compileProgram $ do
 
-    pin13 =: pin12in
+    digitalOutput pin13 =: digitalRead pin12
 
-    pin11 =: clock ~> toggle
+    digitalOutput pin11 =: clock ~> toggle

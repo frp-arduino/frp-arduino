@@ -17,11 +17,12 @@ import Arduino.Uno
 
 main = compileProgram $ do
 
-    pin13 =: clock ~> toggle
+    digitalOutput pin13 =: clock ~> toggle
 
-    uart =: timerDelta ~> mapS formatDelta ~> flattenS
+    uart =: timerDelta ~> mapSMany formatDelta ~> flattenS
 
-formatDelta :: Expression Word -> Expression [Byte]
-formatDelta delta = formatString "delta: " .+.
-                    formatNumber delta .+.
-                    formatString "\r\n"
+formatDelta :: Expression Word -> [Expression [Byte]]
+formatDelta delta = [ formatString "delta: "
+                    , formatNumber delta
+                    , formatString "\r\n"
+                    ]
