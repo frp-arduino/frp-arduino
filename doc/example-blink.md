@@ -17,15 +17,16 @@ main = compileProgram $ do
 ```
 
 The `main` function is the standard `main` function in Haskell. The
-`api:compileProgram` function has the following type:
+`api:Arduino.DSL.compileProgram` function has the following type:
 
 ```haskell
 compileProgram :: Action a -> IO ()
 ```
 
 That means that we can define a set of actions in the do-block that we pass to
-`api:compileProgram`. It takes those actions, builds an internal representation
-of the program, and then generates C code and writes that to a file.
+`api:Arduino.DSL.compileProgram`. It takes those actions, builds an internal
+representation of the program, and then generates C code and writes that to a
+file.
 
 So what action is defined by the last line in the example?
 
@@ -33,7 +34,7 @@ So what action is defined by the last line in the example?
 pin13 =: clock ~> toggle
 ```
 
-Let's look at the type for the `api:=:` operator:
+Let's look at the type for the `api:Arduino.DSL.=:` operator:
 
 ```haskell
 (=:) :: Output a -> Stream a -> Action ()
@@ -42,7 +43,7 @@ Let's look at the type for the `api:=:` operator:
 It takes an output of a specific type and connects it to a stream of values of
 the same type.
 
-The type of `api:pin13` reveals that it accepts booleans:
+The type of `api:Arduino.Uno.pin13` reveals that it accepts booleans:
 
 ```haskell
 pin13 :: Output Bool
@@ -65,16 +66,16 @@ clock :: Stream Int
 toggle :: Stream Int -> Stream Bool
 ```
 
-`api:clock` is a built in stream that produces incrementing integers at a given
-time interval.
+`api:Arduino.Uno.clock` is a built in stream that produces incrementing
+integers at a given time interval.
 
-`api:toggle` is a function that converts a stream of integers to a stream of
-booleans by mapping the `api:isEven` function: Even integers are converted to
-true and odd integers are converted to false.
+`api:Arduino.Library.toggle` is a function that converts a stream of integers
+to a stream of booleans by mapping the `api:Arduino.DSL.isEven` function: Even
+integers are converted to true and odd integers are converted to false.
 
-`api:~>` is an operator that takes a stream on the left hand side and a function on
-the right hand side. The result is a stream that we get by applying the
-function to the stream on the left hand side.
+`api:Arduino.DSL.~>` is an operator that takes a stream on the left hand side
+and a function on the right hand side. The result is a stream that we get by
+applying the function to the stream on the left hand side.
 
 The resulting stream in the example is a stream of booleans that toggles
 between true and false values at a specific time interval. When we connect that

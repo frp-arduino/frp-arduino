@@ -22,8 +22,8 @@ assigning streams to outputs.
 ## Transforming
 
 The most common thing we do with streams is to transform the values in some
-way. This operation is called map (`api:mapS`). Let's say we have a stream of
-numbers:
+way. This operation is called map (`api:Arduino.DSL.mapS`). Let's say we have a
+stream of numbers:
 
 ![A stream of numbers.](doc/number-stream.png)
 
@@ -39,7 +39,7 @@ Mapping is always a one-to-one conversion.
 ## Keeping state
 
 Streams can also be used to keep track of state. We achieve that with the fold
-(`api:foldpS`) operation.
+(`api:Arduino.DSL.foldpS`) operation.
 
 A fold is like a map where we also have access to a state and the output is the
 new state.
@@ -63,7 +63,7 @@ along.
 ## Filtering
 
 Sometimes we would like to discard values from a stream. We do that with the
-filter (`api:filterS`) operation.
+filter (`api:Arduino.DSL.filterS`) operation.
 
 We can for example keep all even numbers in a stream:
 

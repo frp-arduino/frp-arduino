@@ -19,8 +19,6 @@ class Document(object):
                     self._read_example(line.split(":", 1)[1].strip())
                 elif line.startswith("INCLUDE_VIDEO:"):
                     self._embed_youtube_video(line.split(":", 1)[1].strip())
-                elif line.startswith("INCLUDE_API:"):
-                    self._gen_api_doc(line.split(":", 1)[1].strip())
                 elif line.startswith("# "):
                     self._gen_toc(line[2:], depth)
                 elif line.startswith("## "):
@@ -36,8 +34,11 @@ class Document(object):
 
     def _replace_api_refs(self, line):
         def replace(m):
-            name = m.group(1)
-            return "[`%s`](#%s)" % (name, sanitize(name))
+            expression = m.group(1)
+            parts = expression.split(".")
+            name = parts[-1]
+            html_file = "-".join(parts[:-1]) + ".html#" + sanitize(name)
+            return "[`%s`](http://hackage.haskell.org/package/frp-arduino/docs/%s)" % (name, html_file)
         return re.sub(r"`api:(.+?)`", replace, line)
 
     def _read_example(self, name):
@@ -68,21 +69,6 @@ class Document(object):
             "</p>\n",
         ])
 
-    def _gen_api_doc(self, name):
-        matches = 0
-        for (root, dirs, files) in os.walk(os.path.join(ROOT_DIR, "src")):
-            for file_ in files:
-                with open(os.path.join(root, file_)) as f:
-                    for line in f:
-                        if line.startswith("%s :: " % name):
-                            self._body += "<a name=\"%s\"></a>**%s**\n" % (sanitize(name), name)
-                            self._body += "\n"
-                            self._body += "```haskell\n"
-                            self._body += line
-                            self._body += "```\n"
-                            matches += 1
-        assert matches == 1, "api for %r" % name
-
     def write(self):
         with open(self._path, "w") as f:
             f.write(self._toc + self._body)
@@ -91,7 +77,7 @@ def slug(title_line):
     return title_line.strip().lower().replace(" ", "-").replace(":", "")
 
 def sanitize(name):
-    return "api-" + name.replace("=", "-61-").replace("~", "-126-").replace(">", "-62-")
+    return "v:" + name.replace("=", "-61-").replace("~", "-126-").replace(">", "-62-")
 
 def generate(path, files):
     def process(doc, files, depth):
