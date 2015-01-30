@@ -25,7 +25,7 @@ module Arduino.DSL
     , compileProgram
     , def
     , (=:)
-    , foo
+    , prefixOutput
 
     -- * Expressions
     , Expression
@@ -145,8 +145,8 @@ def stream = do
 
 infixr 0 =:
 
-foo :: Output a -> (Stream b -> Stream a) -> Output b
-foo output fn = Output $ \stream -> do
+prefixOutput :: (Stream b -> Stream a) -> Output a -> Output b
+prefixOutput fn output = Output $ \stream -> do
     output =: fn stream
 
 output2 :: Output a1

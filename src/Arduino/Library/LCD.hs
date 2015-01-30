@@ -38,13 +38,14 @@ output :: Output Bit
        -> Output Bit
        -> Output Bit
        -> Output Command
-output rs d4 d5 d6 d7 enable =
-    let pulse =  foo enable $ \wordStream -> wordStream
-                           ~> mapSMany (\delay -> [ pack2 (bitHigh, 1)
-                                                  , pack2 (bitLow, delay)
-                                                  ])
-                           ~> delay
-    in output6 rs d7 d6 d5 d4 pulse
+output rs d4 d5 d6 d7 enable = output6 rs d7 d6 d5 d4 (pulse enable)
+    where
+        pulse :: Output Bit -> Output Word
+        pulse = prefixOutput $ \word ->
+            word ~> mapSMany (\delay -> [ pack2 (bitHigh, 1)
+                                        , pack2 (bitLow, delay)
+                                        ])
+                 ~> delay
 
 init :: [Expression Command]
 init =
