@@ -63,11 +63,20 @@ genStreamsCFile streams = do
     line ""
     block "int main(void) {" $ do
         mapM genInit (streamsInTree streams)
+        mapM genInputCall (filter isBootupStream (streamsInTree streams))
         block "while (1) {" $ do
-            mapM genInputCall (filter (null . inputs) (streamsInTree streams))
+            mapM genInputCall (filter isInputStream (streamsInTree streams))
         line "}"
         line "return 0;"
     line "}"
+
+isBootupStream :: Stream -> Bool
+isBootupStream stream = case body stream of
+    Bootup -> True
+    _      -> False
+
+isInputStream :: Stream -> Bool
+isInputStream stream = null (inputs stream) && not (isBootupStream stream)
 
 genCTypes :: Gen ()
 genCTypes = do
@@ -98,7 +107,7 @@ genStreamCFunction streamTypes stream = do
     let declaration = ("static void " ++ name stream ++
                        "(" ++ streamToArgumentList streamTypes stream ++ ")")
     cFunction declaration $ do
-        genStreamInputParsing args
+        genStreamInputParsing stream args
         outputNames <- genStreamBody inputMap (body stream)
         genStreamOutputCalling outputNames stream
         return $ resultType outputNames
@@ -115,10 +124,10 @@ streamToArgumentList streamTypes stream
     | length (inputs stream) < 1 = ""
     | otherwise                  = cTypeStr argIndexCType ++ " arg, void* value"
 
-genStreamInputParsing :: [(String, String, Int)] -> Gen ()
-genStreamInputParsing args
-    | length args == 1 = do
-        let [(name, cType, _)] = args
+genStreamInputParsing :: Stream -> [(String, String, Int)] -> Gen ()
+genStreamInputParsing stream args
+    | length args == 1 || isMerge stream = do
+        let (name, cType, _):_ = args
         header $ cType ++ " " ++ name ++ " = *((" ++ cType ++ "*)value);"
     | length args > 1 = do
         forM_ args $ \(name, cType, _) -> do
@@ -131,6 +140,11 @@ genStreamInputParsing args
         line $ "}"
     | otherwise = do
         return ()
+
+isMerge :: Stream -> Bool
+isMerge stream = case body stream of
+    (Merge _) -> True
+    _         -> False
 
 genStreamBody :: M.Map Int CType -> Body -> Gen [ResultValue]
 genStreamBody inputMap body = case body of
@@ -170,6 +184,10 @@ genStreamBody inputMap body = case body of
         return [ToFlatVariable cExpression cTypeItem]
     (Driver _ bodyLLI) -> do
         fmap (:[]) $ genLLI bodyLLI
+    (Merge expression) -> do
+        fmap (:[]) $ genExpression inputMap False expression
+    Bootup -> do
+        return [Value "0" CBit Literal Nothing]
 
 genExpression :: M.Map Int CType -> Bool -> Expression -> Gen ResultValue
 genExpression inputMap static expression = case expression of

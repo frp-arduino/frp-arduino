@@ -40,6 +40,8 @@ data Body = Map Expression
           | Flatten Expression
           | DelayMicroseconds Expression Expression
           | Driver LLI LLI
+          | Merge Expression
+          | Bootup
           deriving (Show)
 
 data Expression = Input Int
