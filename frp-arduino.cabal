@@ -1,5 +1,5 @@
 name:                frp-arduino
-version:             0.1.0.1
+version:             0.1.0.3
 synopsis:            Arduino programming without the hassle of C.
 homepage:            http://github.com/frp-arduino/frp-arduino
 license:             GPL-3
