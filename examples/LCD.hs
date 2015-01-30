@@ -30,4 +30,4 @@ main = compileProgram $ do
     digitalOutput pin13 =: tick ~> toggle
 
     LCD.output rs d4 d5 d6 d7 enable =: tick ~> mapSMany (\_ ->
-        LCD.text "FRP Arduino :)")
+        LCD.position 0 0 ++ LCD.text "FRP Arduino :)")
