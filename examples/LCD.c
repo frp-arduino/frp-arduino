@@ -31,17 +31,17 @@ static void stream_1(uint8_t arg, void* value);
 
 static void stream_6(uint8_t arg, void* value);
 
-static void stream_2(uint8_t arg, void* value);
-
-static void stream_3(uint8_t arg, void* value);
-
-static void stream_4(uint8_t arg, void* value);
-
 static void stream_7(uint8_t arg, void* value);
 
-static void stream_5(uint8_t arg, void* value);
-
 static void stream_8(uint8_t arg, void* value);
+
+static void stream_2(uint8_t arg, void* value);
+
+static void stream_9(uint8_t arg, void* value);
+
+static void stream_10(uint8_t arg, void* value);
+
+static void stream_3(uint8_t arg, void* value);
 
 static void stream_11(uint8_t arg, void* value);
 
@@ -53,9 +53,9 @@ static void stream_17(uint8_t arg, void* value);
 
 static void stream_19(uint8_t arg, void* value);
 
-static void stream_9(uint8_t arg, void* value);
+static void stream_21(uint8_t arg, void* value);
 
-static void stream_10(uint8_t arg, void* value);
+static void stream_4(uint8_t arg, void* value);
 
 static void stream_12(uint8_t arg, void* value);
 
@@ -67,14 +67,19 @@ static void stream_18(uint8_t arg, void* value);
 
 static void stream_20(uint8_t arg, void* value);
 
-static void stream_21(uint8_t arg, void* value);
-
 static void stream_22(uint8_t arg, void* value);
+
+static void stream_5(uint8_t arg, void* value);
+
+static void stream_23(uint8_t arg, void* value);
+
+static void stream_24(uint8_t arg, void* value);
 
 static void bootup() {
   bool temp0;
   temp0 = 0;
   stream_6(0, (void*)(&temp0));
+  stream_7(0, (void*)(&temp0));
 }
 
 static void input_timer() {
@@ -82,6 +87,7 @@ static void input_timer() {
   temp1 = TCNT1;
   TCNT1 = 0;
   stream_1(0, (void*)(&temp1));
+  stream_8(0, (void*)(&temp1));
 }
 
 static void stream_1(uint8_t arg, void* value) {
@@ -365,20 +371,668 @@ static void stream_6(uint8_t arg, void* value) {
   temp100.value3 = (void*)&temp97;
   temp100.value4 = (void*)&temp98;
   temp100.value5 = (void*)&temp99;
-  stream_8(0, (void*)(&temp9));
-  stream_8(0, (void*)(&temp16));
-  stream_8(0, (void*)(&temp23));
-  stream_8(0, (void*)(&temp30));
-  stream_8(0, (void*)(&temp37));
-  stream_8(0, (void*)(&temp44));
-  stream_8(0, (void*)(&temp51));
-  stream_8(0, (void*)(&temp58));
-  stream_8(0, (void*)(&temp65));
-  stream_8(0, (void*)(&temp72));
-  stream_8(0, (void*)(&temp79));
-  stream_8(0, (void*)(&temp86));
-  stream_8(0, (void*)(&temp93));
-  stream_8(0, (void*)(&temp100));
+  stream_10(0, (void*)(&temp9));
+  stream_10(0, (void*)(&temp16));
+  stream_10(0, (void*)(&temp23));
+  stream_10(0, (void*)(&temp30));
+  stream_10(0, (void*)(&temp37));
+  stream_10(0, (void*)(&temp44));
+  stream_10(0, (void*)(&temp51));
+  stream_10(0, (void*)(&temp58));
+  stream_10(0, (void*)(&temp65));
+  stream_10(0, (void*)(&temp72));
+  stream_10(0, (void*)(&temp79));
+  stream_10(0, (void*)(&temp86));
+  stream_10(0, (void*)(&temp93));
+  stream_10(0, (void*)(&temp100));
+}
+
+static void stream_7(uint8_t arg, void* value) {
+  bool input_0 = *((bool*)value);
+  bool temp101;
+  bool temp102;
+  bool temp103;
+  bool temp104;
+  bool temp105;
+  uint16_t temp106;
+  struct tuple6 temp107;
+  bool temp108;
+  bool temp109;
+  bool temp110;
+  bool temp111;
+  bool temp112;
+  uint16_t temp113;
+  struct tuple6 temp114;
+  bool temp115;
+  bool temp116;
+  bool temp117;
+  bool temp118;
+  bool temp119;
+  uint16_t temp120;
+  struct tuple6 temp121;
+  bool temp122;
+  bool temp123;
+  bool temp124;
+  bool temp125;
+  bool temp126;
+  uint16_t temp127;
+  struct tuple6 temp128;
+  bool temp129;
+  bool temp130;
+  bool temp131;
+  bool temp132;
+  bool temp133;
+  uint16_t temp134;
+  struct tuple6 temp135;
+  bool temp136;
+  bool temp137;
+  bool temp138;
+  bool temp139;
+  bool temp140;
+  uint16_t temp141;
+  struct tuple6 temp142;
+  bool temp143;
+  bool temp144;
+  bool temp145;
+  bool temp146;
+  bool temp147;
+  uint16_t temp148;
+  struct tuple6 temp149;
+  bool temp150;
+  bool temp151;
+  bool temp152;
+  bool temp153;
+  bool temp154;
+  uint16_t temp155;
+  struct tuple6 temp156;
+  bool temp157;
+  bool temp158;
+  bool temp159;
+  bool temp160;
+  bool temp161;
+  uint16_t temp162;
+  struct tuple6 temp163;
+  bool temp164;
+  bool temp165;
+  bool temp166;
+  bool temp167;
+  bool temp168;
+  uint16_t temp169;
+  struct tuple6 temp170;
+  bool temp171;
+  bool temp172;
+  bool temp173;
+  bool temp174;
+  bool temp175;
+  uint16_t temp176;
+  struct tuple6 temp177;
+  bool temp178;
+  bool temp179;
+  bool temp180;
+  bool temp181;
+  bool temp182;
+  uint16_t temp183;
+  struct tuple6 temp184;
+  bool temp185;
+  bool temp186;
+  bool temp187;
+  bool temp188;
+  bool temp189;
+  uint16_t temp190;
+  struct tuple6 temp191;
+  bool temp192;
+  bool temp193;
+  bool temp194;
+  bool temp195;
+  bool temp196;
+  uint16_t temp197;
+  struct tuple6 temp198;
+  bool temp199;
+  bool temp200;
+  bool temp201;
+  bool temp202;
+  bool temp203;
+  uint16_t temp204;
+  struct tuple6 temp205;
+  bool temp206;
+  bool temp207;
+  bool temp208;
+  bool temp209;
+  bool temp210;
+  uint16_t temp211;
+  struct tuple6 temp212;
+  bool temp213;
+  bool temp214;
+  bool temp215;
+  bool temp216;
+  bool temp217;
+  uint16_t temp218;
+  struct tuple6 temp219;
+  bool temp220;
+  bool temp221;
+  bool temp222;
+  bool temp223;
+  bool temp224;
+  uint16_t temp225;
+  struct tuple6 temp226;
+  bool temp227;
+  bool temp228;
+  bool temp229;
+  bool temp230;
+  bool temp231;
+  uint16_t temp232;
+  struct tuple6 temp233;
+  bool temp234;
+  bool temp235;
+  bool temp236;
+  bool temp237;
+  bool temp238;
+  uint16_t temp239;
+  struct tuple6 temp240;
+  bool temp241;
+  bool temp242;
+  bool temp243;
+  bool temp244;
+  bool temp245;
+  uint16_t temp246;
+  struct tuple6 temp247;
+  bool temp248;
+  bool temp249;
+  bool temp250;
+  bool temp251;
+  bool temp252;
+  uint16_t temp253;
+  struct tuple6 temp254;
+  bool temp255;
+  bool temp256;
+  bool temp257;
+  bool temp258;
+  bool temp259;
+  uint16_t temp260;
+  struct tuple6 temp261;
+  bool temp262;
+  bool temp263;
+  bool temp264;
+  bool temp265;
+  bool temp266;
+  uint16_t temp267;
+  struct tuple6 temp268;
+  temp101 = false;
+  temp102 = true;
+  temp103 = false;
+  temp104 = false;
+  temp105 = false;
+  temp106 = 100;
+  temp107.value0 = (void*)&temp101;
+  temp107.value1 = (void*)&temp102;
+  temp107.value2 = (void*)&temp103;
+  temp107.value3 = (void*)&temp104;
+  temp107.value4 = (void*)&temp105;
+  temp107.value5 = (void*)&temp106;
+  temp108 = false;
+  temp109 = false;
+  temp110 = false;
+  temp111 = false;
+  temp112 = false;
+  temp113 = 100;
+  temp114.value0 = (void*)&temp108;
+  temp114.value1 = (void*)&temp109;
+  temp114.value2 = (void*)&temp110;
+  temp114.value3 = (void*)&temp111;
+  temp114.value4 = (void*)&temp112;
+  temp114.value5 = (void*)&temp113;
+  temp115 = true;
+  temp116 = false;
+  temp117 = true;
+  temp118 = false;
+  temp119 = false;
+  temp120 = 100;
+  temp121.value0 = (void*)&temp115;
+  temp121.value1 = (void*)&temp116;
+  temp121.value2 = (void*)&temp117;
+  temp121.value3 = (void*)&temp118;
+  temp121.value4 = (void*)&temp119;
+  temp121.value5 = (void*)&temp120;
+  temp122 = true;
+  temp123 = false;
+  temp124 = true;
+  temp125 = true;
+  temp126 = false;
+  temp127 = 100;
+  temp128.value0 = (void*)&temp122;
+  temp128.value1 = (void*)&temp123;
+  temp128.value2 = (void*)&temp124;
+  temp128.value3 = (void*)&temp125;
+  temp128.value4 = (void*)&temp126;
+  temp128.value5 = (void*)&temp127;
+  temp129 = true;
+  temp130 = false;
+  temp131 = true;
+  temp132 = false;
+  temp133 = true;
+  temp134 = 100;
+  temp135.value0 = (void*)&temp129;
+  temp135.value1 = (void*)&temp130;
+  temp135.value2 = (void*)&temp131;
+  temp135.value3 = (void*)&temp132;
+  temp135.value4 = (void*)&temp133;
+  temp135.value5 = (void*)&temp134;
+  temp136 = true;
+  temp137 = false;
+  temp138 = false;
+  temp139 = true;
+  temp140 = false;
+  temp141 = 100;
+  temp142.value0 = (void*)&temp136;
+  temp142.value1 = (void*)&temp137;
+  temp142.value2 = (void*)&temp138;
+  temp142.value3 = (void*)&temp139;
+  temp142.value4 = (void*)&temp140;
+  temp142.value5 = (void*)&temp141;
+  temp143 = true;
+  temp144 = false;
+  temp145 = true;
+  temp146 = false;
+  temp147 = true;
+  temp148 = 100;
+  temp149.value0 = (void*)&temp143;
+  temp149.value1 = (void*)&temp144;
+  temp149.value2 = (void*)&temp145;
+  temp149.value3 = (void*)&temp146;
+  temp149.value4 = (void*)&temp147;
+  temp149.value5 = (void*)&temp148;
+  temp150 = true;
+  temp151 = false;
+  temp152 = false;
+  temp153 = false;
+  temp154 = false;
+  temp155 = 100;
+  temp156.value0 = (void*)&temp150;
+  temp156.value1 = (void*)&temp151;
+  temp156.value2 = (void*)&temp152;
+  temp156.value3 = (void*)&temp153;
+  temp156.value4 = (void*)&temp154;
+  temp156.value5 = (void*)&temp155;
+  temp157 = true;
+  temp158 = false;
+  temp159 = false;
+  temp160 = true;
+  temp161 = false;
+  temp162 = 100;
+  temp163.value0 = (void*)&temp157;
+  temp163.value1 = (void*)&temp158;
+  temp163.value2 = (void*)&temp159;
+  temp163.value3 = (void*)&temp160;
+  temp163.value4 = (void*)&temp161;
+  temp163.value5 = (void*)&temp162;
+  temp164 = true;
+  temp165 = false;
+  temp166 = false;
+  temp167 = false;
+  temp168 = false;
+  temp169 = 100;
+  temp170.value0 = (void*)&temp164;
+  temp170.value1 = (void*)&temp165;
+  temp170.value2 = (void*)&temp166;
+  temp170.value3 = (void*)&temp167;
+  temp170.value4 = (void*)&temp168;
+  temp170.value5 = (void*)&temp169;
+  temp171 = true;
+  temp172 = false;
+  temp173 = true;
+  temp174 = false;
+  temp175 = false;
+  temp176 = 100;
+  temp177.value0 = (void*)&temp171;
+  temp177.value1 = (void*)&temp172;
+  temp177.value2 = (void*)&temp173;
+  temp177.value3 = (void*)&temp174;
+  temp177.value4 = (void*)&temp175;
+  temp177.value5 = (void*)&temp176;
+  temp178 = true;
+  temp179 = false;
+  temp180 = false;
+  temp181 = false;
+  temp182 = true;
+  temp183 = 100;
+  temp184.value0 = (void*)&temp178;
+  temp184.value1 = (void*)&temp179;
+  temp184.value2 = (void*)&temp180;
+  temp184.value3 = (void*)&temp181;
+  temp184.value4 = (void*)&temp182;
+  temp184.value5 = (void*)&temp183;
+  temp185 = true;
+  temp186 = false;
+  temp187 = true;
+  temp188 = true;
+  temp189 = true;
+  temp190 = 100;
+  temp191.value0 = (void*)&temp185;
+  temp191.value1 = (void*)&temp186;
+  temp191.value2 = (void*)&temp187;
+  temp191.value3 = (void*)&temp188;
+  temp191.value4 = (void*)&temp189;
+  temp191.value5 = (void*)&temp190;
+  temp192 = true;
+  temp193 = false;
+  temp194 = false;
+  temp195 = true;
+  temp196 = false;
+  temp197 = 100;
+  temp198.value0 = (void*)&temp192;
+  temp198.value1 = (void*)&temp193;
+  temp198.value2 = (void*)&temp194;
+  temp198.value3 = (void*)&temp195;
+  temp198.value4 = (void*)&temp196;
+  temp198.value5 = (void*)&temp197;
+  temp199 = true;
+  temp200 = false;
+  temp201 = true;
+  temp202 = true;
+  temp203 = false;
+  temp204 = 100;
+  temp205.value0 = (void*)&temp199;
+  temp205.value1 = (void*)&temp200;
+  temp205.value2 = (void*)&temp201;
+  temp205.value3 = (void*)&temp202;
+  temp205.value4 = (void*)&temp203;
+  temp205.value5 = (void*)&temp204;
+  temp206 = true;
+  temp207 = false;
+  temp208 = true;
+  temp209 = false;
+  temp210 = false;
+  temp211 = 100;
+  temp212.value0 = (void*)&temp206;
+  temp212.value1 = (void*)&temp207;
+  temp212.value2 = (void*)&temp208;
+  temp212.value3 = (void*)&temp209;
+  temp212.value4 = (void*)&temp210;
+  temp212.value5 = (void*)&temp211;
+  temp213 = true;
+  temp214 = false;
+  temp215 = true;
+  temp216 = true;
+  temp217 = true;
+  temp218 = 100;
+  temp219.value0 = (void*)&temp213;
+  temp219.value1 = (void*)&temp214;
+  temp219.value2 = (void*)&temp215;
+  temp219.value3 = (void*)&temp216;
+  temp219.value4 = (void*)&temp217;
+  temp219.value5 = (void*)&temp218;
+  temp220 = true;
+  temp221 = false;
+  temp222 = true;
+  temp223 = false;
+  temp224 = true;
+  temp225 = 100;
+  temp226.value0 = (void*)&temp220;
+  temp226.value1 = (void*)&temp221;
+  temp226.value2 = (void*)&temp222;
+  temp226.value3 = (void*)&temp223;
+  temp226.value4 = (void*)&temp224;
+  temp226.value5 = (void*)&temp225;
+  temp227 = true;
+  temp228 = false;
+  temp229 = true;
+  temp230 = true;
+  temp231 = false;
+  temp232 = 100;
+  temp233.value0 = (void*)&temp227;
+  temp233.value1 = (void*)&temp228;
+  temp233.value2 = (void*)&temp229;
+  temp233.value3 = (void*)&temp230;
+  temp233.value4 = (void*)&temp231;
+  temp233.value5 = (void*)&temp232;
+  temp234 = true;
+  temp235 = true;
+  temp236 = false;
+  temp237 = false;
+  temp238 = true;
+  temp239 = 100;
+  temp240.value0 = (void*)&temp234;
+  temp240.value1 = (void*)&temp235;
+  temp240.value2 = (void*)&temp236;
+  temp240.value3 = (void*)&temp237;
+  temp240.value4 = (void*)&temp238;
+  temp240.value5 = (void*)&temp239;
+  temp241 = true;
+  temp242 = false;
+  temp243 = true;
+  temp244 = true;
+  temp245 = false;
+  temp246 = 100;
+  temp247.value0 = (void*)&temp241;
+  temp247.value1 = (void*)&temp242;
+  temp247.value2 = (void*)&temp243;
+  temp247.value3 = (void*)&temp244;
+  temp247.value4 = (void*)&temp245;
+  temp247.value5 = (void*)&temp246;
+  temp248 = true;
+  temp249 = true;
+  temp250 = true;
+  temp251 = true;
+  temp252 = false;
+  temp253 = 100;
+  temp254.value0 = (void*)&temp248;
+  temp254.value1 = (void*)&temp249;
+  temp254.value2 = (void*)&temp250;
+  temp254.value3 = (void*)&temp251;
+  temp254.value4 = (void*)&temp252;
+  temp254.value5 = (void*)&temp253;
+  temp255 = true;
+  temp256 = false;
+  temp257 = true;
+  temp258 = true;
+  temp259 = false;
+  temp260 = 100;
+  temp261.value0 = (void*)&temp255;
+  temp261.value1 = (void*)&temp256;
+  temp261.value2 = (void*)&temp257;
+  temp261.value3 = (void*)&temp258;
+  temp261.value4 = (void*)&temp259;
+  temp261.value5 = (void*)&temp260;
+  temp262 = true;
+  temp263 = true;
+  temp264 = true;
+  temp265 = true;
+  temp266 = true;
+  temp267 = 100;
+  temp268.value0 = (void*)&temp262;
+  temp268.value1 = (void*)&temp263;
+  temp268.value2 = (void*)&temp264;
+  temp268.value3 = (void*)&temp265;
+  temp268.value4 = (void*)&temp266;
+  temp268.value5 = (void*)&temp267;
+  stream_9(0, (void*)(&temp107));
+  stream_9(0, (void*)(&temp114));
+  stream_9(0, (void*)(&temp121));
+  stream_9(0, (void*)(&temp128));
+  stream_9(0, (void*)(&temp135));
+  stream_9(0, (void*)(&temp142));
+  stream_9(0, (void*)(&temp149));
+  stream_9(0, (void*)(&temp156));
+  stream_9(0, (void*)(&temp163));
+  stream_9(0, (void*)(&temp170));
+  stream_9(0, (void*)(&temp177));
+  stream_9(0, (void*)(&temp184));
+  stream_9(0, (void*)(&temp191));
+  stream_9(0, (void*)(&temp198));
+  stream_9(0, (void*)(&temp205));
+  stream_9(0, (void*)(&temp212));
+  stream_9(0, (void*)(&temp219));
+  stream_9(0, (void*)(&temp226));
+  stream_9(0, (void*)(&temp233));
+  stream_9(0, (void*)(&temp240));
+  stream_9(0, (void*)(&temp247));
+  stream_9(0, (void*)(&temp254));
+  stream_9(0, (void*)(&temp261));
+  stream_9(0, (void*)(&temp268));
+}
+
+static void stream_8(uint8_t arg, void* value) {
+  uint16_t input_0 = *((uint16_t*)value);
+  bool temp269;
+  bool temp270;
+  bool temp271;
+  bool temp272;
+  bool temp273;
+  uint16_t temp274;
+  struct tuple6 temp275;
+  bool temp276;
+  bool temp277;
+  bool temp278;
+  bool temp279;
+  bool temp280;
+  uint16_t temp281;
+  struct tuple6 temp282;
+  bool temp283;
+  bool temp284;
+  bool temp285;
+  bool temp286;
+  bool temp287;
+  uint16_t temp288;
+  struct tuple6 temp289;
+  bool temp290;
+  bool temp291;
+  bool temp292;
+  bool temp293;
+  bool temp294;
+  uint16_t temp295;
+  struct tuple6 temp296;
+  bool temp297;
+  bool temp298;
+  bool temp299;
+  bool temp300;
+  bool temp301;
+  uint16_t temp302;
+  struct tuple6 temp303;
+  bool temp304;
+  bool temp305;
+  bool temp306;
+  bool temp307;
+  bool temp308;
+  uint16_t temp309;
+  struct tuple6 temp310;
+  bool temp311;
+  bool temp312;
+  bool temp313;
+  bool temp314;
+  bool temp315;
+  uint16_t temp316;
+  struct tuple6 temp317;
+  bool temp318;
+  bool temp319;
+  bool temp320;
+  bool temp321;
+  bool temp322;
+  uint16_t temp323;
+  struct tuple6 temp324;
+  temp269 = false;
+  temp270 = true;
+  temp271 = true;
+  temp272 = false;
+  temp273 = false;
+  temp274 = 100;
+  temp275.value0 = (void*)&temp269;
+  temp275.value1 = (void*)&temp270;
+  temp275.value2 = (void*)&temp271;
+  temp275.value3 = (void*)&temp272;
+  temp275.value4 = (void*)&temp273;
+  temp275.value5 = (void*)&temp274;
+  temp276 = false;
+  temp277 = false;
+  temp278 = false;
+  temp279 = false;
+  temp280 = false;
+  temp281 = 100;
+  temp282.value0 = (void*)&temp276;
+  temp282.value1 = (void*)&temp277;
+  temp282.value2 = (void*)&temp278;
+  temp282.value3 = (void*)&temp279;
+  temp282.value4 = (void*)&temp280;
+  temp282.value5 = (void*)&temp281;
+  temp283 = true;
+  temp284 = false;
+  temp285 = false;
+  temp286 = true;
+  temp287 = true;
+  temp288 = 100;
+  temp289.value0 = (void*)&temp283;
+  temp289.value1 = (void*)&temp284;
+  temp289.value2 = (void*)&temp285;
+  temp289.value3 = (void*)&temp286;
+  temp289.value4 = (void*)&temp287;
+  temp289.value5 = (void*)&temp288;
+  temp290 = true;
+  temp291 = true;
+  temp292 = false;
+  temp293 = true;
+  temp294 = false;
+  temp295 = 100;
+  temp296.value0 = (void*)&temp290;
+  temp296.value1 = (void*)&temp291;
+  temp296.value2 = (void*)&temp292;
+  temp296.value3 = (void*)&temp293;
+  temp296.value4 = (void*)&temp294;
+  temp296.value5 = (void*)&temp295;
+  temp297 = true;
+  temp298 = false;
+  temp299 = false;
+  temp300 = true;
+  temp301 = false;
+  temp302 = 100;
+  temp303.value0 = (void*)&temp297;
+  temp303.value1 = (void*)&temp298;
+  temp303.value2 = (void*)&temp299;
+  temp303.value3 = (void*)&temp300;
+  temp303.value4 = (void*)&temp301;
+  temp303.value5 = (void*)&temp302;
+  temp304 = true;
+  temp305 = true;
+  temp306 = true;
+  temp307 = false;
+  temp308 = true;
+  temp309 = 100;
+  temp310.value0 = (void*)&temp304;
+  temp310.value1 = (void*)&temp305;
+  temp310.value2 = (void*)&temp306;
+  temp310.value3 = (void*)&temp307;
+  temp310.value4 = (void*)&temp308;
+  temp310.value5 = (void*)&temp309;
+  temp311 = true;
+  temp312 = false;
+  temp313 = false;
+  temp314 = true;
+  temp315 = false;
+  temp316 = 100;
+  temp317.value0 = (void*)&temp311;
+  temp317.value1 = (void*)&temp312;
+  temp317.value2 = (void*)&temp313;
+  temp317.value3 = (void*)&temp314;
+  temp317.value4 = (void*)&temp315;
+  temp317.value5 = (void*)&temp316;
+  temp318 = true;
+  temp319 = true;
+  temp320 = false;
+  temp321 = false;
+  temp322 = true;
+  temp323 = 100;
+  temp324.value0 = (void*)&temp318;
+  temp324.value1 = (void*)&temp319;
+  temp324.value2 = (void*)&temp320;
+  temp324.value3 = (void*)&temp321;
+  temp324.value4 = (void*)&temp322;
+  temp324.value5 = (void*)&temp323;
+  stream_9(1, (void*)(&temp275));
+  stream_9(1, (void*)(&temp282));
+  stream_9(1, (void*)(&temp289));
+  stream_9(1, (void*)(&temp296));
+  stream_9(1, (void*)(&temp303));
+  stream_9(1, (void*)(&temp310));
+  stream_9(1, (void*)(&temp317));
+  stream_9(1, (void*)(&temp324));
 }
 
 static void stream_2(uint8_t arg, void* value) {
@@ -388,623 +1042,128 @@ static void stream_2(uint8_t arg, void* value) {
   }
 }
 
+static void stream_9(uint8_t arg, void* value) {
+  struct tuple6 input_0 = *((struct tuple6*)value);
+  stream_10(1, (void*)(&input_0));
+}
+
+static void stream_10(uint8_t arg, void* value) {
+  struct tuple6 input_0 = *((struct tuple6*)value);
+  stream_11(0, (void*)(&input_0));
+  stream_13(0, (void*)(&input_0));
+  stream_15(0, (void*)(&input_0));
+  stream_17(0, (void*)(&input_0));
+  stream_19(0, (void*)(&input_0));
+  stream_21(0, (void*)(&input_0));
+}
+
 static void stream_3(uint8_t arg, void* value) {
   uint16_t input_0 = *((uint16_t*)value);
   static uint16_t input_1 = 0;
   input_1 = (input_1 + 1);
   stream_4(0, (void*)(&input_1));
-  stream_7(0, (void*)(&input_1));
+}
+
+static void stream_11(uint8_t arg, void* value) {
+  struct tuple6 input_0 = *((struct tuple6*)value);
+  stream_12(0, (void*)(&*((bool*)input_0.value0)));
+}
+
+static void stream_13(uint8_t arg, void* value) {
+  struct tuple6 input_0 = *((struct tuple6*)value);
+  stream_14(0, (void*)(&*((bool*)input_0.value1)));
+}
+
+static void stream_15(uint8_t arg, void* value) {
+  struct tuple6 input_0 = *((struct tuple6*)value);
+  stream_16(0, (void*)(&*((bool*)input_0.value2)));
+}
+
+static void stream_17(uint8_t arg, void* value) {
+  struct tuple6 input_0 = *((struct tuple6*)value);
+  stream_18(0, (void*)(&*((bool*)input_0.value3)));
+}
+
+static void stream_19(uint8_t arg, void* value) {
+  struct tuple6 input_0 = *((struct tuple6*)value);
+  stream_20(0, (void*)(&*((bool*)input_0.value4)));
+}
+
+static void stream_21(uint8_t arg, void* value) {
+  struct tuple6 input_0 = *((struct tuple6*)value);
+  stream_22(0, (void*)(&*((uint16_t*)input_0.value5)));
 }
 
 static void stream_4(uint8_t arg, void* value) {
   uint16_t input_0 = *((uint16_t*)value);
-  bool temp101;
-  temp101 = (input_0) % 2 == 0;
-  stream_5(0, (void*)(&temp101));
+  bool temp325;
+  temp325 = (input_0) % 2 == 0;
+  stream_5(0, (void*)(&temp325));
 }
 
-static void stream_7(uint8_t arg, void* value) {
+static void stream_12(uint8_t arg, void* value) {
+  bool input_0 = *((bool*)value);
+  if (input_0) {
+    PORTD |= (1 << PD3);
+  } else {
+    PORTD &= ~(1 << PD3);
+  }
+}
+
+static void stream_14(uint8_t arg, void* value) {
+  bool input_0 = *((bool*)value);
+  if (input_0) {
+    PORTB |= (1 << PB0);
+  } else {
+    PORTB &= ~(1 << PB0);
+  }
+}
+
+static void stream_16(uint8_t arg, void* value) {
+  bool input_0 = *((bool*)value);
+  if (input_0) {
+    PORTD |= (1 << PD7);
+  } else {
+    PORTD &= ~(1 << PD7);
+  }
+}
+
+static void stream_18(uint8_t arg, void* value) {
+  bool input_0 = *((bool*)value);
+  if (input_0) {
+    PORTD |= (1 << PD6);
+  } else {
+    PORTD &= ~(1 << PD6);
+  }
+}
+
+static void stream_20(uint8_t arg, void* value) {
+  bool input_0 = *((bool*)value);
+  if (input_0) {
+    PORTD |= (1 << PD5);
+  } else {
+    PORTD &= ~(1 << PD5);
+  }
+}
+
+static void stream_22(uint8_t arg, void* value) {
   uint16_t input_0 = *((uint16_t*)value);
-  bool temp102;
-  bool temp103;
-  bool temp104;
-  bool temp105;
-  bool temp106;
-  uint16_t temp107;
-  struct tuple6 temp108;
-  bool temp109;
-  bool temp110;
-  bool temp111;
-  bool temp112;
-  bool temp113;
-  uint16_t temp114;
-  struct tuple6 temp115;
-  bool temp116;
-  bool temp117;
-  bool temp118;
-  bool temp119;
-  bool temp120;
-  uint16_t temp121;
-  struct tuple6 temp122;
-  bool temp123;
-  bool temp124;
-  bool temp125;
-  bool temp126;
-  bool temp127;
-  uint16_t temp128;
-  struct tuple6 temp129;
-  bool temp130;
-  bool temp131;
-  bool temp132;
-  bool temp133;
-  bool temp134;
-  uint16_t temp135;
-  struct tuple6 temp136;
-  bool temp137;
-  bool temp138;
-  bool temp139;
-  bool temp140;
-  bool temp141;
-  uint16_t temp142;
-  struct tuple6 temp143;
-  bool temp144;
-  bool temp145;
-  bool temp146;
-  bool temp147;
-  bool temp148;
-  uint16_t temp149;
-  struct tuple6 temp150;
-  bool temp151;
-  bool temp152;
-  bool temp153;
-  bool temp154;
-  bool temp155;
-  uint16_t temp156;
-  struct tuple6 temp157;
-  bool temp158;
-  bool temp159;
-  bool temp160;
-  bool temp161;
-  bool temp162;
-  uint16_t temp163;
-  struct tuple6 temp164;
-  bool temp165;
-  bool temp166;
-  bool temp167;
-  bool temp168;
-  bool temp169;
-  uint16_t temp170;
-  struct tuple6 temp171;
-  bool temp172;
-  bool temp173;
-  bool temp174;
-  bool temp175;
-  bool temp176;
-  uint16_t temp177;
-  struct tuple6 temp178;
-  bool temp179;
-  bool temp180;
-  bool temp181;
-  bool temp182;
-  bool temp183;
-  uint16_t temp184;
-  struct tuple6 temp185;
-  bool temp186;
-  bool temp187;
-  bool temp188;
-  bool temp189;
-  bool temp190;
-  uint16_t temp191;
-  struct tuple6 temp192;
-  bool temp193;
-  bool temp194;
-  bool temp195;
-  bool temp196;
-  bool temp197;
-  uint16_t temp198;
-  struct tuple6 temp199;
-  bool temp200;
-  bool temp201;
-  bool temp202;
-  bool temp203;
-  bool temp204;
-  uint16_t temp205;
-  struct tuple6 temp206;
-  bool temp207;
-  bool temp208;
-  bool temp209;
-  bool temp210;
-  bool temp211;
-  uint16_t temp212;
-  struct tuple6 temp213;
-  bool temp214;
-  bool temp215;
-  bool temp216;
-  bool temp217;
-  bool temp218;
-  uint16_t temp219;
-  struct tuple6 temp220;
-  bool temp221;
-  bool temp222;
-  bool temp223;
-  bool temp224;
-  bool temp225;
-  uint16_t temp226;
-  struct tuple6 temp227;
-  bool temp228;
-  bool temp229;
-  bool temp230;
-  bool temp231;
-  bool temp232;
-  uint16_t temp233;
-  struct tuple6 temp234;
-  bool temp235;
-  bool temp236;
-  bool temp237;
-  bool temp238;
-  bool temp239;
-  uint16_t temp240;
-  struct tuple6 temp241;
-  bool temp242;
-  bool temp243;
-  bool temp244;
-  bool temp245;
-  bool temp246;
-  uint16_t temp247;
-  struct tuple6 temp248;
-  bool temp249;
-  bool temp250;
-  bool temp251;
-  bool temp252;
-  bool temp253;
-  uint16_t temp254;
-  struct tuple6 temp255;
-  bool temp256;
-  bool temp257;
-  bool temp258;
-  bool temp259;
-  bool temp260;
-  uint16_t temp261;
-  struct tuple6 temp262;
-  bool temp263;
-  bool temp264;
-  bool temp265;
-  bool temp266;
-  bool temp267;
-  uint16_t temp268;
-  struct tuple6 temp269;
-  bool temp270;
-  bool temp271;
-  bool temp272;
-  bool temp273;
-  bool temp274;
-  uint16_t temp275;
-  struct tuple6 temp276;
-  bool temp277;
-  bool temp278;
-  bool temp279;
-  bool temp280;
-  bool temp281;
-  uint16_t temp282;
-  struct tuple6 temp283;
-  bool temp284;
-  bool temp285;
-  bool temp286;
-  bool temp287;
-  bool temp288;
-  uint16_t temp289;
-  struct tuple6 temp290;
-  bool temp291;
-  bool temp292;
-  bool temp293;
-  bool temp294;
-  bool temp295;
-  uint16_t temp296;
-  struct tuple6 temp297;
-  bool temp298;
-  bool temp299;
-  bool temp300;
-  bool temp301;
-  bool temp302;
-  uint16_t temp303;
-  struct tuple6 temp304;
-  bool temp305;
-  bool temp306;
-  bool temp307;
-  bool temp308;
-  bool temp309;
-  uint16_t temp310;
-  struct tuple6 temp311;
-  temp102 = false;
-  temp103 = true;
-  temp104 = false;
-  temp105 = false;
-  temp106 = false;
-  temp107 = 100;
-  temp108.value0 = (void*)&temp102;
-  temp108.value1 = (void*)&temp103;
-  temp108.value2 = (void*)&temp104;
-  temp108.value3 = (void*)&temp105;
-  temp108.value4 = (void*)&temp106;
-  temp108.value5 = (void*)&temp107;
-  temp109 = false;
-  temp110 = false;
-  temp111 = false;
-  temp112 = false;
-  temp113 = false;
-  temp114 = 100;
-  temp115.value0 = (void*)&temp109;
-  temp115.value1 = (void*)&temp110;
-  temp115.value2 = (void*)&temp111;
-  temp115.value3 = (void*)&temp112;
-  temp115.value4 = (void*)&temp113;
-  temp115.value5 = (void*)&temp114;
-  temp116 = true;
-  temp117 = false;
-  temp118 = true;
-  temp119 = false;
-  temp120 = false;
-  temp121 = 100;
-  temp122.value0 = (void*)&temp116;
-  temp122.value1 = (void*)&temp117;
-  temp122.value2 = (void*)&temp118;
-  temp122.value3 = (void*)&temp119;
-  temp122.value4 = (void*)&temp120;
-  temp122.value5 = (void*)&temp121;
-  temp123 = true;
-  temp124 = false;
-  temp125 = true;
-  temp126 = true;
-  temp127 = false;
-  temp128 = 100;
-  temp129.value0 = (void*)&temp123;
-  temp129.value1 = (void*)&temp124;
-  temp129.value2 = (void*)&temp125;
-  temp129.value3 = (void*)&temp126;
-  temp129.value4 = (void*)&temp127;
-  temp129.value5 = (void*)&temp128;
-  temp130 = true;
-  temp131 = false;
-  temp132 = true;
-  temp133 = false;
-  temp134 = true;
-  temp135 = 100;
-  temp136.value0 = (void*)&temp130;
-  temp136.value1 = (void*)&temp131;
-  temp136.value2 = (void*)&temp132;
-  temp136.value3 = (void*)&temp133;
-  temp136.value4 = (void*)&temp134;
-  temp136.value5 = (void*)&temp135;
-  temp137 = true;
-  temp138 = false;
-  temp139 = false;
-  temp140 = true;
-  temp141 = false;
-  temp142 = 100;
-  temp143.value0 = (void*)&temp137;
-  temp143.value1 = (void*)&temp138;
-  temp143.value2 = (void*)&temp139;
-  temp143.value3 = (void*)&temp140;
-  temp143.value4 = (void*)&temp141;
-  temp143.value5 = (void*)&temp142;
-  temp144 = true;
-  temp145 = false;
-  temp146 = true;
-  temp147 = false;
-  temp148 = true;
-  temp149 = 100;
-  temp150.value0 = (void*)&temp144;
-  temp150.value1 = (void*)&temp145;
-  temp150.value2 = (void*)&temp146;
-  temp150.value3 = (void*)&temp147;
-  temp150.value4 = (void*)&temp148;
-  temp150.value5 = (void*)&temp149;
-  temp151 = true;
-  temp152 = false;
-  temp153 = false;
-  temp154 = false;
-  temp155 = false;
-  temp156 = 100;
-  temp157.value0 = (void*)&temp151;
-  temp157.value1 = (void*)&temp152;
-  temp157.value2 = (void*)&temp153;
-  temp157.value3 = (void*)&temp154;
-  temp157.value4 = (void*)&temp155;
-  temp157.value5 = (void*)&temp156;
-  temp158 = true;
-  temp159 = false;
-  temp160 = false;
-  temp161 = true;
-  temp162 = false;
-  temp163 = 100;
-  temp164.value0 = (void*)&temp158;
-  temp164.value1 = (void*)&temp159;
-  temp164.value2 = (void*)&temp160;
-  temp164.value3 = (void*)&temp161;
-  temp164.value4 = (void*)&temp162;
-  temp164.value5 = (void*)&temp163;
-  temp165 = true;
-  temp166 = false;
-  temp167 = false;
-  temp168 = false;
-  temp169 = false;
-  temp170 = 100;
-  temp171.value0 = (void*)&temp165;
-  temp171.value1 = (void*)&temp166;
-  temp171.value2 = (void*)&temp167;
-  temp171.value3 = (void*)&temp168;
-  temp171.value4 = (void*)&temp169;
-  temp171.value5 = (void*)&temp170;
-  temp172 = true;
-  temp173 = false;
-  temp174 = true;
-  temp175 = false;
-  temp176 = false;
-  temp177 = 100;
-  temp178.value0 = (void*)&temp172;
-  temp178.value1 = (void*)&temp173;
-  temp178.value2 = (void*)&temp174;
-  temp178.value3 = (void*)&temp175;
-  temp178.value4 = (void*)&temp176;
-  temp178.value5 = (void*)&temp177;
-  temp179 = true;
-  temp180 = false;
-  temp181 = false;
-  temp182 = false;
-  temp183 = true;
-  temp184 = 100;
-  temp185.value0 = (void*)&temp179;
-  temp185.value1 = (void*)&temp180;
-  temp185.value2 = (void*)&temp181;
-  temp185.value3 = (void*)&temp182;
-  temp185.value4 = (void*)&temp183;
-  temp185.value5 = (void*)&temp184;
-  temp186 = true;
-  temp187 = false;
-  temp188 = true;
-  temp189 = true;
-  temp190 = true;
-  temp191 = 100;
-  temp192.value0 = (void*)&temp186;
-  temp192.value1 = (void*)&temp187;
-  temp192.value2 = (void*)&temp188;
-  temp192.value3 = (void*)&temp189;
-  temp192.value4 = (void*)&temp190;
-  temp192.value5 = (void*)&temp191;
-  temp193 = true;
-  temp194 = false;
-  temp195 = false;
-  temp196 = true;
-  temp197 = false;
-  temp198 = 100;
-  temp199.value0 = (void*)&temp193;
-  temp199.value1 = (void*)&temp194;
-  temp199.value2 = (void*)&temp195;
-  temp199.value3 = (void*)&temp196;
-  temp199.value4 = (void*)&temp197;
-  temp199.value5 = (void*)&temp198;
-  temp200 = true;
-  temp201 = false;
-  temp202 = true;
-  temp203 = true;
-  temp204 = false;
-  temp205 = 100;
-  temp206.value0 = (void*)&temp200;
-  temp206.value1 = (void*)&temp201;
-  temp206.value2 = (void*)&temp202;
-  temp206.value3 = (void*)&temp203;
-  temp206.value4 = (void*)&temp204;
-  temp206.value5 = (void*)&temp205;
-  temp207 = true;
-  temp208 = false;
-  temp209 = true;
-  temp210 = false;
-  temp211 = false;
-  temp212 = 100;
-  temp213.value0 = (void*)&temp207;
-  temp213.value1 = (void*)&temp208;
-  temp213.value2 = (void*)&temp209;
-  temp213.value3 = (void*)&temp210;
-  temp213.value4 = (void*)&temp211;
-  temp213.value5 = (void*)&temp212;
-  temp214 = true;
-  temp215 = false;
-  temp216 = true;
-  temp217 = true;
-  temp218 = true;
-  temp219 = 100;
-  temp220.value0 = (void*)&temp214;
-  temp220.value1 = (void*)&temp215;
-  temp220.value2 = (void*)&temp216;
-  temp220.value3 = (void*)&temp217;
-  temp220.value4 = (void*)&temp218;
-  temp220.value5 = (void*)&temp219;
-  temp221 = true;
-  temp222 = false;
-  temp223 = true;
-  temp224 = false;
-  temp225 = true;
-  temp226 = 100;
-  temp227.value0 = (void*)&temp221;
-  temp227.value1 = (void*)&temp222;
-  temp227.value2 = (void*)&temp223;
-  temp227.value3 = (void*)&temp224;
-  temp227.value4 = (void*)&temp225;
-  temp227.value5 = (void*)&temp226;
-  temp228 = true;
-  temp229 = false;
-  temp230 = true;
-  temp231 = true;
-  temp232 = false;
-  temp233 = 100;
-  temp234.value0 = (void*)&temp228;
-  temp234.value1 = (void*)&temp229;
-  temp234.value2 = (void*)&temp230;
-  temp234.value3 = (void*)&temp231;
-  temp234.value4 = (void*)&temp232;
-  temp234.value5 = (void*)&temp233;
-  temp235 = true;
-  temp236 = true;
-  temp237 = false;
-  temp238 = false;
-  temp239 = true;
-  temp240 = 100;
-  temp241.value0 = (void*)&temp235;
-  temp241.value1 = (void*)&temp236;
-  temp241.value2 = (void*)&temp237;
-  temp241.value3 = (void*)&temp238;
-  temp241.value4 = (void*)&temp239;
-  temp241.value5 = (void*)&temp240;
-  temp242 = true;
-  temp243 = false;
-  temp244 = true;
-  temp245 = true;
-  temp246 = false;
-  temp247 = 100;
-  temp248.value0 = (void*)&temp242;
-  temp248.value1 = (void*)&temp243;
-  temp248.value2 = (void*)&temp244;
-  temp248.value3 = (void*)&temp245;
-  temp248.value4 = (void*)&temp246;
-  temp248.value5 = (void*)&temp247;
-  temp249 = true;
-  temp250 = true;
-  temp251 = true;
-  temp252 = true;
-  temp253 = false;
-  temp254 = 100;
-  temp255.value0 = (void*)&temp249;
-  temp255.value1 = (void*)&temp250;
-  temp255.value2 = (void*)&temp251;
-  temp255.value3 = (void*)&temp252;
-  temp255.value4 = (void*)&temp253;
-  temp255.value5 = (void*)&temp254;
-  temp256 = true;
-  temp257 = false;
-  temp258 = true;
-  temp259 = true;
-  temp260 = false;
-  temp261 = 100;
-  temp262.value0 = (void*)&temp256;
-  temp262.value1 = (void*)&temp257;
-  temp262.value2 = (void*)&temp258;
-  temp262.value3 = (void*)&temp259;
-  temp262.value4 = (void*)&temp260;
-  temp262.value5 = (void*)&temp261;
-  temp263 = true;
-  temp264 = true;
-  temp265 = true;
-  temp266 = true;
-  temp267 = true;
-  temp268 = 100;
-  temp269.value0 = (void*)&temp263;
-  temp269.value1 = (void*)&temp264;
-  temp269.value2 = (void*)&temp265;
-  temp269.value3 = (void*)&temp266;
-  temp269.value4 = (void*)&temp267;
-  temp269.value5 = (void*)&temp268;
-  temp270 = true;
-  temp271 = false;
-  temp272 = false;
-  temp273 = true;
-  temp274 = false;
-  temp275 = 100;
-  temp276.value0 = (void*)&temp270;
-  temp276.value1 = (void*)&temp271;
-  temp276.value2 = (void*)&temp272;
-  temp276.value3 = (void*)&temp273;
-  temp276.value4 = (void*)&temp274;
-  temp276.value5 = (void*)&temp275;
-  temp277 = true;
-  temp278 = false;
-  temp279 = false;
-  temp280 = false;
-  temp281 = false;
-  temp282 = 100;
-  temp283.value0 = (void*)&temp277;
-  temp283.value1 = (void*)&temp278;
-  temp283.value2 = (void*)&temp279;
-  temp283.value3 = (void*)&temp280;
-  temp283.value4 = (void*)&temp281;
-  temp283.value5 = (void*)&temp282;
-  temp284 = true;
-  temp285 = false;
-  temp286 = false;
-  temp287 = true;
-  temp288 = true;
-  temp289 = 100;
-  temp290.value0 = (void*)&temp284;
-  temp290.value1 = (void*)&temp285;
-  temp290.value2 = (void*)&temp286;
-  temp290.value3 = (void*)&temp287;
-  temp290.value4 = (void*)&temp288;
-  temp290.value5 = (void*)&temp289;
-  temp291 = true;
-  temp292 = true;
-  temp293 = false;
-  temp294 = true;
-  temp295 = false;
-  temp296 = 100;
-  temp297.value0 = (void*)&temp291;
-  temp297.value1 = (void*)&temp292;
-  temp297.value2 = (void*)&temp293;
-  temp297.value3 = (void*)&temp294;
-  temp297.value4 = (void*)&temp295;
-  temp297.value5 = (void*)&temp296;
-  temp298 = true;
-  temp299 = false;
-  temp300 = false;
-  temp301 = true;
-  temp302 = false;
-  temp303 = 100;
-  temp304.value0 = (void*)&temp298;
-  temp304.value1 = (void*)&temp299;
-  temp304.value2 = (void*)&temp300;
-  temp304.value3 = (void*)&temp301;
-  temp304.value4 = (void*)&temp302;
-  temp304.value5 = (void*)&temp303;
-  temp305 = true;
-  temp306 = true;
-  temp307 = false;
-  temp308 = false;
-  temp309 = true;
-  temp310 = 100;
-  temp311.value0 = (void*)&temp305;
-  temp311.value1 = (void*)&temp306;
-  temp311.value2 = (void*)&temp307;
-  temp311.value3 = (void*)&temp308;
-  temp311.value4 = (void*)&temp309;
-  temp311.value5 = (void*)&temp310;
-  stream_8(1, (void*)(&temp108));
-  stream_8(1, (void*)(&temp115));
-  stream_8(1, (void*)(&temp122));
-  stream_8(1, (void*)(&temp129));
-  stream_8(1, (void*)(&temp136));
-  stream_8(1, (void*)(&temp143));
-  stream_8(1, (void*)(&temp150));
-  stream_8(1, (void*)(&temp157));
-  stream_8(1, (void*)(&temp164));
-  stream_8(1, (void*)(&temp171));
-  stream_8(1, (void*)(&temp178));
-  stream_8(1, (void*)(&temp185));
-  stream_8(1, (void*)(&temp192));
-  stream_8(1, (void*)(&temp199));
-  stream_8(1, (void*)(&temp206));
-  stream_8(1, (void*)(&temp213));
-  stream_8(1, (void*)(&temp220));
-  stream_8(1, (void*)(&temp227));
-  stream_8(1, (void*)(&temp234));
-  stream_8(1, (void*)(&temp241));
-  stream_8(1, (void*)(&temp248));
-  stream_8(1, (void*)(&temp255));
-  stream_8(1, (void*)(&temp262));
-  stream_8(1, (void*)(&temp269));
-  stream_8(1, (void*)(&temp276));
-  stream_8(1, (void*)(&temp283));
-  stream_8(1, (void*)(&temp290));
-  stream_8(1, (void*)(&temp297));
-  stream_8(1, (void*)(&temp304));
-  stream_8(1, (void*)(&temp311));
+  bool temp326;
+  uint16_t temp327;
+  struct tuple2 temp328;
+  bool temp329;
+  uint16_t temp330;
+  struct tuple2 temp331;
+  temp326 = true;
+  temp327 = 1;
+  temp328.value0 = (void*)&temp326;
+  temp328.value1 = (void*)&temp327;
+  temp329 = false;
+  temp330 = input_0;
+  temp331.value0 = (void*)&temp329;
+  temp331.value1 = (void*)&temp330;
+  stream_23(0, (void*)(&temp328));
+  stream_23(0, (void*)(&temp331));
 }
 
 static void stream_5(uint8_t arg, void* value) {
@@ -1016,114 +1175,9 @@ static void stream_5(uint8_t arg, void* value) {
   }
 }
 
-static void stream_8(uint8_t arg, void* value) {
-  struct tuple6 input_0 = *((struct tuple6*)value);
-  stream_9(0, (void*)(&input_0));
-  stream_11(0, (void*)(&input_0));
-  stream_13(0, (void*)(&input_0));
-  stream_15(0, (void*)(&input_0));
-  stream_17(0, (void*)(&input_0));
-  stream_19(0, (void*)(&input_0));
-}
-
-static void stream_11(uint8_t arg, void* value) {
-  struct tuple6 input_0 = *((struct tuple6*)value);
-  stream_12(0, (void*)(&*((bool*)input_0.value1)));
-}
-
-static void stream_13(uint8_t arg, void* value) {
-  struct tuple6 input_0 = *((struct tuple6*)value);
-  stream_14(0, (void*)(&*((bool*)input_0.value2)));
-}
-
-static void stream_15(uint8_t arg, void* value) {
-  struct tuple6 input_0 = *((struct tuple6*)value);
-  stream_16(0, (void*)(&*((bool*)input_0.value3)));
-}
-
-static void stream_17(uint8_t arg, void* value) {
-  struct tuple6 input_0 = *((struct tuple6*)value);
-  stream_18(0, (void*)(&*((bool*)input_0.value4)));
-}
-
-static void stream_19(uint8_t arg, void* value) {
-  struct tuple6 input_0 = *((struct tuple6*)value);
-  stream_20(0, (void*)(&*((uint16_t*)input_0.value5)));
-}
-
-static void stream_9(uint8_t arg, void* value) {
-  struct tuple6 input_0 = *((struct tuple6*)value);
-  stream_10(0, (void*)(&*((bool*)input_0.value0)));
-}
-
-static void stream_10(uint8_t arg, void* value) {
-  bool input_0 = *((bool*)value);
-  if (input_0) {
-    PORTD |= (1 << PD3);
-  } else {
-    PORTD &= ~(1 << PD3);
-  }
-}
-
-static void stream_12(uint8_t arg, void* value) {
-  bool input_0 = *((bool*)value);
-  if (input_0) {
-    PORTB |= (1 << PB0);
-  } else {
-    PORTB &= ~(1 << PB0);
-  }
-}
-
-static void stream_14(uint8_t arg, void* value) {
-  bool input_0 = *((bool*)value);
-  if (input_0) {
-    PORTD |= (1 << PD7);
-  } else {
-    PORTD &= ~(1 << PD7);
-  }
-}
-
-static void stream_16(uint8_t arg, void* value) {
-  bool input_0 = *((bool*)value);
-  if (input_0) {
-    PORTD |= (1 << PD6);
-  } else {
-    PORTD &= ~(1 << PD6);
-  }
-}
-
-static void stream_18(uint8_t arg, void* value) {
-  bool input_0 = *((bool*)value);
-  if (input_0) {
-    PORTD |= (1 << PD5);
-  } else {
-    PORTD &= ~(1 << PD5);
-  }
-}
-
-static void stream_20(uint8_t arg, void* value) {
-  uint16_t input_0 = *((uint16_t*)value);
-  bool temp312;
-  uint16_t temp313;
-  struct tuple2 temp314;
-  bool temp315;
-  uint16_t temp316;
-  struct tuple2 temp317;
-  temp312 = true;
-  temp313 = 1;
-  temp314.value0 = (void*)&temp312;
-  temp314.value1 = (void*)&temp313;
-  temp315 = false;
-  temp316 = input_0;
-  temp317.value0 = (void*)&temp315;
-  temp317.value1 = (void*)&temp316;
-  stream_21(0, (void*)(&temp314));
-  stream_21(0, (void*)(&temp317));
-}
-
-static void stream_21(uint8_t arg, void* value) {
+static void stream_23(uint8_t arg, void* value) {
   struct tuple2 input_0 = *((struct tuple2*)value);
-  stream_22(0, (void*)(&*((bool*)input_0.value0)));
+  stream_24(0, (void*)(&*((bool*)input_0.value0)));
   // Delay assumes a 16MHz clock
   _delay_loop_2(*((uint16_t*)input_0.value1));
   _delay_loop_2(*((uint16_t*)input_0.value1));
@@ -1131,7 +1185,7 @@ static void stream_21(uint8_t arg, void* value) {
   _delay_loop_2(*((uint16_t*)input_0.value1));
 }
 
-static void stream_22(uint8_t arg, void* value) {
+static void stream_24(uint8_t arg, void* value) {
   bool input_0 = *((bool*)value);
   if (input_0) {
     PORTD |= (1 << PD4);
