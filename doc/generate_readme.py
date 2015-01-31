@@ -106,6 +106,7 @@ if __name__ == "__main__":
             "example-lcd.md",
         ],
         "api.md",
+        "questions.md",
         "contributing.md",
         "resources.md",
         "license.md",
