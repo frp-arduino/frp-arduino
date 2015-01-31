@@ -13,6 +13,7 @@
   * [Example: Writing bytes on UART](#example-writing-bytes-on-uart)
   * [Example: Displaying text on LCD](#example-displaying-text-on-lcd)
 * [API](#api)
+* [Questions](#questions)
 * [Contributing](#contributing)
 * [Resources](#resources)
 * [License](#license)
@@ -352,7 +353,7 @@ main = compileProgram $ do
     digitalOutput pin13 =: tick ~> toggle
 
     LCD.output rs d4 d5 d6 d7 enable =: tick ~> mapSMany (\_ ->
-        LCD.init ++ LCD.text "FRP Arduino :)")
+        LCD.position 0 0 ++ LCD.text "FRP Arduino :)")
 ```
 
 * Source code: [examples/LCD.hs](examples/LCD.hs)
@@ -366,6 +367,17 @@ This example shows how to display text on an LCD display.
 The API documentation for the latest version is hosted on Hackage:
 
 http://hackage.haskell.org/package/frp-arduino
+
+## Questions
+
+We want to be welcoming to newcomers.
+
+In particular, if there is something you don't understand, please let us know
+and we'll try to explain it and improve our documentation.
+
+To ask a question,
+[create a new issue](https://github.com/frp-arduino/frp-arduino/issues/new)
+and attach the question label.
 
 ## Contributing
 
