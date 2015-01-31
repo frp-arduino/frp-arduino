@@ -25,7 +25,8 @@ module Arduino.DSL
     , compileProgram
     , def
     , (=:)
-    , foo
+    , prefixOutput
+    , bootup
 
     -- * Expressions
     , Expression
@@ -67,6 +68,9 @@ module Arduino.DSL
     , mapS
     , mapSMany
     , mapS2
+
+    -- ** Merging
+    , mergeS
 
     -- ** Filtering
     , filterS
@@ -145,9 +149,12 @@ def stream = do
 
 infixr 0 =:
 
-foo :: Output a -> (Stream b -> Stream a) -> Output b
-foo output fn = Output $ \stream -> do
+prefixOutput :: (Stream b -> Stream a) -> Output a -> Output b
+prefixOutput fn output = Output $ \stream -> do
     output =: fn stream
+
+bootup :: Stream ()
+bootup = Stream $ addStream "bootup" DAG.Bootup
 
 output2 :: Output a1
         -> Output a2
@@ -212,6 +219,14 @@ mapS2 fn left right = Stream $ do
     where
         expression = unExpression $ fn (Expression $ DAG.Input 0)
                                        (Expression $ DAG.Input 1)
+
+mergeS :: Stream a -> Stream a -> Stream a
+mergeS left right = Stream $ do
+    leftName <- unStream left
+    rightName <- unStream right
+    expressionStreamName <- addAnonymousStream (DAG.Merge $ DAG.Input 0)
+    addDependency leftName expressionStreamName
+    addDependency rightName expressionStreamName
 
 -- | Needs a tuple created with 'pack2'.
 delay :: Stream (a, DAG.Word) -> Stream a

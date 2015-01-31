@@ -18,7 +18,7 @@
 module Arduino.Library.LCD
     ( Command
     , output
-    , init
+    , position
     , text
     ) where
 
@@ -38,13 +38,18 @@ output :: Output Bit
        -> Output Bit
        -> Output Bit
        -> Output Command
-output rs d4 d5 d6 d7 enable =
-    let pulse =  foo enable $ \wordStream -> wordStream
-                           ~> mapSMany (\delay -> [ pack2 (bitHigh, 1)
-                                                  , pack2 (bitLow, delay)
-                                                  ])
-                           ~> delay
-    in output6 rs d7 d6 d5 d4 pulse
+output rs d4 d5 d6 d7 enable = mergeBootup (output6 rs d7 d6 d5 d4 (pulse enable))
+    where
+        mergeBootup :: Output Command -> Output Command
+        mergeBootup = prefixOutput $ \command ->
+            mergeS (bootup ~> mapSMany (\_ -> init)) command
+
+        pulse :: Output Bit -> Output Word
+        pulse = prefixOutput $ \word ->
+            word ~> mapSMany (\delay -> [ pack2 (bitHigh, 1)
+                                        , pack2 (bitLow, delay)
+                                        ])
+                 ~> delay
 
 init :: [Expression Command]
 init =
@@ -69,13 +74,30 @@ init =
     , command Command 1 1 1 1 100
     ]
 
-text :: String -> [Expression Command]
-text string = concatMap charToCommands string
+position :: Int -> Int -> [Expression Command]
+position row column = byteToCommands Command (address .|. 0x80)
     where
-        charToCommands char = let x = ord char in
-            [ command Data (getBit 7 x) (getBit 6 x) (getBit 5 x) (getBit 4 x) 100
-            , command Data (getBit 3 x) (getBit 2 x) (getBit 1 x) (getBit 0 x) 100
-            ]
+        address = rowOffset row + column
+        rowOffset 0 = 0x00
+        rowOffset 1 = 0x40
+
+text :: String -> [Expression Command]
+text = concatMap (byteToCommands Data . ord)
+
+byteToCommands :: CommandType -> Int -> [Expression Command]
+byteToCommands commandType byte =
+    [ command commandType (bit7 byte) (bit6 byte) (bit5 byte) (bit4 byte) 100
+    , command commandType (bit3 byte) (bit2 byte) (bit1 byte) (bit0 byte) 100
+    ]
+    where
+        bit0 = getBit 0
+        bit1 = getBit 1
+        bit2 = getBit 2
+        bit3 = getBit 3
+        bit4 = getBit 4
+        bit5 = getBit 5
+        bit6 = getBit 6
+        bit7 = getBit 7
 
 getBit :: Int -> Int -> Int
 getBit bit number = (number `shiftR` bit) .&. 0x1
