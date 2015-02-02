@@ -58,7 +58,9 @@ data Expression = Input Int
                 | IsHigh Expression
                 | Add Expression Expression
                 | Sub Expression Expression
+                | Mul Expression Expression
                 | Greater Expression Expression
+                | Equal Expression Expression
                 | If Expression Expression Expression
                 deriving (Show)
 

@@ -59,6 +59,9 @@ module Arduino.DSL
     , output2
     , output6
 
+    -- ** Misc
+    , isEqual
+
     -- ** Conditionals
     , if_
 
@@ -130,7 +133,7 @@ newtype LLI a = LLI { unLLI :: DAG.LLI }
 instance Num (Expression a) where
     (+) left right = Expression $ DAG.Add (unExpression left) (unExpression right)
     (-) left right = Expression $ DAG.Sub (unExpression left) (unExpression right)
-    (*) = error "* not yet implemented"
+    (*) left right = Expression $ DAG.Mul (unExpression left) (unExpression right)
     abs = error "abs not yet implemented"
     signum = error "signum not yet implemented"
     fromInteger value = Expression $ DAG.WordConstant $ fromIntegral value
@@ -275,6 +278,10 @@ flattenS stream = Stream $ do
     addDependency streamName expressionStreamName
     where
         expression = DAG.Flatten $ DAG.Input 0
+
+isEqual :: Expression a -> Expression a -> Expression Bool
+isEqual left right =
+    Expression $ DAG.Equal (unExpression left) (unExpression right)
 
 if_ :: Expression Bool -> Expression a -> Expression a -> Expression a
 if_ condition trueExpression falseExpression =
