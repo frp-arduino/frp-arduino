@@ -67,6 +67,7 @@ data LLI = WriteBit String String LLI LLI
          | WriteWord String LLI LLI
          | ReadBit String String
          | ReadWord String LLI
+         | ReadTwoPartWord String String LLI
          | WaitBit String String Bit LLI
          | Const String
          | ConstBit Bit

@@ -98,7 +98,9 @@ module Arduino.DSL
     , writeWord
     , readBit
     , readWord
+    , readTwoPartWord
     , waitBitSet
+    , waitBitCleared
     , byteConstant
     , wordConstant
     , end
@@ -401,8 +403,14 @@ readBit register bit = LLI $ DAG.ReadBit register bit
 readWord :: String -> LLI a -> LLI DAG.Word
 readWord register next = LLI $ DAG.ReadWord register (unLLI next)
 
+readTwoPartWord :: String -> String -> LLI a -> LLI DAG.Word
+readTwoPartWord lowRegister highRegister next = LLI $ DAG.ReadTwoPartWord lowRegister highRegister (unLLI next)
+
 waitBitSet :: String -> String -> LLI a -> LLI a
 waitBitSet register bit next = waitBit register bit DAG.High next
+
+waitBitCleared :: String -> String -> LLI a -> LLI a
+waitBitCleared register bit next = waitBit register bit DAG.Low next
 
 waitBit :: String -> String -> DAG.Bit -> LLI a -> LLI a
 waitBit register bit value next = LLI $ DAG.WaitBit register bit value (unLLI next)

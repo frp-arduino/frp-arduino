@@ -342,10 +342,22 @@ genLLI lli = case lli of
         line $ x ++ " = " ++ register ++ ";"
         genLLI next
         variable x CWord
+    (ReadTwoPartWord lowRegister highRegister next) -> do
+        cLow <- genCVariable (cTypeStr CByte)
+        cHigh <- genCVariable (cTypeStr CByte)
+        cWord <- genCVariable (cTypeStr CWord)
+        line $ cLow ++ " = " ++ lowRegister ++ ";"
+        line $ cHigh ++ " = " ++ highRegister ++ ";"
+        line $ cWord ++ " = " ++ cLow ++ " | (" ++ cHigh ++ " << 8);"
+        genLLI next
+        variable cWord CWord
     (WaitBit register bit value next) -> do
         case value of
             High -> do
                 line $ "while ((" ++ register ++ " & (1 << " ++ bit ++ ")) == 0) {"
+                line $ "}"
+            Low -> do
+                line $ "while ((" ++ register ++ " & (1 << " ++ bit ++ ")) != 0) {"
                 line $ "}"
         genLLI next
     (Const x) -> do
