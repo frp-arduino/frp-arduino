@@ -211,6 +211,10 @@ genExpression inputMap static expression = case expression of
         (Value cLeft  CWord _ Nothing) <- genExpression inputMap static left
         (Value cRight CWord _ Nothing) <- genExpression inputMap static right
         literal CWord $ "(" ++ cLeft ++ " - " ++ cRight ++ ")"
+    (Mul left right) -> do
+        (Value cLeft  CWord _ Nothing) <- genExpression inputMap static left
+        (Value cRight CWord _ Nothing) <- genExpression inputMap static right
+        literal CWord $ "(" ++ cLeft ++ " * " ++ cRight ++ ")"
     (Input value) -> do
         variable ("input_" ++ show value) (inputMap M.! value)
     (ByteConstant value) -> do
@@ -280,6 +284,12 @@ genExpression inputMap static expression = case expression of
         variable temp (CList CByte)
     (WordConstant value) -> do
         literal CWord $ show value
+    (Equal leftExpression rightExpression) -> do
+        (Value cLeft _ _ _) <-
+            genExpression inputMap static leftExpression
+        (Value cRight _ _ _) <-
+            genExpression inputMap static rightExpression
+        literal CBit $ cLeft ++ " == " ++ cRight
     (If conditionExpression trueExpression falseExpression) -> do
         (Value cCondition CBit _ _) <-
             genExpression inputMap static conditionExpression
@@ -342,10 +352,22 @@ genLLI lli = case lli of
         line $ x ++ " = " ++ register ++ ";"
         genLLI next
         variable x CWord
+    (ReadTwoPartWord lowRegister highRegister next) -> do
+        cLow <- genCVariable (cTypeStr CByte)
+        cHigh <- genCVariable (cTypeStr CByte)
+        cWord <- genCVariable (cTypeStr CWord)
+        line $ cLow ++ " = " ++ lowRegister ++ ";"
+        line $ cHigh ++ " = " ++ highRegister ++ ";"
+        line $ cWord ++ " = " ++ cLow ++ " | (" ++ cHigh ++ " << 8);"
+        genLLI next
+        variable cWord CWord
     (WaitBit register bit value next) -> do
         case value of
             High -> do
                 line $ "while ((" ++ register ++ " & (1 << " ++ bit ++ ")) == 0) {"
+                line $ "}"
+            Low -> do
+                line $ "while ((" ++ register ++ " & (1 << " ++ bit ++ ")) != 0) {"
                 line $ "}"
         genLLI next
     (Const x) -> do

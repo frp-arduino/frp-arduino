@@ -59,6 +59,9 @@ module Arduino.DSL
     , output2
     , output6
 
+    -- ** Misc
+    , isEqual
+
     -- ** Conditionals
     , if_
 
@@ -98,7 +101,9 @@ module Arduino.DSL
     , writeWord
     , readBit
     , readWord
+    , readTwoPartWord
     , waitBitSet
+    , waitBitCleared
     , byteConstant
     , wordConstant
     , end
@@ -128,7 +133,7 @@ newtype LLI a = LLI { unLLI :: DAG.LLI }
 instance Num (Expression a) where
     (+) left right = Expression $ DAG.Add (unExpression left) (unExpression right)
     (-) left right = Expression $ DAG.Sub (unExpression left) (unExpression right)
-    (*) = error "* not yet implemented"
+    (*) left right = Expression $ DAG.Mul (unExpression left) (unExpression right)
     abs = error "abs not yet implemented"
     signum = error "signum not yet implemented"
     fromInteger value = Expression $ DAG.WordConstant $ fromIntegral value
@@ -274,6 +279,10 @@ flattenS stream = Stream $ do
     where
         expression = DAG.Flatten $ DAG.Input 0
 
+isEqual :: Expression a -> Expression a -> Expression Bool
+isEqual left right =
+    Expression $ DAG.Equal (unExpression left) (unExpression right)
+
 if_ :: Expression Bool -> Expression a -> Expression a -> Expression a
 if_ condition trueExpression falseExpression =
     Expression (DAG.If (unExpression condition)
@@ -401,8 +410,14 @@ readBit register bit = LLI $ DAG.ReadBit register bit
 readWord :: String -> LLI a -> LLI DAG.Word
 readWord register next = LLI $ DAG.ReadWord register (unLLI next)
 
+readTwoPartWord :: String -> String -> LLI a -> LLI DAG.Word
+readTwoPartWord lowRegister highRegister next = LLI $ DAG.ReadTwoPartWord lowRegister highRegister (unLLI next)
+
 waitBitSet :: String -> String -> LLI a -> LLI a
 waitBitSet register bit next = waitBit register bit DAG.High next
+
+waitBitCleared :: String -> String -> LLI a -> LLI a
+waitBitCleared register bit next = waitBit register bit DAG.Low next
 
 waitBit :: String -> String -> DAG.Bit -> LLI a -> LLI a
 waitBit register bit value next = LLI $ DAG.WaitBit register bit value (unLLI next)
