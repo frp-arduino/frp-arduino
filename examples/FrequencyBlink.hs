@@ -14,6 +14,7 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import Arduino.Uno
+import Data.Tuple (swap)
 
 main = compileProgram $ do
 
@@ -24,9 +25,7 @@ setupAlternateBlink pin1 pin2 triggerStream = do
     output2 (digitalOutput pin1) (digitalOutput pin2) =: alternate triggerStream
     where
         alternate :: Stream a -> Stream (Bit, Bit)
-        alternate = foldpS (\_ state -> let (a, b) = unpack2 state
-                                        in pack2 (b, a))
-                           (pack2 (bitLow, bitHigh))
+        alternate = foldpS2Tuple (\_ -> swap) (bitLow, bitHigh)
 
 createVariableTick :: AnalogInput -> Stream (Word, Word)
 createVariableTick limitInput = deltaAndLimit ~> accumulate ~> keepOverflowing
@@ -44,8 +43,7 @@ createVariableTick limitInput = deltaAndLimit ~> accumulate ~> keepOverflowing
                           , limit
                           ))
         keepOverflowing :: Stream (Word, Word) -> Stream (Word, Word)
-        keepOverflowing = filterS keepOverflowing'
-        keepOverflowing' x = let (delta, _) = unpack2 x in isEqual delta 0
+        keepOverflowing = filterS2Tuple $ \(delta, _) -> isEqual delta 0
         deltaAndLimit :: Stream (Word, Word)
         deltaAndLimit = mapS2 (\delta limit -> pack2 (delta, limit))
                               timerDelta

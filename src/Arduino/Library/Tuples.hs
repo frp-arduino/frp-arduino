@@ -15,32 +15,20 @@
 -- You should have received a copy of the GNU General Public License
 -- along with frp-arduino.  If not, see <http://www.gnu.org/licenses/>.
 
-module Arduino.Library
-    (
-    -- * Standard library
-      module Arduino.Library
-    -- * Tuples
-    , module Arduino.Library.Tuples
+module Arduino.Library.Tuples
+    ( filterS2Tuple
+    , foldpS2Tuple
     ) where
 
 import Arduino.DSL
-import Arduino.Library.Tuples
 
-toggle :: Stream Word -> Stream Bit
-toggle = mapS (boolToBit . isEven)
+filterS2Tuple :: ((Expression a, Expression b) -> Expression Bool)
+              -> Stream (a, b)
+              -> Stream (a, b)
+filterS2Tuple fn = filterS (fn . unpack2)
 
-invert :: Stream Bit -> Stream Bit
-invert = mapS flipBit
-
-count :: Stream a -> Stream Word
-count = foldpS (\_ state -> state + 1) 0
-
-keepWhen :: Stream Bit
-         -> Expression a
-         -> Stream a
-         -> Stream a
-keepWhen filterStream defaultValue valueStream =
-    mapS2 (pick defaultValue) filterStream valueStream
-    where
-        pick :: Expression a -> Expression Bit -> Expression a -> Expression a
-        pick defaultValue first second = if_ (isHigh first) second defaultValue
+foldpS2Tuple :: (Expression a -> (Expression b, Expression c) -> (Expression b, Expression c))
+             -> (Expression b, Expression c)
+             -> Stream a
+             -> Stream (b, c)
+foldpS2Tuple fn startValue = foldpS (\x state -> pack2 $ fn x (unpack2 state)) (pack2 startValue)
