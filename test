@@ -46,3 +46,4 @@ test Combine
 test LCD
 test FrequencyBlink
 spell_check
+runhaskell Spec.hs
