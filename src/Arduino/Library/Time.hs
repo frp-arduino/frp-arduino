@@ -17,11 +17,18 @@
 
 module Arduino.Library.Time
     ( accumulator
+    , accumulatorConstLimit
     ) where
 
 import Arduino.DSL
 import Arduino.Library.Tuples
 
+-- | The snippet
+--
+-- @accumulator limitStream deltaStream@
+--
+-- creates a stream that produces a unit value every time the accumulated
+-- deltas have reached the limit.
 accumulator :: Stream Word -> Stream Word -> Stream ()
 accumulator limitStream deltaStream = unitStream
     where
@@ -42,3 +49,6 @@ accumulator limitStream deltaStream = unitStream
 
         isWrap :: (Expression Word, Expression Word) -> Expression Bool
         isWrap (didWrap, _) = isEqual didWrap 0
+
+accumulatorConstLimit :: Expression Word -> Stream Word -> Stream ()
+accumulatorConstLimit limit = accumulator (constStream limit)

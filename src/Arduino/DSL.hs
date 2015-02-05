@@ -27,6 +27,7 @@ module Arduino.DSL
     , (=:)
     , prefixOutput
     , bootup
+    , constStream
 
     -- * Expressions
     , Expression
@@ -161,6 +162,9 @@ prefixOutput fn output = Output $ \stream -> do
 
 bootup :: Stream ()
 bootup = Stream $ addStream "bootup" DAG.Bootup
+
+constStream :: Expression a -> Stream a
+constStream value = mapS (const value) bootup
 
 output2 :: Output a1
         -> Output a2

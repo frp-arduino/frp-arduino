@@ -18,11 +18,9 @@
 module Arduino.Library
     (
     -- * Standard library
-      module Arduino.Library
-    -- * Time
-    , module Arduino.Library.Time
-    -- * Tuples
+      module Arduino.Library.Time
     , module Arduino.Library.Tuples
+    , module Arduino.Library
     ) where
 
 import Arduino.DSL
