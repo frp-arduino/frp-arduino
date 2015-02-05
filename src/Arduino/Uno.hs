@@ -99,13 +99,7 @@ clock :: Stream Word
 clock = every 10000
 
 every :: Expression Word -> Stream Word
-every limit = timerDelta ~> accumulate ~> keepOverflowing ~> count
-    where
-        accumulate = foldpS (\delta total -> if_ (greater total limit)
-                                                 (total - limit + delta)
-                                                 (total + delta))
-                            0
-        keepOverflowing = filterS (\value -> greater value limit)
+every limit = accumulator (bootup ~> mapS (const limit)) timerDelta ~> count
 
 uart :: Output Byte
 uart =

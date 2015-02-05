@@ -45,6 +45,7 @@ data Body = Map Expression
           deriving (Show)
 
 data Expression = Input Int
+                | Unit
                 | BitConstant Bit
                 | ByteConstant Byte
                 | WordConstant Word

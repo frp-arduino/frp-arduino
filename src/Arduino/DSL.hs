@@ -60,6 +60,7 @@ module Arduino.DSL
     , output6
 
     -- ** Misc
+    , unit
     , isEqual
 
     -- ** Conditionals
@@ -277,6 +278,9 @@ flattenS stream = Stream $ do
     addDependency streamName expressionStreamName
     where
         expression = DAG.Flatten $ DAG.Input 0
+
+unit :: Expression ()
+unit = Expression $ DAG.Unit
 
 isEqual :: Expression a -> Expression a -> Expression Bool
 isEqual left right =

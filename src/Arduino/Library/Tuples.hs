@@ -18,6 +18,7 @@
 module Arduino.Library.Tuples
     ( filterS2Tuple
     , foldpS2Tuple
+    , pack2Stream
     ) where
 
 import Arduino.DSL
@@ -32,3 +33,6 @@ foldpS2Tuple :: (Expression a -> (Expression b, Expression c) -> (Expression b, 
              -> Stream a
              -> Stream (b, c)
 foldpS2Tuple fn startValue = foldpS (\x state -> pack2 $ fn x (unpack2 state)) (pack2 startValue)
+
+pack2Stream :: Stream a -> Stream b -> Stream (a, b)
+pack2Stream = mapS2 (\a b -> pack2 (a, b))
