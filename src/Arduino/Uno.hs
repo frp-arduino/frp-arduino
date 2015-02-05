@@ -95,18 +95,6 @@ pin12 = GPIO "pin12" "DDRB" "PORTB" "PINB" "PB4"
 pin13 :: GPIO
 pin13 = GPIO "pin13" "DDRB" "PORTB" "PINB" "PB5"
 
-clock :: Stream Word
-clock = every 10000
-
-every :: Expression Word -> Stream Word
-every limit = timerDelta ~> accumulate ~> keepOverflowing ~> count
-    where
-        accumulate = foldpS (\delta total -> if_ (greater total limit)
-                                                 (total - limit + delta)
-                                                 (total + delta))
-                            0
-        keepOverflowing = filterS (\value -> greater value limit)
-
 uart :: Output Byte
 uart =
     let ubrr = floor ((16000000 / (16 * 9600)) - 1)
@@ -175,3 +163,9 @@ timerDelta = createInput
     (readWord "TCNT1" $
      writeWord "TCNT1" (wordConstant 0) $
      end)
+
+every :: Expression Word -> Stream Word
+every limit = accumulatorConstLimit limit timerDelta ~> count
+
+clock :: Stream Word
+clock = every 10000

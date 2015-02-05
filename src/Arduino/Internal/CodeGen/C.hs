@@ -217,6 +217,8 @@ genExpression inputMap static expression = case expression of
         literal CWord $ "(" ++ cLeft ++ " * " ++ cRight ++ ")"
     (Input value) -> do
         variable ("input_" ++ show value) (inputMap M.! value)
+    Unit -> do
+        return $ Value "0" CBit Literal Nothing
     (ByteConstant value) -> do
         literal CByte $ show value
     (BoolToBit operand) -> do

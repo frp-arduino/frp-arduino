@@ -37,9 +37,13 @@ static void stream_4(uint8_t arg, void* value);
 
 static void stream_5(uint8_t arg, void* value);
 
+static void stream_6(uint8_t arg, void* value);
+
 static void stream_7(uint8_t arg, void* value);
 
-static void stream_6(uint8_t arg, void* value);
+static void stream_9(uint8_t arg, void* value);
+
+static void stream_10(uint8_t arg, void* value);
 
 static void stream_8(uint8_t arg, void* value);
 
@@ -57,22 +61,29 @@ static void input_a0() {
   temp0 = ADCL;
   temp1 = ADCH;
   temp2 = temp0 | (temp1 << 8);
-  stream_1(1, (void*)(&temp2));
+  stream_1(0, (void*)(&temp2));
 }
 
 static void input_timer() {
   uint16_t temp3;
   temp3 = TCNT1;
   TCNT1 = 0;
-  stream_1(0, (void*)(&temp3));
+  stream_2(1, (void*)(&temp3));
 }
 
 static void stream_1(uint8_t arg, void* value) {
+  uint16_t input_0 = *((uint16_t*)value);
+  uint16_t temp4;
+  temp4 = (1000 + (input_0 * 20));
+  stream_2(0, (void*)(&temp4));
+}
+
+static void stream_2(uint8_t arg, void* value) {
   static uint16_t input_0;
   static uint16_t input_1;
-  uint16_t temp4;
   uint16_t temp5;
-  struct tuple2 temp6;
+  uint16_t temp6;
+  struct tuple2 temp7;
   switch (arg) {
     case 0:
       input_0 = *((uint16_t*)value);
@@ -81,93 +92,100 @@ static void stream_1(uint8_t arg, void* value) {
       input_1 = *((uint16_t*)value);
       break;
   }
-  temp4 = input_0;
-  temp5 = input_1;
-  temp6.value0 = (void*)&temp4;
-  temp6.value1 = (void*)&temp5;
-  stream_2(0, (void*)(&temp6));
-}
-
-static void stream_2(uint8_t arg, void* value) {
-  struct tuple2 input_0 = *((struct tuple2*)value);
-  static uint16_t temp7 = 0;
-  static uint16_t temp8 = 0;
-  static struct tuple2 input_1 = { .value0 = (void*)&temp7, .value1 = (void*)&temp8 };
-  uint16_t temp9;
-  uint16_t temp10;
-  struct tuple2 temp11;
-  uint16_t temp12;
-  uint16_t temp13;
-  struct tuple2 temp14;
-  struct tuple2 temp15;
-  temp9 = 0;
-  temp10 = *((uint16_t*)input_0.value1);
-  temp11.value0 = (void*)&temp9;
-  temp11.value1 = (void*)&temp10;
-  temp12 = (*((uint16_t*)input_0.value0) + *((uint16_t*)input_1.value0));
-  temp13 = *((uint16_t*)input_0.value1);
-  temp14.value0 = (void*)&temp12;
-  temp14.value1 = (void*)&temp13;
-  if ((*((uint16_t*)input_1.value0) > (1000 + (*((uint16_t*)input_0.value1) * 20)))) {
-    temp15 = temp11;
-  } else {
-    temp15 = temp14;
-  }
-  *((uint16_t*)input_1.value0) = *((uint16_t*)temp15.value0);
-  *((uint16_t*)input_1.value1) = *((uint16_t*)temp15.value1);
-  stream_3(0, (void*)(&input_1));
+  temp5 = input_0;
+  temp6 = input_1;
+  temp7.value0 = (void*)&temp5;
+  temp7.value1 = (void*)&temp6;
+  stream_3(0, (void*)(&temp7));
 }
 
 static void stream_3(uint8_t arg, void* value) {
   struct tuple2 input_0 = *((struct tuple2*)value);
-  if (*((uint16_t*)input_0.value0) == 0) {
-    stream_4(0, (void*)(&input_0));
+  static uint16_t temp8 = 0;
+  static uint16_t temp9 = 0;
+  static struct tuple2 input_1 = { .value0 = (void*)&temp8, .value1 = (void*)&temp9 };
+  uint16_t temp10;
+  uint16_t temp11;
+  struct tuple2 temp12;
+  uint16_t temp13;
+  uint16_t temp14;
+  struct tuple2 temp15;
+  struct tuple2 temp16;
+  temp10 = 0;
+  temp11 = 0;
+  temp12.value0 = (void*)&temp10;
+  temp12.value1 = (void*)&temp11;
+  temp13 = 1;
+  temp14 = (*((uint16_t*)input_1.value1) + *((uint16_t*)input_0.value1));
+  temp15.value0 = (void*)&temp13;
+  temp15.value1 = (void*)&temp14;
+  if (((*((uint16_t*)input_1.value1) + *((uint16_t*)input_0.value1)) > *((uint16_t*)input_0.value0))) {
+    temp16 = temp12;
+  } else {
+    temp16 = temp15;
   }
+  *((uint16_t*)input_1.value0) = *((uint16_t*)temp16.value0);
+  *((uint16_t*)input_1.value1) = *((uint16_t*)temp16.value1);
+  stream_4(0, (void*)(&input_1));
 }
 
 static void stream_4(uint8_t arg, void* value) {
   struct tuple2 input_0 = *((struct tuple2*)value);
-  static bool temp16 = false;
-  static bool temp17 = true;
-  static struct tuple2 input_1 = { .value0 = (void*)&temp16, .value1 = (void*)&temp17 };
-  bool temp18;
-  bool temp19;
-  struct tuple2 temp20;
-  temp18 = *((bool*)input_1.value1);
-  temp19 = *((bool*)input_1.value0);
-  temp20.value0 = (void*)&temp18;
-  temp20.value1 = (void*)&temp19;
-  *((bool*)input_1.value0) = *((bool*)temp20.value0);
-  *((bool*)input_1.value1) = *((bool*)temp20.value1);
-  stream_5(0, (void*)(&input_1));
-  stream_7(0, (void*)(&input_1));
+  if (*((uint16_t*)input_0.value0) == 0) {
+    stream_5(0, (void*)(&input_0));
+  }
 }
 
 static void stream_5(uint8_t arg, void* value) {
   struct tuple2 input_0 = *((struct tuple2*)value);
-  stream_6(0, (void*)(&*((bool*)input_0.value0)));
-}
-
-static void stream_7(uint8_t arg, void* value) {
-  struct tuple2 input_0 = *((struct tuple2*)value);
-  stream_8(0, (void*)(&*((bool*)input_0.value1)));
+  bool temp17;
+  temp17 = 0;
+  stream_6(0, (void*)(&temp17));
 }
 
 static void stream_6(uint8_t arg, void* value) {
   bool input_0 = *((bool*)value);
+  static bool temp18 = false;
+  static bool temp19 = true;
+  static struct tuple2 input_1 = { .value0 = (void*)&temp18, .value1 = (void*)&temp19 };
+  bool temp20;
+  bool temp21;
+  struct tuple2 temp22;
+  temp20 = *((bool*)input_1.value1);
+  temp21 = *((bool*)input_1.value0);
+  temp22.value0 = (void*)&temp20;
+  temp22.value1 = (void*)&temp21;
+  *((bool*)input_1.value0) = *((bool*)temp22.value0);
+  *((bool*)input_1.value1) = *((bool*)temp22.value1);
+  stream_7(0, (void*)(&input_1));
+  stream_9(0, (void*)(&input_1));
+}
+
+static void stream_7(uint8_t arg, void* value) {
+  struct tuple2 input_0 = *((struct tuple2*)value);
+  stream_8(0, (void*)(&*((bool*)input_0.value0)));
+}
+
+static void stream_9(uint8_t arg, void* value) {
+  struct tuple2 input_0 = *((struct tuple2*)value);
+  stream_10(0, (void*)(&*((bool*)input_0.value1)));
+}
+
+static void stream_10(uint8_t arg, void* value) {
+  bool input_0 = *((bool*)value);
   if (input_0) {
-    PORTB |= (1 << PB3);
+    PORTB |= (1 << PB4);
   } else {
-    PORTB &= ~(1 << PB3);
+    PORTB &= ~(1 << PB4);
   }
 }
 
 static void stream_8(uint8_t arg, void* value) {
   bool input_0 = *((bool*)value);
   if (input_0) {
-    PORTB |= (1 << PB4);
+    PORTB |= (1 << PB3);
   } else {
-    PORTB &= ~(1 << PB4);
+    PORTB &= ~(1 << PB3);
   }
 }
 
@@ -179,8 +197,8 @@ int main(void) {
   ADCSRA |= (1 << ADPS0);
   TCCR1B |= (1 << CS12);
   TCCR1B |= (1 << CS10);
-  DDRB |= (1 << PB3);
   DDRB |= (1 << PB4);
+  DDRB |= (1 << PB3);
   while (1) {
     input_a0();
     input_timer();

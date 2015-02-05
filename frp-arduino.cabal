@@ -17,6 +17,8 @@ library
     Arduino.DSL
     Arduino.Library
     Arduino.Library.LCD
+    Arduino.Library.Tuples
+    Arduino.Library.Time
   other-modules:
     Arduino.Internal.DAG
     Arduino.Internal.CodeGen.C

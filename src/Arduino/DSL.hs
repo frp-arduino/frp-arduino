@@ -27,6 +27,7 @@ module Arduino.DSL
     , (=:)
     , prefixOutput
     , bootup
+    , constStream
 
     -- * Expressions
     , Expression
@@ -60,6 +61,7 @@ module Arduino.DSL
     , output6
 
     -- ** Misc
+    , unit
     , isEqual
 
     -- ** Conditionals
@@ -160,6 +162,9 @@ prefixOutput fn output = Output $ \stream -> do
 
 bootup :: Stream ()
 bootup = Stream $ addStream "bootup" DAG.Bootup
+
+constStream :: Expression a -> Stream a
+constStream value = mapS (const value) bootup
 
 output2 :: Output a1
         -> Output a2
@@ -277,6 +282,9 @@ flattenS stream = Stream $ do
     addDependency streamName expressionStreamName
     where
         expression = DAG.Flatten $ DAG.Input 0
+
+unit :: Expression ()
+unit = Expression $ DAG.Unit
 
 isEqual :: Expression a -> Expression a -> Expression Bool
 isEqual left right =

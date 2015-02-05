@@ -27,24 +27,10 @@ setupAlternateBlink pin1 pin2 triggerStream = do
         alternate :: Stream a -> Stream (Bit, Bit)
         alternate = foldpS2Tuple (\_ -> swap) (bitLow, bitHigh)
 
-createVariableTick :: AnalogInput -> Stream (Word, Word)
-createVariableTick limitInput = deltaAndLimit ~> accumulate ~> keepOverflowing
+createVariableTick :: AnalogInput -> Stream ()
+createVariableTick limitInput = accumulator limitStream timerDelta
     where
-        accumulate :: Stream (Word, Word) -> Stream (Word, Word)
-        accumulate = foldpS accumulate' (pack2 (0, 0))
-        accumulate' current new = let
-            (currentDelta, limit) = unpack2 current
-            (accumulatedDelta, _) = unpack2 new
-            in if_ (greater accumulatedDelta (1000 + limit * 20))
-                   (pack2 ( 0
-                          , limit
-                          ))
-                   (pack2 ( currentDelta + accumulatedDelta
-                          , limit
-                          ))
-        keepOverflowing :: Stream (Word, Word) -> Stream (Word, Word)
-        keepOverflowing = filterS2Tuple $ \(delta, _) -> isEqual delta 0
-        deltaAndLimit :: Stream (Word, Word)
-        deltaAndLimit = mapS2 (\delta limit -> pack2 (delta, limit))
-                              timerDelta
-                              (analogRead limitInput)
+        limitStream :: Stream Word
+        limitStream = analogRead limitInput ~> mapS analogToLimit
+        analogToLimit :: Expression Word -> Expression Word
+        analogToLimit analog = 1000 + analog * 20

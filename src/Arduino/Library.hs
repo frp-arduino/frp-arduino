@@ -18,12 +18,13 @@
 module Arduino.Library
     (
     -- * Standard library
-      module Arduino.Library
-    -- * Tuples
+      module Arduino.Library.Time
     , module Arduino.Library.Tuples
+    , module Arduino.Library
     ) where
 
 import Arduino.DSL
+import Arduino.Library.Time
 import Arduino.Library.Tuples
 
 toggle :: Stream Word -> Stream Bit
