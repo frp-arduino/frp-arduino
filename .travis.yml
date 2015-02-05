@@ -5,6 +5,7 @@ before_install:
     - sudo apt-get install -y arduino-core
 install:
     - cabal install mtl
+    - cabal install hspec
     - git clone https://github.com/sudar/Arduino-Makefile.git
 script:
     - ./test
