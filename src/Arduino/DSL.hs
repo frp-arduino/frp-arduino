@@ -225,13 +225,12 @@ mapS2 fn left right = Stream $ do
         expression = unExpression $ fn (Expression $ DAG.Input 0)
                                        (Expression $ DAG.Input 1)
 
-mergeS :: Stream a -> Stream a -> Stream a
-mergeS left right = Stream $ do
-    leftName <- unStream left
-    rightName <- unStream right
+mergeS :: [Stream a] -> Stream a
+mergeS streams = Stream $ do
+    names <- mapM unStream streams
     expressionStreamName <- addAnonymousStream (DAG.Merge $ DAG.Input 0)
-    addDependency leftName expressionStreamName
-    addDependency rightName expressionStreamName
+    mapM_ (\x -> addDependency x expressionStreamName) names
+    return expressionStreamName
 
 -- | Needs a tuple created with 'pack2'.
 delay :: Stream (a, DAG.Word) -> Stream a

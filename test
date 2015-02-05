@@ -44,4 +44,5 @@ test UART
 test Input
 test Combine
 test LCD
+test FrequencyBlink
 spell_check

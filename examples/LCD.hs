@@ -18,16 +18,33 @@ import qualified Arduino.Library.LCD as LCD
 
 main = compileProgram $ do
 
-    let rs     = digitalOutput pin3
-    let d4     = digitalOutput pin5
-    let d5     = digitalOutput pin6
-    let d6     = digitalOutput pin7
-    let d7     = digitalOutput pin8
-    let enable = digitalOutput pin4
-
     tick <- def clock
 
     digitalOutput pin13 =: tick ~> toggle
 
-    LCD.output rs d4 d5 d6 d7 enable =: tick ~> mapSMany (\_ ->
-        LCD.position 0 0 ++ LCD.text "FRP Arduino :)")
+    setupLCD [ bootup ~> mapSMany (const introText)
+             , timerDelta ~> mapSMany statusText
+             ]
+
+introText :: [Expression LCD.Command]
+introText = concat
+    [ LCD.position 0 0
+    , LCD.text "FRP Arduino"
+    ]
+
+statusText :: Expression Word -> [Expression LCD.Command]
+statusText delta = concat
+    [ LCD.position 1 0
+    , LCD.text ":-)"
+    ]
+
+setupLCD :: [Stream LCD.Command] -> Action ()
+setupLCD streams = do
+    LCD.output rs d4 d5 d6 d7 enable =: mergeS streams
+    where
+        rs     = digitalOutput pin3
+        d4     = digitalOutput pin5
+        d5     = digitalOutput pin6
+        d6     = digitalOutput pin7
+        d7     = digitalOutput pin8
+        enable = digitalOutput pin4

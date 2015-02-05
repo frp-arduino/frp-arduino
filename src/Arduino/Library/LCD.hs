@@ -42,7 +42,9 @@ output rs d4 d5 d6 d7 enable = mergeBootup (output6 rs d7 d6 d5 d4 (pulse enable
     where
         mergeBootup :: Output Command -> Output Command
         mergeBootup = prefixOutput $ \command ->
-            mergeS (bootup ~> mapSMany (\_ -> init)) command
+            mergeS [ (bootup ~> mapSMany (\_ -> init))
+                   , command
+                   ]
 
         pulse :: Output Bit -> Output Word
         pulse = prefixOutput $ \word ->
