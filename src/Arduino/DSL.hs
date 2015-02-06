@@ -116,6 +116,7 @@ import Arduino.Internal.CodeGen.Dot(streamsToDot)
 import Control.Monad.State
 import Data.Char (ord)
 import qualified Arduino.Internal.DAG as DAG
+import System.Exit (exitFailure)
 
 data DAGState = DAGState
     { idCounter :: Int
@@ -142,9 +143,19 @@ instance Num (Expression a) where
 
 compileProgram :: Action a -> IO ()
 compileProgram action = do
-    let dagState = execState action (DAGState 1 DAG.emptyStreams)
-    writeFile "main.c" $ streamsToC (dag dagState)
-    writeFile "dag.dot" $ streamsToDot (dag dagState)
+    case parseProgram action of
+        Right dag -> do
+            writeFile "main.c" $ streamsToC dag
+            writeFile "dag.dot" $ streamsToDot dag
+        Left errors -> do
+            putStrLn "Errors:"
+            mapM_ putStrLn errors
+            exitFailure
+
+parseProgram :: Action a -> Either [String] DAG.Streams
+parseProgram action = Right $ dag dagState
+    where
+        dagState = execState action (DAGState 1 DAG.emptyStreams)
 
 def :: Stream a -> Action (Stream a)
 def stream = do
