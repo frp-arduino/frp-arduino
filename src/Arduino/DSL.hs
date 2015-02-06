@@ -23,6 +23,7 @@ module Arduino.DSL
     , Output
     , LLI
     , compileProgram
+    , parseProgram
     , def
     , (=:)
     , prefixOutput
@@ -121,6 +122,8 @@ import System.Exit (exitFailure)
 data DAGState = DAGState
     { idCounter :: Int
     , dag       :: DAG.Streams
+    , resources :: [String]
+    , errors    :: [String]
     }
 
 type Action a = State DAGState a
@@ -153,9 +156,12 @@ compileProgram action = do
             exitFailure
 
 parseProgram :: Action a -> Either [String] DAG.Streams
-parseProgram action = Right $ dag dagState
+parseProgram action =
+    case errors dagState of
+        [] -> Right $ dag dagState
+        x  -> Left x
     where
-        dagState = execState action (DAGState 1 DAG.emptyStreams)
+        dagState = execState action (DAGState 1 DAG.emptyStreams [] [])
 
 def :: Stream a -> Action (Stream a)
 def stream = do
@@ -397,6 +403,16 @@ addDependency source destination = do
     modify (\x -> x { dag = DAG.addDependency source destination (dag x) })
     return destination
 
+addResource :: String -> Action ()
+addResource name = do
+    modify addResource'
+    return ()
+    where
+        addResource' dagState =
+            if name `elem` resources dagState
+                then dagState { errors = errors dagState ++ [name ++ " used twice"]}
+                else dagState { resources = name : (resources dagState) }
+
 createInput :: String -> LLI () -> LLI a -> Stream a
 createInput name initLLI bodyLLI =
     Stream $ addStream ("input_" ++ name) body
@@ -405,6 +421,7 @@ createInput name initLLI bodyLLI =
 
 createOutput :: String -> LLI () -> (LLI a -> LLI ()) -> Output a
 createOutput name initLLI bodyLLI = Output $ \stream -> do
+    addResource name
     streamName <- unStream stream
     outputName <- addAnonymousStream $ DAG.Driver (unLLI initLLI) (unLLI (bodyLLI (LLI DAG.InputValue)))
     addDependency streamName outputName

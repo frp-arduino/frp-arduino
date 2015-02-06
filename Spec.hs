@@ -15,11 +15,12 @@
 -- You should have received a copy of the GNU General Public License
 -- along with frp-arduino.  If not, see <http://www.gnu.org/licenses/>.
 
+import Arduino.Uno
 import Control.Monad (when)
 import Data.List
 import System.Directory
-import System.FilePath
 import System.Exit
+import System.FilePath
 import System.Process
 import Test.Hspec
 
@@ -27,7 +28,9 @@ main :: IO ()
 main = hspec $ do
 
     describe "cabal file" $ do
+
         describe "sdist" $ do
+
             it "contains all source code" $ do
                 name <- getCabalName
                 let extracted = "dist/" ++ name
@@ -37,6 +40,16 @@ main = hspec $ do
                 assertSucceeds ["cabal", "configure"] extracted
                 assertSucceeds ["cabal", "build"] extracted
                 assertSucceeds ["diff", "-r", "../../src", "src"] extracted
+
+    describe "dsl" $ do
+
+        describe "prevents multiple usages of same output" $ do
+
+            it "works for simple outputs" $ do
+                let result = parseProgram $ do
+                    digitalOutput pin12 =: digitalRead pin11
+                    digitalOutput pin12 =: digitalRead pin11
+                result `shouldBe` Left ["pin12 used twice"]
 
 getCabalName :: IO String
 getCabalName = do
