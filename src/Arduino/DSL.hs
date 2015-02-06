@@ -392,11 +392,16 @@ addStream :: DAG.Identifier -> DAG.Body -> Action DAG.Identifier
 addStream name body = do
     streamTreeState <- get
     unless (DAG.hasStream (dag streamTreeState) name) $ do
+        mapM_ addResource (getResources body)
         modify $ insertStream $ DAG.Stream name [] body []
     return name
     where
         insertStream :: DAG.Stream -> DAGState -> DAGState
         insertStream stream x = x { dag = DAG.addStream (dag x) stream }
+
+getResources :: DAG.Body -> [String]
+getResources (DAG.Driver resources _ _) = resources
+getResources _                          = []
 
 addDependency :: DAG.Identifier -> DAG.Identifier -> Action DAG.Identifier
 addDependency source destination = do
@@ -417,13 +422,12 @@ createInput :: String -> LLI () -> LLI a -> Stream a
 createInput name initLLI bodyLLI =
     Stream $ addStream ("input_" ++ name) body
     where
-        body = DAG.Driver (unLLI initLLI) (unLLI bodyLLI)
+        body = DAG.Driver [name] (unLLI initLLI) (unLLI bodyLLI)
 
 createOutput :: String -> LLI () -> (LLI a -> LLI ()) -> Output a
 createOutput name initLLI bodyLLI = Output $ \stream -> do
-    addResource name
     streamName <- unStream stream
-    outputName <- addAnonymousStream $ DAG.Driver (unLLI initLLI) (unLLI (bodyLLI (LLI DAG.InputValue)))
+    outputName <- addAnonymousStream $ DAG.Driver [name] (unLLI initLLI) (unLLI (bodyLLI (LLI DAG.InputValue)))
     addDependency streamName outputName
     return ()
 

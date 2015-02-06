@@ -182,7 +182,7 @@ genStreamBody inputMap body = case body of
         (Value cExpression (CList cTypeItem) _ Nothing) <-
             genExpression inputMap False expression
         return [ToFlatVariable cExpression cTypeItem]
-    (Driver _ bodyLLI) -> do
+    (Driver _ _ bodyLLI) -> do
         fmap (:[]) $ genLLI bodyLLI
     (Merge expression) -> do
         fmap (:[]) $ genExpression inputMap False expression
@@ -422,7 +422,7 @@ genStreamOutputCalling results stream = do
 
 genInit :: Stream -> Gen ()
 genInit stream = case body stream of
-    (Driver initLLI _) -> do
+    (Driver _ initLLI _) -> do
         genLLI initLLI
         return ()
     _ -> do

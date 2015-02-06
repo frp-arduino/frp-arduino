@@ -40,7 +40,7 @@ data Body = Map Expression
           | Filter Expression
           | Flatten Expression
           | DelayMicroseconds Expression Expression
-          | Driver LLI LLI
+          | Driver [String] LLI LLI
           | Merge Expression
           | Bootup
           deriving (Show, Eq)

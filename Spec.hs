@@ -43,12 +43,17 @@ main = hspec $ do
 
     describe "dsl" $ do
 
-        describe "prevents multiple usages of same output" $ do
+        describe "prevents multiple 'resource' usage" $ do
 
-            it "works for simple outputs" $ do
+            it "same output is assigned to twice" $ do
                 let result = parseProgram $ do
                     digitalOutput pin12 =: digitalRead pin11
                     digitalOutput pin12 =: digitalRead pin11
+                result `shouldBe` Left ["pin12 used twice"]
+
+            it "same pin is used both as input and output" $ do
+                let result = parseProgram $ do
+                    digitalOutput pin12 =: digitalRead pin12
                 result `shouldBe` Left ["pin12 used twice"]
 
 getCabalName :: IO String
