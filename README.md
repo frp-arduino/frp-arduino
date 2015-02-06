@@ -10,6 +10,7 @@
   * [Running the examples](#running-the-examples)
   * [Example: Blinking led](#example-blinking-led)
   * [Example: Blinking pair of leds](#example-blinking-pair-of-leds)
+  * [Example: Blinking with variable frequency](#example-blinking-with-variable-frequency)
   * [Example: Writing bytes on UART](#example-writing-bytes-on-uart)
   * [Example: Displaying text on LCD](#example-displaying-text-on-lcd)
 * [API](#api)
@@ -309,6 +310,39 @@ flip2TupleStream = foldpS (\_ -> flip2Tuple) (pack2 (bitLow, bitHigh))
 This example shows how to group two values together and output them to two
 different outputs.
 
+### Example: Blinking with variable frequency
+
+```haskell
+import Arduino.Uno
+import Data.Tuple (swap)
+
+main = compileProgram $ do
+
+    setupAlternateBlink pin11 pin12 (createVariableTick a0)
+
+setupAlternateBlink :: GPIO -> GPIO -> Stream a -> Action ()
+setupAlternateBlink pin1 pin2 triggerStream = do
+    output2 (digitalOutput pin1) (digitalOutput pin2) =: alternate triggerStream
+    where
+        alternate :: Stream a -> Stream (Bit, Bit)
+        alternate = foldpS2Tuple (\_ -> swap) (bitLow, bitHigh)
+
+createVariableTick :: AnalogInput -> Stream ()
+createVariableTick limitInput = accumulator limitStream timerDelta
+    where
+        limitStream :: Stream Word
+        limitStream = analogRead limitInput ~> mapS analogToLimit
+        analogToLimit :: Expression Word -> Expression Word
+        analogToLimit analog = 1000 + analog * 20
+```
+
+* Source code: [examples/FrequencyBlink.hs](examples/FrequencyBlink.hs)
+* Generated C code (no need to understand this): [examples/FrequencyBlink.c](examples/FrequencyBlink.c)
+* Compile and upload command: `./make FrequencyBlink upload`
+
+This is like blinking a pair of leds except that the frequency of the blinks in
+this example depends on an analog input.
+
 ### Example: Writing bytes on UART
 
 ```haskell
@@ -341,19 +375,36 @@ import qualified Arduino.Library.LCD as LCD
 
 main = compileProgram $ do
 
-    let rs     = digitalOutput pin3
-    let d4     = digitalOutput pin5
-    let d5     = digitalOutput pin6
-    let d6     = digitalOutput pin7
-    let d7     = digitalOutput pin8
-    let enable = digitalOutput pin4
-
     tick <- def clock
 
     digitalOutput pin13 =: tick ~> toggle
 
-    LCD.output rs d4 d5 d6 d7 enable =: tick ~> mapSMany (\_ ->
-        LCD.position 0 0 ++ LCD.text "FRP Arduino :)")
+    setupLCD [ bootup ~> mapSMany (const introText)
+             , timerDelta ~> mapSMany statusText
+             ]
+
+introText :: [Expression LCD.Command]
+introText = concat
+    [ LCD.position 0 0
+    , LCD.text "FRP Arduino"
+    ]
+
+statusText :: Expression Word -> [Expression LCD.Command]
+statusText delta = concat
+    [ LCD.position 1 0
+    , LCD.text ":-)"
+    ]
+
+setupLCD :: [Stream LCD.Command] -> Action ()
+setupLCD streams = do
+    LCD.output rs d4 d5 d6 d7 enable =: mergeS streams
+    where
+        rs     = digitalOutput pin3
+        d4     = digitalOutput pin5
+        d5     = digitalOutput pin6
+        d6     = digitalOutput pin7
+        d7     = digitalOutput pin8
+        enable = digitalOutput pin4
 ```
 
 * Source code: [examples/LCD.hs](examples/LCD.hs)
