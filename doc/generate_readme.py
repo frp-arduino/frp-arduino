@@ -102,6 +102,7 @@ if __name__ == "__main__":
             "example-intro.md",
             "example-blink.md",
             "example-double-blink.md",
+            "example-frequency-blink.md",
             "example-uart.md",
             "example-lcd.md",
         ],

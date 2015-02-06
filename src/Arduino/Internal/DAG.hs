@@ -32,6 +32,7 @@ data Stream = Stream
     , body    :: Body
     , outputs :: [(Int, Identifier)]
     }
+    deriving (Show, Eq)
 
 data Body = Map Expression
           | MapMany [Expression]
@@ -39,10 +40,10 @@ data Body = Map Expression
           | Filter Expression
           | Flatten Expression
           | DelayMicroseconds Expression Expression
-          | Driver LLI LLI
+          | Driver [String] LLI LLI
           | Merge Expression
           | Bootup
-          deriving (Show)
+          deriving (Show, Eq)
 
 data Expression = Input Int
                 | Unit
@@ -63,7 +64,7 @@ data Expression = Input Int
                 | Greater Expression Expression
                 | Equal Expression Expression
                 | If Expression Expression Expression
-                deriving (Show)
+                deriving (Show, Eq)
 
 data LLI = WriteBit String String LLI LLI
          | WriteByte String LLI LLI
@@ -76,11 +77,11 @@ data LLI = WriteBit String String LLI LLI
          | ConstBit Bit
          | InputValue
          | End
-         deriving (Show)
+         deriving (Show, Eq)
 
 data Bit = High
          | Low
-         deriving (Show)
+         deriving (Show, Eq)
 
 type Byte = W.Word8
 

@@ -23,6 +23,7 @@ module Arduino.DSL
     , Output
     , LLI
     , compileProgram
+    , parseProgram
     , def
     , (=:)
     , prefixOutput
@@ -116,10 +117,13 @@ import Arduino.Internal.CodeGen.Dot(streamsToDot)
 import Control.Monad.State
 import Data.Char (ord)
 import qualified Arduino.Internal.DAG as DAG
+import System.Exit (exitFailure)
 
 data DAGState = DAGState
     { idCounter :: Int
     , dag       :: DAG.Streams
+    , resources :: [String]
+    , errors    :: [String]
     }
 
 type Action a = State DAGState a
@@ -142,9 +146,22 @@ instance Num (Expression a) where
 
 compileProgram :: Action a -> IO ()
 compileProgram action = do
-    let dagState = execState action (DAGState 1 DAG.emptyStreams)
-    writeFile "main.c" $ streamsToC (dag dagState)
-    writeFile "dag.dot" $ streamsToDot (dag dagState)
+    case parseProgram action of
+        Right dag -> do
+            writeFile "main.c" $ streamsToC dag
+            writeFile "dag.dot" $ streamsToDot dag
+        Left errors -> do
+            putStrLn "Errors:"
+            mapM_ putStrLn errors
+            exitFailure
+
+parseProgram :: Action a -> Either [String] DAG.Streams
+parseProgram action =
+    case errors dagState of
+        [] -> Right $ dag dagState
+        x  -> Left x
+    where
+        dagState = execState action (DAGState 1 DAG.emptyStreams [] [])
 
 def :: Stream a -> Action (Stream a)
 def stream = do
@@ -375,27 +392,42 @@ addStream :: DAG.Identifier -> DAG.Body -> Action DAG.Identifier
 addStream name body = do
     streamTreeState <- get
     unless (DAG.hasStream (dag streamTreeState) name) $ do
+        mapM_ addResource (getResources body)
         modify $ insertStream $ DAG.Stream name [] body []
     return name
     where
         insertStream :: DAG.Stream -> DAGState -> DAGState
         insertStream stream x = x { dag = DAG.addStream (dag x) stream }
 
+getResources :: DAG.Body -> [String]
+getResources (DAG.Driver resources _ _) = resources
+getResources _                          = []
+
 addDependency :: DAG.Identifier -> DAG.Identifier -> Action DAG.Identifier
 addDependency source destination = do
     modify (\x -> x { dag = DAG.addDependency source destination (dag x) })
     return destination
 
+addResource :: String -> Action ()
+addResource name = do
+    modify addResource'
+    return ()
+    where
+        addResource' dagState =
+            if name `elem` resources dagState
+                then dagState { errors = errors dagState ++ [name ++ " used twice"]}
+                else dagState { resources = name : (resources dagState) }
+
 createInput :: String -> LLI () -> LLI a -> Stream a
 createInput name initLLI bodyLLI =
     Stream $ addStream ("input_" ++ name) body
     where
-        body = DAG.Driver (unLLI initLLI) (unLLI bodyLLI)
+        body = DAG.Driver [name] (unLLI initLLI) (unLLI bodyLLI)
 
 createOutput :: String -> LLI () -> (LLI a -> LLI ()) -> Output a
 createOutput name initLLI bodyLLI = Output $ \stream -> do
     streamName <- unStream stream
-    outputName <- addAnonymousStream $ DAG.Driver (unLLI initLLI) (unLLI (bodyLLI (LLI DAG.InputValue)))
+    outputName <- addAnonymousStream $ DAG.Driver [name] (unLLI initLLI) (unLLI (bodyLLI (LLI DAG.InputValue)))
     addDependency streamName outputName
     return ()
 
