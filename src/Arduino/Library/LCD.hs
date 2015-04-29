@@ -25,7 +25,7 @@ module Arduino.Library.LCD
 import Arduino.DSL
 import Data.Bits
 import Data.Char (ord)
-import Prelude hiding (init)
+import Prelude hiding (init, Word)
 
 type Command = (Bit, Bit, Bit, Bit, Bit, Word)
 

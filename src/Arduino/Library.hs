@@ -26,6 +26,7 @@ module Arduino.Library
 import Arduino.DSL
 import Arduino.Library.Time
 import Arduino.Library.Tuples
+import Prelude hiding (Word)
 
 toggle :: Stream Word -> Stream Bit
 toggle = mapS (boolToBit . isEven)
