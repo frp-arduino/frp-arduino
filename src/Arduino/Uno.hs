@@ -49,6 +49,7 @@ module Arduino.Uno
 import Arduino.DSL
 import Arduino.Library
 import Data.Bits (shiftR, (.&.), testBit)
+import Prelude hiding (Word)
 
 data GPIO = GPIO
     { name              :: String

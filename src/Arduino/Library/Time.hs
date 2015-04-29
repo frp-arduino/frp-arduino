@@ -22,6 +22,7 @@ module Arduino.Library.Time
 
 import Arduino.DSL
 import Arduino.Library.Tuples
+import Prelude hiding (Word)
 
 -- | The snippet
 --

@@ -23,6 +23,7 @@ import Data.Monoid
 import qualified Data.Map as M
 import qualified Data.Set as S
 import qualified Data.Word as W
+import Prelude hiding (Word)
 
 type Streams = M.Map Identifier Stream
 
