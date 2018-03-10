@@ -28,6 +28,7 @@ module Arduino.Uno
     , pin6
     , pin7
     , pin8
+    , pin9
     , pin10
     , pin11
     , pin12
@@ -83,6 +84,9 @@ pin7 = GPIO "pin7" "DDRD" "PORTD" "PIND" "PD7"
 
 pin8 :: GPIO
 pin8 = GPIO "pin8" "DDRB" "PORTB" "PINB" "PB0"
+
+pin9 :: GPIO
+pin9 = GPIO "pin9" "DDRB" "PORTB" "PINB" "PB1"
 
 pin10 :: GPIO
 pin10 = GPIO "pin10" "DDRB" "PORTB" "PINB" "PB2"
