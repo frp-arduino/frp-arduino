@@ -170,6 +170,10 @@ commands:
     yum install arduino-core
     git clone https://github.com/sudar/Arduino-Makefile.git
 
+Hspec is required for tests to pass:
+
+    cabal update && cabal install hspec
+
 The arduino-core package depends on the following packages:
 
 * avr-gcc

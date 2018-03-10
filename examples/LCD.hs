@@ -32,7 +32,7 @@ introText = concat
     , LCD.text "FRP Arduino"
     ]
 
-statusText :: Expression Word -> [Expression LCD.Command]
+statusText :: Expression Arduino.Uno.Word -> [Expression LCD.Command]
 statusText delta = concat
     [ LCD.position 1 0
     , LCD.text ":-)"

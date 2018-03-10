@@ -30,7 +30,7 @@ setupAlternateBlink pin1 pin2 triggerStream = do
 createVariableTick :: AnalogInput -> Stream ()
 createVariableTick limitInput = accumulator limitStream timerDelta
     where
-        limitStream :: Stream Word
+        limitStream :: Stream Arduino.Uno.Word
         limitStream = analogRead limitInput ~> mapS analogToLimit
-        analogToLimit :: Expression Word -> Expression Word
+        analogToLimit :: Expression Arduino.Uno.Word -> Expression Arduino.Uno.Word
         analogToLimit analog = 1000 + analog * 20

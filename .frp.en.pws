@@ -1,4 +1,4 @@
-personal_ws-1.1 en 27 
+personal_ws-1.1 en 27
 AnalogInput
 analogRead
 analogToLimit
@@ -40,6 +40,8 @@ Hackage
 haskell
 Haskell's
 href
+hspec
+Hspec
 img
 incrementing
 init
