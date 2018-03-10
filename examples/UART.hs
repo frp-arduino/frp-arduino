@@ -21,7 +21,7 @@ main = compileProgram $ do
 
     uart =: timerDelta ~> mapSMany formatDelta ~> flattenS
 
-formatDelta :: Expression Word -> [Expression [Byte]]
+formatDelta :: Expression Arduino.Uno.Word -> [Expression [Byte]]
 formatDelta delta = [ formatString "delta: "
                     , formatNumber delta
                     , formatString "\r\n"
