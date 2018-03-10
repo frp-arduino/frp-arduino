@@ -334,9 +334,9 @@ setupAlternateBlink pin1 pin2 triggerStream = do
 createVariableTick :: AnalogInput -> Stream ()
 createVariableTick limitInput = accumulator limitStream timerDelta
     where
-        limitStream :: Stream Word
+        limitStream :: Stream Arduino.Uno.Word
         limitStream = analogRead limitInput ~> mapS analogToLimit
-        analogToLimit :: Expression Word -> Expression Word
+        analogToLimit :: Expression Arduino.Uno.Word -> Expression Arduino.Uno.Word
         analogToLimit analog = 1000 + analog * 20
 ```
 
@@ -358,7 +358,7 @@ main = compileProgram $ do
 
     uart =: timerDelta ~> mapSMany formatDelta ~> flattenS
 
-formatDelta :: Expression Word -> [Expression [Byte]]
+formatDelta :: Expression Arduino.Uno.Word -> [Expression [Byte]]
 formatDelta delta = [ formatString "delta: "
                     , formatNumber delta
                     , formatString "\r\n"
@@ -393,7 +393,7 @@ introText = concat
     , LCD.text "FRP Arduino"
     ]
 
-statusText :: Expression Word -> [Expression LCD.Command]
+statusText :: Expression Arduino.Uno.Word -> [Expression LCD.Command]
 statusText delta = concat
     [ LCD.position 1 0
     , LCD.text ":-)"
