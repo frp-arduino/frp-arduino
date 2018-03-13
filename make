@@ -1,9 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
 EXAMPLE=$1
 TARGET=$2
+BOARD=$3
 OUTPUT_DIR=build-output/$EXAMPLE
 
 if [ "$TARGET" == "clean" ]
@@ -21,22 +22,30 @@ else
         examples/$EXAMPLE.hs
     cd $OUTPUT_DIR
     ./$EXAMPLE
+
     if ! [ -n "$ARDUINO_MAKEFILE_PATH" ]; then
         ARDUINO_MAKEFILE_PATH="../../Arduino-Makefile/Arduino.mk"
     fi
-    cat << EOF > Makefile
-NO_CORE = Yes
 
-BOARD_TAG = uno
-MCU = atmega328p
-F_CPU = 16000000L
+		# Add new boards as an elif statement here after creating a matching
+		# makefile in the makefiles directory.
+		if [ "$BOARD" == "Uno" ]
+		then
+			cp ../../makefiles/Uno ./
+			mv Uno Makefile
+			echo "include ${ARDUINO_MAKEFILE_PATH}" >> Makefile
+		elif [ "$BOARD" == "Nano" ]
+		then
+			cp ../../makefiles/Nano ./
+			mv Nano Makefile
+			echo "include ${ARDUINO_MAKEFILE_PATH}" >> Makefile
+		else
+			# Default to the Arduino Uno
+			cp ../../makefiles/Uno ./
+			mv Uno Makefile
+			echo "include ${ARDUINO_MAKEFILE_PATH}" >> Makefile
+		fi
 
-AVRDUDE_ARD_PROGRAMMER = arduino
-AVRDUDE_ARD_BAUDRATE = 115200
-
-include $ARDUINO_MAKEFILE_PATH
-
-EOF
     if [ "$TARGET" == "dot" ];
     then
         dot -Tpng -odag.png dag.dot

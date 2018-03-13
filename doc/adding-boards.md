@@ -20,4 +20,10 @@ corresponding pin mapping. Below are diagrams for some common Arduino chips.
 In addition to the pin mapping, the port register information for each pin
 will need to be determined. The port register information can be found
 [here](https://www.arduino.cc/en/Reference/PortManipulation), and the original
-Uno module shows examples of how to combine this information into a pin declaration. 
+Uno module shows examples of how to combine this information into a pin declaration.
+
+#TODO: Add explanation of how to set up pins here
+
+#TODO: Explain makefile directory and adding a makefile, and examples in Arduino-Makefile
+
+#TODO: Talk about modifying makefile to add another elif
