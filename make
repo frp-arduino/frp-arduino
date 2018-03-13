@@ -4,7 +4,6 @@ set -e
 
 EXAMPLE=$1
 TARGET=$2
-BOARD=$3
 OUTPUT_DIR=build-output/$EXAMPLE
 
 if [ "$TARGET" == "clean" ]
