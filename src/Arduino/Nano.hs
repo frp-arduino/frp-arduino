@@ -153,25 +153,25 @@ a0 :: AnalogInput
 a0 = AnalogInput "a0" 0
 
 a1 :: AnalogInput
-a1 = AnalogInput "a1" 0
+a1 = AnalogInput "a1" 1
 
 a2 :: AnalogInput
-a2 = AnalogInput "a2" 0
+a2 = AnalogInput "a2" 2
 
 a3 :: AnalogInput
-a3 = AnalogInput "a3" 0
+a3 = AnalogInput "a3" 3
 
 a4 :: AnalogInput
-a4 = AnalogInput "a4" 0
+a4 = AnalogInput "a4" 4
 
 a5 :: AnalogInput
-a5 = AnalogInput "a5" 0
+a5 = AnalogInput "a5" 5
 
 a6 :: AnalogInput
-a6 = AnalogInput "a6" 0
+a6 = AnalogInput "a6" 6
 
 a7 :: AnalogInput
-a7 = AnalogInput "a7" 0
+a7 = AnalogInput "a7" 7
 
 analogRead :: AnalogInput -> Stream Word
 analogRead an = createInput

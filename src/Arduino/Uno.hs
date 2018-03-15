@@ -22,6 +22,7 @@ module Arduino.Uno
     , GPIO()
     , digitalOutput
     , digitalRead
+    , pin2
     , pin3
     , pin4
     , pin5
@@ -37,6 +38,11 @@ module Arduino.Uno
     , AnalogInput()
     , analogRead
     , a0
+    , a1
+    , a2
+    , a3
+    , a4
+    , a5
     -- * UART
     , uart
     -- * Clock
@@ -66,6 +72,9 @@ data AnalogInput = AnalogInput
     }
 
 -- For mappings, see http://arduino.cc/en/Hacking/PinMapping168
+
+pin2 :: GPIO
+pin2 = GPIO "pin2" "DDRD" "PORTD" "PIND" "PD2"
 
 pin3 :: GPIO
 pin3 = GPIO "pin3" "DDRD" "PORTD" "PIND" "PD3"
@@ -140,6 +149,21 @@ digitalRead gpio = createInput
 
 a0 :: AnalogInput
 a0 = AnalogInput "a0" 0
+
+a1 :: AnalogInput
+a1 = AnalogInput "a1" 1
+
+a2 :: AnalogInput
+a2 = AnalogInput "a2" 2
+
+a3 :: AnalogInput
+a3 = AnalogInput "a3" 3
+
+a4 :: AnalogInput
+a4 = AnalogInput "a4" 4
+
+a5 :: AnalogInput
+a5 = AnalogInput "a5" 5
 
 analogRead :: AnalogInput -> Stream Word
 analogRead an = createInput
