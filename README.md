@@ -16,6 +16,7 @@
 * [API](#api)
 * [Questions](#questions)
 * [Contributing](#contributing)
+* [Developer Documentation](#developer-documentation)
 * [Resources](#resources)
 * [License](#license)
 * [This document](#this-document)
@@ -458,6 +459,11 @@ Comments on the process:
 In our case, this means that `./test` should run without failure.
 
 [![Build Status](https://travis-ci.org/frp-arduino/frp-arduino.svg)](https://travis-ci.org/frp-arduino/frp-arduino)
+
+## Developer Documentation
+Below is a collection of information to help developers extend and improve frp-arduino.
+
+* [Adding Boards](adding-boards.md)
 
 ## Resources
 

@@ -109,6 +109,7 @@ if __name__ == "__main__":
         "api.md",
         "questions.md",
         "contributing.md",
+        "developer.md",
         "resources.md",
         "license.md",
         "this-document.md",
