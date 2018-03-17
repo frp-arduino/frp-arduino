@@ -8,6 +8,12 @@ Command to compile and upload an example to a connected Arduino:
 
     ./make [name of example] upload
 
+A board name can be specified as an environment variable if using a board other
+than the Arduino Uno. Currently supported board names include "Uno" (default
+Arduino Uno) and "Nano" (Arduino Nano).
+
+    BOARD=[name of board] ./make [name of example] upload
+
 Before we can run these commands, we need to install a few dependencies:
 
 * [The Haskell platform](https://www.haskell.org/platform/)

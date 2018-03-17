@@ -1,4 +1,4 @@
--- Copyright (c) 2014 Contributors as noted in the AUTHORS file
+-- Copyright (c) 2014-2018 Contributors as noted in the AUTHORS file
 --
 -- This file is part of frp-arduino.
 --
@@ -15,7 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with frp-arduino.  If not, see <http://www.gnu.org/licenses/>.
 
-module Arduino.Uno
+module Arduino.Nano
     ( module Arduino.DSL
     , module Arduino.Library
     -- * GPIO
@@ -43,6 +43,8 @@ module Arduino.Uno
     , a3
     , a4
     , a5
+    , a6
+    , a7
     -- * UART
     , uart
     -- * Clock
@@ -164,6 +166,12 @@ a4 = AnalogInput "a4" 4
 
 a5 :: AnalogInput
 a5 = AnalogInput "a5" 5
+
+a6 :: AnalogInput
+a6 = AnalogInput "a6" 6
+
+a7 :: AnalogInput
+a7 = AnalogInput "a7" 7
 
 analogRead :: AnalogInput -> Stream Word
 analogRead an = createInput

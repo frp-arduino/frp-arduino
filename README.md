@@ -16,6 +16,7 @@
 * [API](#api)
 * [Questions](#questions)
 * [Contributing](#contributing)
+* [Developer Documentation](#developer-documentation)
 * [Resources](#resources)
 * [License](#license)
 * [This document](#this-document)
@@ -151,6 +152,12 @@ Command to compile an example:
 Command to compile and upload an example to a connected Arduino:
 
     ./make [name of example] upload
+
+A board name can be specified as an environment variable if using a board other
+than the Arduino Uno. Currently supported board names include "Uno" (default
+Arduino Uno) and "Nano" (Arduino Nano).
+
+    BOARD=[name of board] ./make [name of example] upload
 
 Before we can run these commands, we need to install a few dependencies:
 
@@ -452,6 +459,11 @@ Comments on the process:
 In our case, this means that `./test` should run without failure.
 
 [![Build Status](https://travis-ci.org/frp-arduino/frp-arduino.svg)](https://travis-ci.org/frp-arduino/frp-arduino)
+
+## Developer Documentation
+Below is a collection of information to help developers extend and improve frp-arduino.
+
+* [Adding Boards](doc/adding-boards.md)
 
 ## Resources
 
