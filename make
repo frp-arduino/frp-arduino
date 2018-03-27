@@ -2,9 +2,9 @@
 
 set -e
 
-EXAMPLE=$1
+SOURCE=$1
 TARGET=$2
-OUTPUT_DIR=build-output/$EXAMPLE
+OUTPUT_DIR=build-output/$SOURCE
 
 if [ "$TARGET" == "clean" ]
 then
@@ -17,10 +17,10 @@ else
         -fwarn-unused-imports \
         -isrc \
         -outputdir $OUTPUT_DIR \
-        -o $OUTPUT_DIR/$EXAMPLE \
-        examples/$EXAMPLE.hs
+        -o $OUTPUT_DIR/$SOURCE \
+        examples/$SOURCE.hs
     cd $OUTPUT_DIR
-    ./$EXAMPLE
+    ./$SOURCE
 
     if ! [ -n "$ARDUINO_MAKEFILE_PATH" ]; then
         ARDUINO_MAKEFILE_PATH="../../Arduino-Makefile/Arduino.mk"
@@ -28,12 +28,7 @@ else
 
 		# Add new boards as an elif statement here after creating a matching
 		# makefile in the makefiles directory.
-		if [ "$BOARD" == "Uno" ]
-		then
-			cp ../../makefiles/Uno ./
-			mv Uno Makefile
-			echo "include ${ARDUINO_MAKEFILE_PATH}" >> Makefile
-		elif [ "$BOARD" == "Nano" ]
+		if [ "$BOARD" == "Nano" ]
 		then
 			cp ../../makefiles/Nano ./
 			mv Nano Makefile
