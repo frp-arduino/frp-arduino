@@ -2,9 +2,33 @@
 
 set -e
 
-EXAMPLE=$1
+if [ "$#" -lt 1 ]; then
+    echo "usage: BOARD=board_type ./make source_file target"
+		echo "    board_type: Type of Arduino [Uno|Nano], this environment variable can be omitted"
+		echo "    source_file: frp-arduino source file (.hs)"
+		echo "    target: Make target [upload|clean], can be omitted"
+		exit 1
+fi
+
+SOURCE=$1
 TARGET=$2
-OUTPUT_DIR=build-output/$EXAMPLE
+OUTPUT_DIR=build-output/$(basename "$SOURCE")
+BASENAME=$(basename "$SOURCE")
+
+# We do not want the file extension at this time
+if [[ "$BASENAME" = *".hs" ]]
+then
+	echo "Please do not include the .hs extension on your file name."
+	exit 0
+fi
+
+# Source file name exists as an example
+if [ "$SOURCE" = *"examples"* ] || [ -f "examples/$BASENAME.hs" ]
+then
+	SOURCE_PATH="examples/$BASENAME.hs"
+else
+	SOURCE_PATH="${SOURCE}.hs"
+fi
 
 if [ "$TARGET" == "clean" ]
 then
@@ -17,10 +41,10 @@ else
         -fwarn-unused-imports \
         -isrc \
         -outputdir $OUTPUT_DIR \
-        -o $OUTPUT_DIR/$EXAMPLE \
-        examples/$EXAMPLE.hs
+        -o $OUTPUT_DIR/$BASENAME \
+        $SOURCE_PATH
     cd $OUTPUT_DIR
-    ./$EXAMPLE
+    ./$BASENAME
 
     if ! [ -n "$ARDUINO_MAKEFILE_PATH" ]; then
         ARDUINO_MAKEFILE_PATH="../../Arduino-Makefile/Arduino.mk"
@@ -28,12 +52,7 @@ else
 
 		# Add new boards as an elif statement here after creating a matching
 		# makefile in the makefiles directory.
-		if [ "$BOARD" == "Uno" ]
-		then
-			cp ../../makefiles/Uno ./
-			mv Uno Makefile
-			echo "include ${ARDUINO_MAKEFILE_PATH}" >> Makefile
-		elif [ "$BOARD" == "Nano" ]
+		if [ "$BOARD" == "Nano" ]
 		then
 			cp ../../makefiles/Nano ./
 			mv Nano Makefile
