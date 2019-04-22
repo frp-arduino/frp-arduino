@@ -22,8 +22,10 @@ module Arduino.Internal.CodeGen.C
 import Arduino.Internal.CodeGen.BlockDoc
 import Arduino.Internal.DAG
 import Control.Monad
+import qualified Control.Monad.Fail as Fail
 import Data.List (intersperse)
 import qualified Data.Map as M
+import Data.Functor.Identity as Identity
 
 data ResultValue = Value String CType Storage (Maybe String)
                  | FilterVariable String CType String
@@ -40,6 +42,9 @@ data CType = CBit
            | CList CType
            | CTuple [CType]
            deriving (Eq, Show)
+
+instance Fail.MonadFail Identity.Identity where
+    fail = error "assumption failed in pattern matching"
 
 listSizeCType :: CType
 listSizeCType = CByte
