@@ -74,7 +74,10 @@ else
     if [ "$TARGET" == "dot" ];
     then
         dot -Tpng -odag.png dag.dot
-        xdg-open dag.png
+        case "$(uname -s)" in
+            Darwin) open dag.png ;;
+            *) xdg-open dag.png ;;
+        esac
     else
         make $TARGET
     fi
