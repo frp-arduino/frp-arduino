@@ -1,6 +1,20 @@
 name:                frp-arduino
 version:             0.1.1.0
 synopsis:            Arduino programming without the hassle of C.
+description:
+            frp-arduino provides the basic building blocks to program
+            your Arduino Nano, Arduino Uno or compatible hardware
+            using Haskell and Functional Reactive Programming (FRP).
+            .
+            frp-arduino compiles a subset of Haskell (embedded
+            domain-specific language, or EDSL) to C and then uses the
+            standard `avr-g++` Arduino cross-compiler behind the
+            scenes. However, the C parts are completely hidden thanks
+            to a `make` wrapper script that builds on top of the
+            Arduino-Makefile project (see
+            https://github.com/sudar/Arduino-Makefile), thus
+            letting you build and upload your Haskell code to your
+            hardware in a single command.
 homepage:            http://github.com/frp-arduino/frp-arduino
 license:             GPL-3
 license-file:        COPYING
