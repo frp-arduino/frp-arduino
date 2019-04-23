@@ -47,7 +47,14 @@ else
     ./$BASENAME
 
     if ! [ -n "$ARDUINO_MAKEFILE_PATH" ]; then
-        ARDUINO_MAKEFILE_PATH="../../Arduino-Makefile/Arduino.mk"
+        case "$(uname -s)" in
+            Darwin)
+                # Assume Arduino-Makefile was installed with `brew install arduino-mk`
+                ARDUINO_MAKEFILE_PATH="/usr/local/opt/arduino-mk/Arduino.mk" ;;
+            *)
+                # Assume both projects are checked out from source side by side
+                ARDUINO_MAKEFILE_PATH="../../Arduino-Makefile/Arduino.mk" ;;
+        esac
     fi
 
 		# Add new boards as an elif statement here after creating a matching
