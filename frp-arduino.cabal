@@ -10,6 +10,7 @@ category:            Language
 build-type:          Simple
 extra-source-files:  README.md
 cabal-version:       >=1.10
+Tested-With:         GHC ==8.6.4
 
 library
   exposed-modules:
